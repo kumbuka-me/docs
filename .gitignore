@@ -1,0 +1,7 @@
+/bin/*
+!/bin/dev-tools.mk
+# Local development port assignments
+/.dev-ports.json
+/.dev-ports.json.lock
+/site/
+.DS_Store

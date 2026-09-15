@@ -1,0 +1,34 @@
+[[plugin]]
+id = "me.kumbuka.coding-ligatures"
+repository = "kumbuka-me/plugins"
+tag_prefix = "coding-ligatures/v"
+asset = "coding-ligatures"
+version = "1.0.2"
+
+[[plugin]]
+id = "me.kumbuka.simple-icons"
+repository = "kumbuka-me/plugins"
+tag_prefix = "simple-icons/v"
+asset = "simple-icons"
+version = "1.0.2"
+
+[[plugin]]
+id = "me.kumbuka.strikethrough"
+repository = "kumbuka-me/plugins"
+tag_prefix = "strikethrough/v"
+asset = "strikethrough"
+version = "1.0.2"
+
+[[plugin]]
+id = "me.kumbuka.task-lists"
+repository = "kumbuka-me/plugins"
+tag_prefix = "task-lists/v"
+asset = "task-lists"
+version = "1.0.2"
+
+[[plugin]]
+id = "me.kumbuka.typographer"
+repository = "kumbuka-me/plugins"
+tag_prefix = "typographer/v"
+asset = "typographer"
+version = "1.0.2"

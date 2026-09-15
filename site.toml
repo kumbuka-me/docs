@@ -1,0 +1,19 @@
+site_name = "Kumbuka"
+site_url = "https://kumbuka.me/"
+source_dir = "content"
+output_dir = "site"
+theme = "Light"
+language = "en"
+navigation_style = "sidebar"
+navigation_density = "comfortable"
+sidebar_width = 280
+robots = "allow"
+
+assets_dir = "assets"
+
+[[external_links]]
+label = "Repository"
+url = "https://github.com/kumbuka-me/kumbuka"
+icon = "github-simple"
+description = "GitHub"
+hover_text = "{{label}} | {{description}}"
