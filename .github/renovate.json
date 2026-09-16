@@ -1,0 +1,18 @@
+{
+  "extends": ["config:recommended"],
+  "labels": ["dependency"],
+  "postUpdateOptions": ["gomodTidy"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update Kumbuka plugins",
+      "managerFilePatterns": ["/\\.toml$/"],
+      "matchStrings": [
+        "\\[\\[plugin\\]\\]\\s*id\\s*=\\s*\"(?<depName>[^\"]+)\"\\s*repository\\s*=\\s*\"(?<packageName>[^\"]+)\"\\s*tag_prefix\\s*=\\s*\"(?<tagPrefix>[^\"]+)\"\\s*asset\\s*=\\s*\"[^\"]+\"\\s*version\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "github-tags",
+      "versioningTemplate": "semver",
+      "extractVersionTemplate": "^{{{tagPrefix}}}(?<version>.*)$"
+    }
+  ]
+}
