@@ -30,7 +30,7 @@ The Markdown editor provides the same reusable insert actions from the keyboard 
 
 Autocomplete is suppressed inside fenced code blocks where Kumbuka keeps knowledge macros literal.
 
-The Markdown source editor always disables coding ligatures so operator sequences remain visually literal while editing. Enable the **Coding Ligatures** plugin under **Administration → Plugins** to show operator ligatures in ordinary text, inline code, and fenced code in previews and rendered pages. When enabled alongside the built-in **Typographer** Markdown extension, ASCII operators such as `-->`, `<<`, and `>>` are preserved instead of being converted to punctuation.
+The Markdown source editor always disables coding ligatures so operator sequences remain visually literal while editing. Enable the **Coding Ligatures** plugin under **Administration → Plugins** to show operator ligatures in ordinary text, inline code, and fenced code in previews and rendered pages. When enabled alongside the bundled **Typographer** plugin, ASCII operators such as `-->`, `<<`, and `>>` are preserved instead of being converted to punctuation.
 
 ## Draft protection
 
@@ -42,4 +42,4 @@ A page whose lifecycle status is `draft` is different: it is a real persisted pa
 
 ## Revision history
 
-Every persisted page update creates immutable revision history. The page view shows the newest revision summary and can load the full history. Editors can restore an older revision by creating a new revision from its Markdown rather than mutating history in place.
+Every persisted page update creates immutable revision history. When the bundled **Revision History** plugin is enabled, page details show recent revision metadata and link to the full history. Editors can restore an older revision by creating a new revision from its Markdown rather than mutating history in place.

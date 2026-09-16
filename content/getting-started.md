@@ -1,6 +1,6 @@
 # Getting started
 
-The quickest way to run the full Kumbuka server is Docker Compose. It starts Kumbuka and PostgreSQL together.
+The quickest way to run the full Kumbuka server is Docker Compose. It starts Kumbuka, PostgreSQL, and the separate `html2pdf` service used for PDF export.
 
 ## Start the stack
 

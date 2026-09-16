@@ -62,7 +62,7 @@ Use `???+` to render the details block initially open.
 
 ## Page functions
 
-A standalone function can insert the current page's child navigation:
+The bundled **Subpages** plugin provides a standalone function that inserts the current page's child navigation:
 
 ```markdown
 {{subpages}}
@@ -75,7 +75,7 @@ The default heading is **Pages in this section**. Set a custom heading with the 
 {{subpages title=""}}
 ```
 
-The static filesystem builder supports the same `{{subpages}}` title behavior.
+Static builds support the same `{{subpages}}` title behavior when the project declares the Subpages plugin in `.kumbukaplugins`.
 
 ## Server-only knowledge macros
 

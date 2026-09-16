@@ -1,6 +1,6 @@
 # Tables
 
-Kumbuka renders GitHub-flavored Markdown tables. An optional directive immediately after a table can add theme-aware colors, sorting, and filtering.
+The bundled **Tables** plugin renders GitHub-flavored Markdown tables. An optional directive immediately after a table can add theme-aware colors, sorting, and filtering.
 
 ```markdown
 | Service | Status  | Owner    |
@@ -20,6 +20,6 @@ accent accent-soft info success warning danger neutral
 gray blue purple green yellow orange red
 ```
 
-`sortable` enables client-side column sorting. `filterable` adds per-column filtering controls. Administrators can disable table rendering, styling, sorting, or filtering independently.
+`sortable` enables client-side column sorting. `filterable` adds per-column filtering controls. Disable the Tables plugin to stop table rendering. Its settings independently control table colors, sorting, and filtering.
 
 The editor's table tools can apply the same directive-based formatting without requiring authors to memorize the syntax.

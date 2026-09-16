@@ -1,18 +1,33 @@
 {
   "extends": ["config:recommended"],
   "labels": ["dependency"],
-  "postUpdateOptions": ["gomodTidy"],
   "customManagers": [
     {
       "customType": "regex",
+      "description": "Update pinned project tools",
+      "managerFilePatterns": ["/(^|/)Makefile$/"],
+      "matchStrings": [
+        "#\\srenovate:\\sdatasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?( extractVersion=(?<extractVersion>.*?))?\\s.*?_VERSION(\\s+?\\?=\\s)(?<currentValue>.*)\\s"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "customType": "regex",
       "description": "Update Kumbuka plugins",
-      "managerFilePatterns": ["/\\.toml$/"],
+      "managerFilePatterns": ["/(^|/)\\.kumbukaplugins$/"],
       "matchStrings": [
         "\\[\\[plugin\\]\\]\\s*id\\s*=\\s*\"(?<depName>[^\"]+)\"\\s*repository\\s*=\\s*\"(?<packageName>[^\"]+)\"\\s*tag_prefix\\s*=\\s*\"(?<tagPrefix>[^\"]+)\"\\s*asset\\s*=\\s*\"[^\"]+\"\\s*version\\s*=\\s*\"(?<currentValue>[^\"]+)\""
       ],
-      "datasourceTemplate": "github-tags",
+      "datasourceTemplate": "github-releases",
       "versioningTemplate": "semver",
-      "extractVersionTemplate": "^{{{tagPrefix}}}(?<version>.*)$"
+      "extractVersionTemplate": "^{{{tagPrefix}}}(?<version>\\d+\\.\\d+\\.\\d+)$"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["custom.regex"],
+      "matchPackageNames": ["kumbuka-me/plugins"],
+      "groupName": "Kumbuka plugins"
     }
   ]
 }

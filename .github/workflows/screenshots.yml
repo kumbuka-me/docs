@@ -72,7 +72,7 @@ jobs:
       - name: Commit changed screenshots
         if: github.ref_type == 'branch'
         run: |
-          git add assets/screenshots/dashboard.png assets/screenshots/editor.png
+          git add -A assets/screenshots
           if git diff --cached --quiet; then
             echo "Screenshots are unchanged."
             exit 0

@@ -1,16 +1,15 @@
 # Dashboard
 
-The server home page is a personalized documentation dashboard.
+The server home page is a personalized documentation dashboard assembled from enabled plugin widgets.
 
-It combines:
+Kumbuka ships bundled widgets for:
 
-- favorite pages for the current user;
-- recently updated pages;
-- recently viewed pages;
-- the most viewed active pages;
-- the current user's recent edits;
-- private server drafts for `admin` and `editor` accounts.
+- **Continue Working** — private drafts and pages recently edited by the current user;
+- **Recent Changes** — recently updated pages visible to the current user;
+- **Favorites** — favorite pages on Home and pinned favorites in the sidebar;
+- **Popular Pages** — the most viewed visible pages;
+- **Recently Viewed** — recent pages on Home and in the sidebar.
 
-Favorites can also appear as pinned pages in the sidebar. Recently viewed pages can be enabled as a separate sidebar section in user preferences.
+Users can show or hide individual enabled widgets under **Settings → Plugin widgets**. Disabling or uninstalling the owning plugin removes its widgets for everyone.
 
-Opening a page records a view for the authenticated user and contributes to recent-view and popularity features. The static filesystem site has no accounts or server-side view tracking, so it does not generate a personalized dashboard.
+Opening a page records a view for the authenticated user and supplies the activity used by Recently Viewed and Popular Pages. The static filesystem site has no accounts, plugin widgets, or server-side view tracking, so it does not generate a personalized dashboard.

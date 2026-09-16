@@ -19,13 +19,19 @@ The pinned Kumbuka CLI and development helpers are downloaded automatically.
 
 ## Build locally
 
-```bash
+```sh
 make build
+```
+
+Run the same formatting and artifact checks used by CI with:
+
+```sh
+make check
 ```
 
 The generated site is written to `site/`. Build, serve, and open it locally with:
 
-```bash
+```sh
 make serve
 ```
 
@@ -35,7 +41,7 @@ The local site uses a persistent random port for the current checkout.
 
 Documentation screenshots are generated from the same Markdown under `content/`; there is no second fixture copy. Keep the Kumbuka server repository next to this checkout and run:
 
-```bash
+```sh
 make screenshots
 ```
 

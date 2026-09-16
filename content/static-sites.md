@@ -18,7 +18,7 @@ In this documentation repository, the convenience target downloads the pinned Ku
 make build
 ```
 
-The site configuration file is supplied with `--config`; this repository uses `site.toml`. Without it, `kumbuka-cli` uses `Documentation` as the site name, `docs` as the source directory, and `site` as the output directory. Static presentation defaults to sidebar navigation, comfortable density, and a 280-pixel sidebar. Command-line flags can override the configuration.
+By default, `kumbuka-cli build` looks for `kumbuka-site.toml`. The configuration file can be changed with `--config`; this repository deliberately uses `site.toml`. When no configuration file is present, `kumbuka-cli` uses `Documentation` as the site name, `docs` as the source directory, and `site` as the output directory. Static presentation defaults to sidebar navigation, comfortable density, and a 280-pixel sidebar. Command-line flags can override the configuration.
 
 ## Configuration
 
@@ -60,7 +60,25 @@ hover_text = "{{label}} | {{description}}"
 
 `robots` controls generated crawler guidance. `allow` writes a `robots.txt` that permits crawling and links to `sitemap.xml` when `site_url` is absolute. `disallow` writes `Disallow: /`, while `none` omits the file entirely. Static builds default to `allow`; the regular Kumbuka application has its own administrator-controlled setting and defaults to `disallow`.
 
-`external_links` adds optional links beside search in the generated header. Each entry requires `label` and an absolute HTTP(S) `url`; `icon` is an optional icon identifier and `description` is optional secondary text such as a version, environment, or provider name. `hover_effect` accepts `highlight` (the default), `lift`, or `none`. `hover_text` customizes the browser tooltip and can contain `{{label}}` and `{{description}}`. Icon identifiers explicitly include their source: use `-lucide` for Lucide interface icons and `-simple` for Simple Icons brand logos, for example `book-open-lucide` or `github-simple`. Multiple entries are rendered in configuration order.
+`external_links` adds optional links beside search in the generated header. Each entry requires `label` and an absolute HTTP(S) `url`; `icon` is an optional icon identifier and `description` is optional secondary text such as a version, environment, or provider name. `hover_effect` accepts `highlight` (the default), `lift`, or `none`. `hover_text` customizes the browser tooltip and can contain `{{label}}` and `{{description}}`. Built-in Lucide identifiers use the `-lucide` suffix, for example `book-open-lucide`. The first-party Simple Icons plugin contributes names such as `github-simple`; other `icon-resource` plugins define their own names. Multiple entries are rendered in configuration order.
+
+## Project plugins
+
+Static builds use the project-level `.kumbukaplugins` file to resolve optional rendering and presentation features. The file pins plugin IDs, repositories, tag prefixes, release assets, and versions; `kumbuka-cli build` resolves those packages and selects the declared plugins required by the discovered Markdown and static renderer. The default dependency file is `.kumbukaplugins`; use `--plugins FILE` to select another file for one build.
+
+Manage the file with the CLI instead of downloading package archives by hand:
+
+```sh
+kumbuka-cli plugins list
+kumbuka-cli plugins sync
+kumbuka-cli plugins add \
+  --id com.example.chart \
+  --repository example/kumbuka-chart \
+  --plugin-version 2.3.0
+kumbuka-cli plugins remove --id com.example.chart
+```
+
+This documentation repository pins its static-site plugins in `.kumbukaplugins`: Subpages renders the section indexes, Tables renders Markdown tables used throughout these pages, Simple Icons supplies the `github-simple` header icon, and Coding Ligatures plus Typographer define the selected text presentation behavior.
 
 ## Filesystem routes
 
@@ -87,7 +105,7 @@ Kumbuka resolves the source file at build time and rewrites the link to the gene
 
 Non-Markdown files under the source directory are copied into the output tree. Relative image and asset URLs are rewritten so they continue to work after page routes become directory-style URLs.
 
-Kumbuka wiki links use the same Kumbuka renderer and are rewritten to static routes. Unresolved or ambiguous wiki-link targets fail the build, so a published static site does not silently ship broken Kumbuka links. `{{subpages}}` is generated from the filesystem page hierarchy and supports the same optional `title="..."` heading override as server-rendered pages.
+Kumbuka wiki links use the same Kumbuka renderer and are rewritten to static routes. Unresolved or ambiguous wiki-link targets fail the build, so a published static site does not silently ship broken Kumbuka links. When the Subpages plugin is declared, `{{subpages}}` reads the filesystem page hierarchy through the static navigation capability and supports the same optional `title="..."` heading override as server-rendered pages.
 
 ## Logos, favicons, and extra assets
 

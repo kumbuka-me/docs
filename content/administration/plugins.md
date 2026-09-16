@@ -18,6 +18,6 @@ Dependencies must remain enabled while a dependent plugin is active. System plug
 
 Installed plugins can be uninstalled from their detail modal. Plugin settings and namespaced data are retained for reinstall. Removing an installed override leaves any bundled copy disabled. Bundled plugins themselves can be disabled; their embedded package remains part of Kumbuka.
 
-Plugin-owned rendering features and settings live in the plugin detail modal. **Administration → Rendering** contains only Kumbuka's built-in rendering behavior.
+Plugin-owned rendering features and settings live in the plugin detail modal. Kumbuka's built-in application presentation defaults remain under **Administration → Configuration**.
 
 For package creation and extension APIs, see [Plugin development](../plugins/index.md).

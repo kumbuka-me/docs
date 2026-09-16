@@ -1,6 +1,6 @@
 # Development
 
-Kumbuka is a Go monolith with a server-rendered frontend enhanced by pure TypeScript and plain CSS.
+The Kumbuka server repository is a Go monolith with a server-rendered frontend enhanced by pure TypeScript and plain CSS.
 
 ## Common commands
 
@@ -30,7 +30,7 @@ The Makefile pins the dev-tools release:
 
 ```makefile
 # renovate: datasource=github-releases depName=gi8lino/dev-tools
-DEV_TOOLS_VERSION ?= v0.7.0
+DEV_TOOLS_VERSION ?= v0.9.0
 ```
 
 and includes only the modules it needs:
@@ -82,7 +82,7 @@ make html-pdf
 make serve
 ```
 
-`make run` builds and starts everything together and opens the browser once Kumbuka responds. `make open` can also be run from another terminal.
+`make run` builds and starts everything together and opens the application URL in the browser. `make open` can also be run from another terminal.
 
 `make ports` prints the saved application, PostgreSQL, and PDF addresses.
 
@@ -114,7 +114,7 @@ Stop services before `make ports-reset`. Saved ports are reused even while occup
 
 ## Documentation
 
-User-facing documentation is maintained in the separate [kumbuka-docs](https://github.com/kumbuka-me/kumbuka-docs) repository. That repository owns the Markdown sources, static-site configuration, local preview workflow, and GitHub Pages deployment.
+User-facing documentation is maintained in the separate [kumbuka-me/docs](https://github.com/kumbuka-me/docs) repository. That repository owns the Markdown sources, static-site configuration, local preview workflow, and GitHub Pages deployment.
 
 ## Frontend
 

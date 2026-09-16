@@ -55,6 +55,12 @@ Declares a named macro parsed and rendered by the WASM guest. The optional `capa
 
 Provides the exclusive fenced-code highlighter. The guest receives the source and language with stage `highlight`. An optional packaged CSS asset is filtered and scoped by Kumbuka.
 
+### `widget`
+
+Runs executable WASM to render a bounded widget on a host-owned surface. Supported surfaces are `home`, `page.details`, `page.after-content`, `page.aside`, and `sidebar`. `width` can be omitted or set to `normal` or `wide`; `order` controls deterministic placement within the surface.
+
+Widget HTML is sanitized by Kumbuka. A widget can also return bounded host-rendered `link` or `dialog` actions with local application URLs; it cannot return recursive Markdown fragments.
+
 ### `settings`
 
 Adds host-rendered boolean controls to the plugin detail page. `requires` can reference other modules in the same package; missing dependencies and cycles are rejected.
@@ -65,7 +71,7 @@ Adds a packaged stylesheet for rendered page typography. Kumbuka filters selecto
 
 ### `render-policy`
 
-Requests a named host rendering behavior from the public allowlist. API v1 includes `coding-ligatures` and `typographer`.
+Declares a bounded semantic rendering-policy marker. Active policies become request-scoped feature flags named `render-policy.<policy>` that other modules can observe; core does not attach feature-specific behavior to individual policy names.
 
 ### `browser-module`
 
@@ -87,9 +93,13 @@ Exposes an `admin-resource` through a bounded editor-completion trigger and repl
 
 Adds a static insertion action to the editor without loading plugin code into Kumbuka's editor DOM.
 
+### `icon-resource`
+
+Adds a declarative icon set from a packaged JSON asset. Kumbuka validates the resource and emits the SVG wrapper itself; plugin-provided SVG markup is not trusted directly. Icon names join the shared icon catalog and disappear when the owning plugin is disabled or removed.
+
 ## Usage selectors
 
-Executable modules can declare `usage` rules so Kumbuka can avoid invoking a plugin for pages that cannot use it:
+Executable source-aware modules can declare `usage` rules so Kumbuka can avoid invoking a plugin for pages that cannot use it:
 
 ```yaml
 modules:

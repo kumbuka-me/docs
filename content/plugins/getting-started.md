@@ -73,7 +73,7 @@ The plugins release workflow verifies that the tag matches the manifest version,
 A Go SDK version must exist as a Git tag before another repository can resolve it. When a plugin needs a new SDK version, release the SDK first:
 
 ```sh
-cd ../kumbuka-sdk
+cd ../sdk
 git tag v0.2.0
 git push origin v0.2.0
 ```

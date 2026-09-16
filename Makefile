@@ -21,7 +21,7 @@ include $(call dev-tools-module,help)
 ## Tools
 
 KUMBUKA_CLI := bin/kumbuka-cli
-KUMBUKA_ASSET ?= kumbuka-cli_{version}_{os}_{arch}.tar.gz
+KUMBUKA_CLI_ASSET ?= kumbuka-cli_{version}_{os}_{arch}.tar.gz
 FAVICON_GENERATE := $(DEV_TOOLS_BIN)/favicon-generate
 SVG_TO_PNG := $(DEV_TOOLS_BIN)/svg-to-png
 NPX ?= npx
@@ -55,7 +55,7 @@ LOGO_PNG_WIDTH ?= 1200
 
 ## Formatting
 
-PRETTIER_SOURCES := README.md "content/**/*.md" ".github/**/*.yml"
+PRETTIER_SOURCES := README.md "content/**/*.md" ".github/**/*.{yml,yaml,json}"
 
 
 ##@ Development
@@ -65,7 +65,7 @@ build: cli ## Build the production documentation site.
 	$(call run-tool,$(KUMBUKA_CLI),build --config "$(SITE_CONFIG)" $(BUILD_ARGS))
 
 .PHONY: check
-check: build ## Build and verify the static site artifacts required by GitHub Pages.
+check: fmt-check build ## Check formatting, build, and verify the GitHub Pages artifacts.
 	@test -s "$(SITE_OUTPUT)/index.html"
 	@test -s "$(SITE_OUTPUT)/assets/css/app.css"
 	@test -s "$(SITE_OUTPUT)/assets/js/static.js"
@@ -88,7 +88,10 @@ serve: $(DEV_PORT) $(OPEN_BROWSER) ## Build, serve, and open the documentation l
 
 .PHONY: screenshots
 screenshots: ## Regenerate product screenshots from the canonical documentation Markdown.
-	@test -f "$(KUMBUKA_SERVER_DIR)/go.mod" || { echo "Kumbuka server repository not found: $(KUMBUKA_SERVER_DIR)" >&2; exit 2; }
+	@test -f "$(KUMBUKA_SERVER_DIR)/go.mod" || { \
+		echo "Kumbuka server repository not found: $(KUMBUKA_SERVER_DIR)" >&2; \
+		exit 2; \
+	}
 	@$(MAKE) -C "$(KUMBUKA_SERVER_DIR)" screenshots \
 		SCREENSHOT_CONTENT="$(CURDIR)/content" \
 		SCREENSHOT_OUTPUT="$(CURDIR)/$(SCREENSHOT_OUTPUT)" \
@@ -116,11 +119,11 @@ logo-png: $(SVG_TO_PNG) $(LOGO_SOURCE) ## Generate a PNG version of the Kumbuka 
 ##@ Formatting
 
 .PHONY: fmt
-fmt: ## Format Markdown and workflow files.
+fmt: ## Format documentation and GitHub configuration files.
 	$(NPX) --yes prettier@$(PRETTIER_VERSION) --write $(PRETTIER_SOURCES)
 
 .PHONY: fmt-check
-fmt-check: ## Check Markdown and workflow formatting.
+fmt-check: ## Check documentation and GitHub configuration formatting.
 	$(NPX) --yes prettier@$(PRETTIER_VERSION) --check $(PRETTIER_SOURCES)
 
 
@@ -140,6 +143,8 @@ cli: $(GITHUB_RELEASE_INSTALL) ## Install the pinned Kumbuka CLI.
 	@$(GITHUB_RELEASE_INSTALL) \
 		--repo kumbuka-me/cli \
 		--tag "$(KUMBUKA_CLI_VERSION)" \
-		--asset "$(KUMBUKA_ASSET)" \
+		--asset "$(KUMBUKA_CLI_ASSET)" \
 		--binary kumbuka-cli \
 		--target "$(KUMBUKA_CLI)"
+
+

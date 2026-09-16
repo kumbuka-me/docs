@@ -8,7 +8,11 @@ Users can select a theme, choose a personal typography size (Application default
 
 The administrator chooses the application typography default, which is Compact on new installations. Users who leave **Application default** selected follow that setting; a personal Compact, Standard, or Large choice overrides it for that account. The typography preset scales page titles, Markdown headings, and reading text together.
 
-Navigation preferences also control indentation guides, whether expanded folders are remembered, whether favorite pages are pinned above the tree, whether recently viewed pages are shown, and whether folder page counts are displayed.
+Navigation preferences also control indentation guides, whether expanded folders are remembered, and whether folder page counts are displayed.
+
+## Plugin widgets
+
+When enabled plugins contribute widgets, **Plugin widgets** lists each available widget and its surface. Users can hide or show widgets independently without disabling the plugin for anyone else. Bundled examples include Favorites and Recently Viewed in the sidebar and several personalized Home dashboard widgets.
 
 ## Saved searches
 
@@ -16,7 +20,7 @@ Any server search query can be stored with a name. Saved searches can be pinned 
 
 ## Personal access tokens
 
-Users can issue named personal access tokens with an optional expiration date. Token secrets are shown only at creation time and inherit the current user's Kumbuka role. See [Personal access tokens](../api/tokens.md).
+Users can issue named personal access tokens with an optional expiration date. Token secrets are shown only at creation time. Tokens authenticate as the issuing user, so that account's current Kumbuka role and authorization rules still apply. See [Personal access tokens](../api/tokens.md).
 
 ## Uploaded images
 

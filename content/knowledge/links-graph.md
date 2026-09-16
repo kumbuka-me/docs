@@ -1,6 +1,6 @@
 # Links, backlinks, and graph
 
-Kumbuka records wiki-link relationships between pages. The page view can show outgoing links, broken links, backlinks, and related pages.
+Kumbuka records wiki-link relationships between pages. When the bundled **Wiki Links** plugin is enabled, page details show incoming and outgoing wiki-link relationships. The bundled **Related Pages** plugin separately shows pages related through shared tags. Documentation health reports broken wiki links.
 
 The knowledge graph exposes active pages as nodes and wiki-link relationships as edges. The graph UI can focus on a selected page, while the JSON API exposes graph data for authenticated clients.
 

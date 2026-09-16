@@ -13,7 +13,7 @@ HTTP -> routes/middleware -> handler -> service -> repository contract -> store 
 ## Main layers
 
 - `cmd/kumbuka` is the minimal server process entry point. `kumbuka` starts the server directly; there is no server subcommand.
-- `internal/serve` owns runtime configuration and is the server composition root. It loads assets, opens PostgreSQL, constructs services/authentication/views, and builds the router.
+- `internal/app` owns server startup orchestration and is the composition root. It loads assets, opens PostgreSQL, constructs services/authentication/views, and builds the router.
 - `internal/routes` registers routes and applies authentication/role policies to already-constructed dependencies.
 - `internal/handler`, `internal/middleware`, and `internal/auth` are inbound HTTP adapters.
 - `internal/service` owns application use cases and mutation policy.
@@ -24,6 +24,6 @@ HTTP -> routes/middleware -> handler -> service -> repository contract -> store 
 
 ## Boundaries
 
-Handlers do not import the concrete store. Services and authenticators declare the persistence capabilities they consume. `internal/serve` is the place where concrete store implementations satisfy those contracts for the running server. SQL and `pgx` stay in `pkg/store`.
+Handlers do not import the concrete store. Services and authenticators declare the persistence capabilities they consume. `internal/app` is the place where concrete store implementations satisfy those contracts for the running server. SQL and `pgx` stay in `pkg/store`.
 
 The static builder and mirror exporter are intentionally outside the server repository's composition path. `kumbuka-cli build` reads files, renders them, and writes static output without opening PostgreSQL; `kumbuka-cli mirror` opens PostgreSQL only to write its deterministic snapshot. Both reuse the public runtime packages under `github.com/kumbuka-me/kumbuka/pkg/...`.

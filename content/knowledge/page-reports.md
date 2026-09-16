@@ -1,6 +1,6 @@
 # Dynamic page reports
 
-Kumbuka can render a live collection of pages from the normal server search language. The report is evaluated when the page is rendered, so changes to matching page metadata appear without editing the report page.
+The bundled **Page Report** plugin can render a live collection of pages from the normal server search language. The report is evaluated when the page is rendered, so changes to matching page metadata appear without editing the report page.
 
 Use a standalone `{{pages ...}}` function:
 
@@ -16,4 +16,4 @@ The required `query` option accepts the same filters as normal search. Optional 
 
 Supported columns are `title`, `path`, `status`, `owner`, `updated`, `author`, `tags`, `views`, and `property:<key>`. Supported views are `table`, `list`, and `cards`. Sorting can use `relevance`, `updated`, `title`, or `path`; the limit may be between 1 and 100.
 
-Page reports are a server knowledge feature because they execute PostgreSQL-backed search queries. Filesystem static builds leave the source invocation unchanged rather than querying a database.
+Page reports are a server-only plugin feature because they execute PostgreSQL-backed search queries. Filesystem static builds do not provide the `pages.search` capability, so the Page Report macro is unavailable there and its source invocation remains literal.

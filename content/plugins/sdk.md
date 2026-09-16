@@ -14,8 +14,9 @@ The root package exposes helpers such as:
 
 - `RegisterModule` for a declared executable module;
 - `RegisterMacro` for typed macro parse/render handlers;
+- `RegisterWidget` for typed widget render handlers;
 - `Text`, `Markdown`, and `Failure` for render results;
-- `Pages`, `Settings`, `Storage`, `Attachments`, `Icon`, and `Log` for host capabilities;
+- `Pages`, `Drafts`, `Settings`, `Storage`, `Attachments`, `Icon`, and `Log` for host capabilities;
 - public wire and page/storage/attachment types used by plugin code.
 
 The host still sanitizes resulting HTML and enforces manifest permissions. SDK helpers do not bypass runtime policy.

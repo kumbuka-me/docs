@@ -28,15 +28,22 @@ A render request contains:
 - `source` — Markdown, code, or intermediate HTML input;
 - `language` — fenced-code language when applicable;
 - `invocation` — serialized macro parse state when applicable;
-- `features` — request-scoped presentation flags.
+- `features` — request-scoped presentation flags;
+- `widget` — the host surface plus optional current-page metadata for widget invocations.
 
-A result can contain an error, macro match/invocation data, and ordered output parts. A part is literal intermediate text or Markdown that Kumbuka renders recursively. Only preprocessing stages may return recursive Markdown fragments; the WASM call finishes before nested rendering occurs.
+A result can contain an error, macro match/invocation data, ordered output parts, and widget actions. A part is literal intermediate text or Markdown that Kumbuka renders recursively. Only preprocessing stages may return recursive Markdown fragments; the WASM call finishes before nested rendering occurs.
 
 All resulting HTML passes through Kumbuka's central sanitizer. There is no trusted-HTML result type.
 
 ## Macros
 
 For a `macro` module, Kumbuka first invokes stage `parse` for candidate source. A matched response returns `matched` plus JSON `invocation` data. Kumbuka later calls stage `macro` with that invocation data. Macro rendering returns ordinary text fragments; it cannot return recursive Markdown fragments.
+
+## Widgets
+
+For a `widget` module, Kumbuka invokes stage `widget`. The request contains the selected public widget surface and, for page-scoped surfaces, authorized current-page metadata.
+
+Widget output uses ordinary text parts and is sanitized before it reaches the host template. Recursive Markdown fragments are rejected. A result can additionally request bounded host-rendered actions. API v1 supports `link` and `dialog` actions with a stable action ID, visible label, local application URL, and optional host icon. Kumbuka validates those fields before rendering the control.
 
 ## Host capability import
 
