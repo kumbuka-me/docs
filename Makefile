@@ -23,6 +23,7 @@ include $(call dev-tools-module,help)
 KUMBUKA_CLI := bin/kumbuka-cli
 KUMBUKA_ASSET ?= kumbuka-cli_{version}_{os}_{arch}.tar.gz
 FAVICON_GENERATE := $(DEV_TOOLS_BIN)/favicon-generate
+SVG_TO_PNG := $(DEV_TOOLS_BIN)/svg-to-png
 NPX ?= npx
 
 ## Site Configuration
@@ -48,6 +49,10 @@ FAVICON_SOURCE ?= assets/favicon.svg
 FAVICON_OUTPUT ?= assets
 FAVICON_SIZES ?= 16x16 32x32
 
+LOGO_SOURCE ?= assets/kumbuka.svg
+LOGO_PNG ?= assets/kumbuka.png
+LOGO_PNG_WIDTH ?= 1200
+
 ## Formatting
 
 PRETTIER_SOURCES := README.md "content/**/*.md" ".github/**/*.yml"
@@ -65,10 +70,6 @@ check: build ## Build and verify the static site artifacts required by GitHub Pa
 	@test -s "$(SITE_OUTPUT)/assets/css/app.css"
 	@test -s "$(SITE_OUTPUT)/assets/js/static.js"
 	@test -f "$(SITE_OUTPUT)/.nojekyll"
-
-.PHONY: open
-open: ports $(OPEN_BROWSER) ## Open the browser once Kumbuka responds.
-	$(call run-tool,$(OPEN_BROWSER),"http://127.0.0.1:$(KUMBUKA_ASSIGNED_PORT)/")
 
 .PHONY: serve
 serve: $(DEV_PORT) $(OPEN_BROWSER) ## Build, serve, and open the documentation locally.
@@ -107,6 +108,10 @@ ports-reset: $(DEV_PORT) ## Clear saved local development ports.
 favicon: $(FAVICON_GENERATE) $(FAVICON_SOURCE) ## Generate PNG favicons from the canonical SVG.
 	$(call run-tool,$(FAVICON_GENERATE),--apple-touch "$(FAVICON_SOURCE)" "$(FAVICON_OUTPUT)" $(FAVICON_SIZES))
 
+.PHONY: logo-png
+logo-png: $(SVG_TO_PNG) $(LOGO_SOURCE) ## Generate a PNG version of the Kumbuka logo.
+	$(call run-tool,$(SVG_TO_PNG),--width "$(LOGO_PNG_WIDTH)" "$(LOGO_SOURCE)" "$(LOGO_PNG)")
+
 
 ##@ Formatting
 
@@ -124,8 +129,11 @@ fmt-check: ## Check Markdown and workflow formatting.
 $(FAVICON_GENERATE): | $(DEV_TOOLS_BIN)
 	$(call download-dev-tool,favicon-generate,$@)
 
+$(SVG_TO_PNG): | $(DEV_TOOLS_BIN)
+	$(call download-dev-tool,svg-to-png,$@)
+
 .PHONY: dev-tools
-dev-tools: $(DEV_PORT) $(OPEN_BROWSER) $(MAKE_HELP) $(FAVICON_GENERATE) ## Download the pinned development tools.
+dev-tools: $(DEV_PORT) $(OPEN_BROWSER) $(MAKE_HELP) $(FAVICON_GENERATE) $(SVG_TO_PNG) ## Download the pinned development tools.
 
 .PHONY: cli
 cli: $(GITHUB_RELEASE_INSTALL) ## Install the pinned Kumbuka CLI.
