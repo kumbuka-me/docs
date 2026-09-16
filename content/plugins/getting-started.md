@@ -11,7 +11,7 @@ kumbuka-plugin init my-plugin
 cd my-plugin
 ```
 
-The generated project contains a manifest, Go module, sample plugin code, tests, and the README displayed in Kumbuka's plugin administration UI.
+The generated project contains a manifest, Go module, sample plugin code, tests, and the README displayed in Kumbuka's plugin administration UI. Plugins that need only declarative modules can later remove the Go/WASM implementation entirely; Kumbuka packages declarative-only plugins without `plugin.wasm`.
 
 A Go plugin normally imports the root SDK:
 

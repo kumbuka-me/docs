@@ -2,6 +2,12 @@
 
 Kumbuka plugins are versioned `.kumbukaplugin` packages that add rendering, editor, administration, or presentation features without exposing Kumbuka internals to plugin code.
 
+## Choose the smallest module that works
+
+Plugins do not need Go code merely to be plugins. Prefer a declarative module such as `markdown-syntax`, `editor-insert`, `content-style`, `icon-resource`, `page-action`, or another host-owned contribution when it expresses the feature. Use executable WASM only for behavior that cannot be represented declaratively, and use a `browser-module` only for isolated client-side execution.
+
+This is also a security boundary: declarative packages have no guest code to execute, while executable packages receive only the capabilities declared by their manifest and granted by the host.
+
 ## Install a plugin
 
 1. Download the plugin's `.kumbukaplugin` file.

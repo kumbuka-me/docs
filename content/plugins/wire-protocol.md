@@ -30,8 +30,10 @@ A render request contains:
 - `invocation` — serialized macro parse state when applicable;
 - `features` — request-scoped presentation flags;
 - `widget` — the host surface plus optional current-page metadata for widget invocations.
+- `widget_command` — validated widget surface, optional page, and action ID for a host-mediated command;
+- `export` — authorized page metadata and stored Markdown source for an exporter invocation.
 
-A result can contain an error, macro match/invocation data, ordered output parts, and widget actions. A part is literal intermediate text or Markdown that Kumbuka renders recursively. Only preprocessing stages may return recursive Markdown fragments; the WASM call finishes before nested rendering occurs.
+A result can contain an error, macro match/invocation data, ordered output parts, widget actions, a widget-command result, or an exported file depending on the stage. A part is literal intermediate text or Markdown that Kumbuka renders recursively. Only preprocessing stages may return recursive Markdown fragments; the WASM call finishes before nested rendering occurs.
 
 All resulting HTML passes through Kumbuka's central sanitizer. There is no trusted-HTML result type.
 
@@ -43,7 +45,13 @@ For a `macro` module, Kumbuka first invokes stage `parse` for candidate source. 
 
 For a `widget` module, Kumbuka invokes stage `widget`. The request contains the selected public widget surface and, for page-scoped surfaces, authorized current-page metadata.
 
-Widget output uses ordinary text parts and is sanitized before it reaches the host template. Recursive Markdown fragments are rejected. A result can additionally request bounded host-rendered actions. API v1 supports `link` and `dialog` actions with a stable action ID, visible label, local application URL, and optional host icon. Kumbuka validates those fields before rendering the control.
+Widget output uses ordinary text parts and is sanitized before it reaches the host template. Recursive Markdown fragments are rejected. A result can additionally request bounded host-rendered actions. API v1 supports `link` and `dialog` actions with a stable action ID, visible label, local application URL, and optional host icon. It also supports `command`, which has no plugin URL and may carry bounded confirmation text.
+
+For a command, Kumbuka owns the POST route and invokes the same module with stage `widget-command` plus `widget_command` context. A command response contains only an optional local redirect. Page-scoped commands are reauthorized by the host before the guest runs.
+
+## Exporters
+
+For an `exporter` module, Kumbuka invokes stage `export` with an `export` context containing the authorized current page and stored Markdown source. The result contains exactly one `file` with a base filename, media type, and bytes. Render parts and widget actions are rejected for this stage, and Kumbuka validates the file again before sending it as a download.
 
 ## Host capability import
 

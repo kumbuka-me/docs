@@ -59,7 +59,17 @@ Provides the exclusive fenced-code highlighter. The guest receives the source an
 
 Runs executable WASM to render a bounded widget on a host-owned surface. Supported surfaces are `home`, `page.details`, `page.after-content`, `page.aside`, and `sidebar`. `width` can be omitted or set to `normal` or `wide`; `order` controls deterministic placement within the surface.
 
-Widget HTML is sanitized by Kumbuka. A widget can also return bounded host-rendered `link` or `dialog` actions with local application URLs; it cannot return recursive Markdown fragments.
+Widget HTML is sanitized by Kumbuka. A widget can also return bounded host-rendered `link` or `dialog` actions with local application URLs, or a `command` action handled through Kumbuka's host-owned POST endpoint. Command actions do not expose arbitrary plugin routes. They may include optional confirmation text and are executed only after the host revalidates the current page context. Widgets cannot return recursive Markdown fragments.
+
+### `page-action`
+
+Adds a declarative action to the current page without requiring WASM. `name`, optional `description` and `icon`, `order`, `kind`, and a bounded local `url` describe the host-rendered control. `kind` can be `link` or `dialog` and defaults to `link`. URL templates may use `${slug}` and `${id}`; Kumbuka expands both with path-safe current-page values.
+
+Use `page-action` for navigation or host dialogs. Fundamental page operations such as edit, move, and delete remain core application actions rather than plugin contributions.
+
+### `exporter`
+
+Runs executable WASM to produce one bounded downloadable file for the current authorized page. The exporter receives public page metadata plus the stored Markdown source and returns a base filename, media type, and file bytes. Kumbuka owns the POST route, page authorization, response headers, and filename/media-type validation.
 
 ### `settings`
 
