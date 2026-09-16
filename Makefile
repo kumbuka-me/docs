@@ -6,7 +6,7 @@
 KUMBUKA_CLI_VERSION ?= v0.0.1
 
 # renovate: datasource=github-releases depName=gi8lino/dev-tools
-DEV_TOOLS_VERSION ?= v0.7.0
+DEV_TOOLS_VERSION ?= v0.8.0
 
 # renovate: datasource=npm depName=prettier
 PRETTIER_VERSION ?= 3.9.6
@@ -21,7 +21,8 @@ include $(call dev-tools-module,help)
 ## Tools
 
 KUMBUKA_CLI := bin/kumbuka-cli
-KUMBUKA_CLI_ASSET ?= kumbuka-cli_{version}_{os}_{arch}.tar.gz
+KUMBUKA_ASSET ?= kumbuka-cli_{version}_{os}_{arch}.tar.gz
+FAVICON_GENERATE := $(DEV_TOOLS_BIN)/favicon-generate
 NPX ?= npx
 
 ## Site Configuration
@@ -32,6 +33,21 @@ SITE_PORT = $(call dev-port,site)
 SITE_URL = http://127.0.0.1:$(SITE_PORT)/
 BUILD_ARGS ?=
 
+## Screenshots
+
+KUMBUKA_SERVER_DIR ?= ../kumbuka
+SCREENSHOT_OUTPUT ?= assets/screenshots
+SCREENSHOT_EDITOR_SLUG ?= getting-started
+SCREENSHOT_VISITS ?= /pages/getting-started,/pages/content/editor,/pages/knowledge/search
+SCREENSHOT_BROWSER_CHANNEL ?=
+SCREENSHOT_SKIP_BROWSER_INSTALL ?= 0
+
+## Assets
+
+FAVICON_SOURCE ?= assets/favicon.svg
+FAVICON_OUTPUT ?= assets
+FAVICON_SIZES ?= 16x16 32x32
+
 ## Formatting
 
 PRETTIER_SOURCES := README.md "content/**/*.md" ".github/**/*.yml"
@@ -40,7 +56,7 @@ PRETTIER_SOURCES := README.md "content/**/*.md" ".github/**/*.yml"
 ##@ Development
 
 .PHONY: build
-build: kumbuka-cli ## Build the production documentation site.
+build: cli ## Build the production documentation site.
 	$(call run-tool,$(KUMBUKA_CLI),build --config "$(SITE_CONFIG)" $(BUILD_ARGS))
 
 .PHONY: check
@@ -49,6 +65,10 @@ check: build ## Build and verify the static site artifacts required by GitHub Pa
 	@test -s "$(SITE_OUTPUT)/assets/css/app.css"
 	@test -s "$(SITE_OUTPUT)/assets/js/static.js"
 	@test -f "$(SITE_OUTPUT)/.nojekyll"
+
+.PHONY: open
+open: ports $(OPEN_BROWSER) ## Open the browser once Kumbuka responds.
+	$(call run-tool,$(OPEN_BROWSER),"http://127.0.0.1:$(KUMBUKA_ASSIGNED_PORT)/")
 
 .PHONY: serve
 serve: $(DEV_PORT) $(OPEN_BROWSER) ## Build, serve, and open the documentation locally.
@@ -65,9 +85,27 @@ serve: $(DEV_PORT) $(OPEN_BROWSER) ## Build, serve, and open the documentation l
 		--bind 127.0.0.1 \
 		--directory "$(SITE_OUTPUT)"
 
+.PHONY: screenshots
+screenshots: ## Regenerate product screenshots from the canonical documentation Markdown.
+	@test -f "$(KUMBUKA_SERVER_DIR)/go.mod" || { echo "Kumbuka server repository not found: $(KUMBUKA_SERVER_DIR)" >&2; exit 2; }
+	@$(MAKE) -C "$(KUMBUKA_SERVER_DIR)" screenshots \
+		SCREENSHOT_CONTENT="$(CURDIR)/content" \
+		SCREENSHOT_OUTPUT="$(CURDIR)/$(SCREENSHOT_OUTPUT)" \
+		SCREENSHOT_EDITOR_SLUG="$(SCREENSHOT_EDITOR_SLUG)" \
+		SCREENSHOT_VISITS="$(SCREENSHOT_VISITS)" \
+		SCREENSHOT_BROWSER_CHANNEL="$(SCREENSHOT_BROWSER_CHANNEL)" \
+		SCREENSHOT_SKIP_BROWSER_INSTALL="$(SCREENSHOT_SKIP_BROWSER_INSTALL)"
+
 .PHONY: ports-reset
 ports-reset: $(DEV_PORT) ## Clear saved local development ports.
 	$(call run-tool,$(DEV_PORT),--reset)
+
+
+##@ Assets
+
+.PHONY: favicon
+favicon: $(FAVICON_GENERATE) $(FAVICON_SOURCE) ## Generate PNG favicons from the canonical SVG.
+	$(call run-tool,$(FAVICON_GENERATE),--apple-touch "$(FAVICON_SOURCE)" "$(FAVICON_OUTPUT)" $(FAVICON_SIZES))
 
 
 ##@ Formatting
@@ -83,14 +121,17 @@ fmt-check: ## Check Markdown and workflow formatting.
 
 ##@ Dependencies
 
-.PHONY: kumbuka-cli
-kumbuka-cli: $(GITHUB_RELEASE_INSTALL) ## Install the pinned Kumbuka CLI.
+$(FAVICON_GENERATE): | $(DEV_TOOLS_BIN)
+	$(call download-dev-tool,favicon-generate,$@)
+
+.PHONY: dev-tools
+dev-tools: $(DEV_PORT) $(OPEN_BROWSER) $(MAKE_HELP) $(FAVICON_GENERATE) ## Download the pinned development tools.
+
+.PHONY: cli
+cli: $(GITHUB_RELEASE_INSTALL) ## Install the pinned Kumbuka CLI.
 	@$(GITHUB_RELEASE_INSTALL) \
 		--repo kumbuka-me/cli \
 		--tag "$(KUMBUKA_CLI_VERSION)" \
-		--asset "$(KUMBUKA_CLI_ASSET)" \
+		--asset "$(KUMBUKA_ASSET)" \
 		--binary kumbuka-cli \
 		--target "$(KUMBUKA_CLI)"
-
-
-

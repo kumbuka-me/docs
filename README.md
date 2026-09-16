@@ -31,6 +31,16 @@ make serve
 
 The local site uses a persistent random port for the current checkout.
 
+## Screenshots
+
+Documentation screenshots are generated from the same Markdown under `content/`; there is no second fixture copy. Keep the Kumbuka server repository next to this checkout and run:
+
+```bash
+make screenshots
+```
+
+By default this expects the server at `../kumbuka`. Override `KUMBUKA_SERVER_DIR` when it lives elsewhere. Screenshot generation additionally requires Go, Docker, `zip`, and Playwright's Chromium browser. The manual **Documentation Screenshots** workflow checks out the server automatically and commits changed PNGs under `assets/screenshots/`.
+
 ## Links
 
 - [Documentation](https://kumbuka.me/)

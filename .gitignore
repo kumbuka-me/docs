@@ -4,4 +4,7 @@
 /.dev-ports.json
 /.dev-ports.json.lock
 /site/
+/.kumbuka-server/
 .DS_Store
+
+

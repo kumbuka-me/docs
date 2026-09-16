@@ -9,6 +9,8 @@ navigation_density = "comfortable"
 sidebar_width = 280
 robots = "allow"
 
+logo = "assets/kumbuka.svg"
+favicon = "assets/favicon.svg"
 assets_dir = "assets"
 
 [[external_links]]

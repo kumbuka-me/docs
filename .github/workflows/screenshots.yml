@@ -1,0 +1,83 @@
+---
+name: Documentation Screenshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      kumbuka_ref:
+        description: Kumbuka server branch, tag, or commit to capture
+        required: true
+        default: main
+        type: string
+
+jobs:
+  screenshots:
+    name: Update Screenshots
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out documentation
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Check out Kumbuka server
+        uses: actions/checkout@v7
+        with:
+          repository: kumbuka-me/kumbuka
+          ref: ${{ inputs.kumbuka_ref }}
+          path: .kumbuka-server
+          fetch-depth: 1
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: .kumbuka-server/go.mod
+          check-latest: true
+          cache: true
+          cache-dependency-path: .kumbuka-server/go.sum
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: .kumbuka-server/package-lock.json
+
+      - name: Install Kumbuka dependencies
+        working-directory: .kumbuka-server
+        run: |
+          npm ci
+          go mod download
+          npx playwright install --with-deps chromium
+
+      - name: Generate screenshots from documentation content
+        run: |
+          make screenshots \
+            KUMBUKA_SERVER_DIR="$GITHUB_WORKSPACE/.kumbuka-server" \
+            SCREENSHOT_SKIP_BROWSER_INSTALL=1
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v7
+        with:
+          name: documentation-screenshots
+          path: assets/screenshots/*.png
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Commit changed screenshots
+        if: github.ref_type == 'branch'
+        run: |
+          git add assets/screenshots/dashboard.png assets/screenshots/editor.png
+          if git diff --cached --quiet; then
+            echo "Screenshots are unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "docs: update application screenshots"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
