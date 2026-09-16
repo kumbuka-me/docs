@@ -1,6 +1,6 @@
 # Runtime configuration
 
-Kumbuka uses command-line flags and matching `KUMBUKA__` environment variables. The database URL is required for `kumbuka serve`; it is not required for `kumbuka build`.
+The Kumbuka server uses command-line flags and matching `KUMBUKA__` environment variables. The database URL is required when starting `kumbuka`. Static-site and mirror commands belong to the separate `kumbuka-cli` binary.
 
 | Flag                     | Environment                     | Purpose                                                                                   |
 | ------------------------ | ------------------------------- | ----------------------------------------------------------------------------------------- |

@@ -12,21 +12,18 @@ HTTP -> routes/middleware -> handler -> service -> repository contract -> store 
 
 ## Main layers
 
-- `cmd` is the minimal process entry point.
-- `internal/cli` defines the TinyFlags command tree (`serve`, `build`, `mirror`) and dispatches each command to its owning package.
-- `internal/serve` owns `serve` runtime configuration and is the server composition root. It loads assets, opens PostgreSQL, constructs services/authentication/views, and builds the router.
+- `cmd/kumbuka` is the minimal server process entry point. `kumbuka` starts the server directly; there is no server subcommand.
+- `internal/serve` owns runtime configuration and is the server composition root. It loads assets, opens PostgreSQL, constructs services/authentication/views, and builds the router.
 - `internal/routes` registers routes and applies authentication/role policies to already-constructed dependencies.
 - `internal/handler`, `internal/middleware`, and `internal/auth` are inbound HTTP adapters.
 - `internal/service` owns application use cases and mutation policy.
-- `internal/domain` owns persistence-agnostic domain records and shared errors.
-- `internal/store` owns SQL, migrations, transactions, and PostgreSQL row mapping.
-- focused packages such as `internal/markdown`, `internal/navigation`, `internal/revision`, `internal/pdf`, `internal/icons`, and `internal/httpresponse` provide narrow capabilities.
-- `internal/site` owns the `build` command and filesystem/static publishing adapter. It uses the same Markdown/navigation/theme capabilities but does not construct the server, authentication, services, or store.
-- `internal/mirror` owns the `mirror` command and exports PostgreSQL-backed content into a deterministic filesystem snapshot without constructing the server.
-- `web` and `themes` contain browser assets and theme resources.
+- reusable runtime packages under `pkg/` contain domain records, PostgreSQL storage, Markdown rendering, navigation, plugin/runtime support, revisions, icons, logging, and themes. These packages are intentionally consumable by the standalone CLI.
+- server-only HTTP, authentication, routing, and application composition remain under `internal/`.
+- `web` contains the server browser assets.
+- the separate `github.com/kumbuka-me/cli` repository owns its CLI command tree plus `internal/site`, `internal/mirror`, and `internal/pluginproject`.
 
 ## Boundaries
 
-Handlers do not import the concrete store. Services and authenticators declare the persistence capabilities they consume. `internal/serve` is the place where concrete store implementations satisfy those contracts for the running server. SQL and `pgx` stay in `internal/store`.
+Handlers do not import the concrete store. Services and authenticators declare the persistence capabilities they consume. `internal/serve` is the place where concrete store implementations satisfy those contracts for the running server. SQL and `pgx` stay in `pkg/store`.
 
-The static builder and mirror exporter are intentionally outside the server composition path. `kumbuka build` reads files, renders them, and writes static output without opening PostgreSQL; `kumbuka mirror` opens PostgreSQL only to write its deterministic snapshot.
+The static builder and mirror exporter are intentionally outside the server repository's composition path. `kumbuka-cli build` reads files, renders them, and writes static output without opening PostgreSQL; `kumbuka-cli mirror` opens PostgreSQL only to write its deterministic snapshot. Both reuse the public runtime packages under `github.com/kumbuka-me/kumbuka/pkg/...`.

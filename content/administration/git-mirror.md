@@ -3,7 +3,7 @@
 Kumbuka can export the current PostgreSQL-backed knowledge base into a deterministic directory tree that is suitable for committing to Git or copying into a normal backup system.
 
 ```sh
-kumbuka mirror \
+kumbuka-cli mirror \
   --database-url 'postgres://kumbuka:secret@postgres:5432/kumbuka?sslmode=disable' \
   --output kumbuka-mirror
 ```

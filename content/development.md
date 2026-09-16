@@ -126,13 +126,13 @@ CSS remains framework-free and is split by responsibility under `web/src/css`. `
 
 ## Backend
 
-Go code is formatted with `gofmt`; tests use the standard testing package plus Testify where appropriate. PostgreSQL queries and migrations live in `internal/store`.
+Go code is formatted with `gofmt`; tests use the standard testing package plus Testify where appropriate. PostgreSQL queries and migrations live in `pkg/store`.
 
 Read [Architecture](architecture.md) for dependency rules.
 
 ### PostgreSQL integration tests
 
-Set `KUMBUKA_TEST_DATABASE_URL` to a disposable PostgreSQL database URL, then run `go test -race ./internal/store`. These tests create and remove isolated schemas and require schema creation privileges. Without the variable they are skipped. Coverage includes simultaneous application startup, OIDC identity persistence across database reconnections, and saved-search update conflicts with their original database cause.
+Set `KUMBUKA_TEST_DATABASE_URL` to a disposable PostgreSQL database URL, then run `go test -race ./pkg/store`. These tests create and remove isolated schemas and require schema creation privileges. Without the variable they are skipped. Coverage includes simultaneous application startup, OIDC identity persistence across database reconnections, and saved-search update conflicts with their original database cause.
 
 Startup migrations run together in one transaction under a database advisory lock. Concurrent instances wait for that transaction before checking migration history; a failed migration rolls back the pending batch so a later startup can retry.
 

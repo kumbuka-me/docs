@@ -14,10 +14,10 @@ A release-style local binary can be built with:
 
 ```sh
 make build
-./kumbuka serve --database-url 'postgres://kumbuka:kumbuka@localhost:5432/kumbuka?sslmode=disable'
+./kumbuka --database-url 'postgres://kumbuka:kumbuka@localhost:5432/kumbuka?sslmode=disable'
 ```
 
-Run `./kumbuka --help` to see the available commands or `./kumbuka serve --help` for server runtime flags.
+Run `./kumbuka --help` to see the server runtime flags. Static-site builds, mirrors, and project plugin management are provided by the separate `kumbuka-cli` binary.
 
 ## Frontend assets
 

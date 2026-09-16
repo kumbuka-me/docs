@@ -6,10 +6,10 @@ This repository's own documentation is configured by `site.toml`; the published 
 
 ## Build
 
-A built Kumbuka binary already contains the read-only browser assets needed by the generator, so it can build a site directly:
+The standalone Kumbuka CLI contains the read-only browser assets needed by the generator, so it can build a site without the server binary:
 
 ```sh
-kumbuka build
+kumbuka-cli build
 ```
 
 In this documentation repository, the convenience target downloads the pinned Kumbuka CLI and runs the generator:
@@ -18,7 +18,7 @@ In this documentation repository, the convenience target downloads the pinned Ku
 make build
 ```
 
-The site configuration file is supplied with `--config`; this repository uses `site.toml`. Without it, Kumbuka uses `Documentation` as the site name, `docs` as the source directory, and `site` as the output directory. Static presentation defaults to sidebar navigation, comfortable density, and a 280-pixel sidebar. Command-line flags can override the configuration.
+The site configuration file is supplied with `--config`; this repository uses `site.toml`. Without it, `kumbuka-cli` uses `Documentation` as the site name, `docs` as the source directory, and `site` as the output directory. Static presentation defaults to sidebar navigation, comfortable density, and a 280-pixel sidebar. Command-line flags can override the configuration.
 
 ## Configuration
 
@@ -138,6 +138,6 @@ It intentionally does **not** ship the Kumbuka editor, authentication, account m
 
 ## GitHub Pages
 
-A typical CI job builds the frontend and Kumbuka binary, runs `kumbuka build`, and publishes the generated `site/` directory as the Pages artifact. No PostgreSQL service is needed for that job.
+A typical CI job installs `kumbuka-cli`, runs `kumbuka-cli build`, and publishes the generated `site/` directory as the Pages artifact. No PostgreSQL service is needed for that job.
 
 For local preview, override the site URL to match your local server root if the checked-in configuration uses a GitHub Pages project prefix.

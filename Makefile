@@ -2,8 +2,8 @@
 
 ## Tool Versions
 
-# renovate: datasource=github-releases depName=kumbuka-me/kumbuka
-KUMBUKA_VERSION ?= v0.0.4
+# renovate: datasource=github-releases depName=kumbuka-me/cli
+KUMBUKA_CLI_VERSION ?= v0.0.1
 
 # renovate: datasource=github-releases depName=gi8lino/dev-tools
 DEV_TOOLS_VERSION ?= v0.7.0
@@ -20,8 +20,8 @@ include $(call dev-tools-module,help)
 
 ## Tools
 
-KUMBUKA := bin/kumbuka
-KUMBUKA_ASSET ?= kumbuka_{version}_{os}_{arch}.tar.gz
+KUMBUKA_CLI := bin/kumbuka-cli
+KUMBUKA_CLI_ASSET ?= kumbuka-cli_{version}_{os}_{arch}.tar.gz
 NPX ?= npx
 
 ## Site Configuration
@@ -40,8 +40,8 @@ PRETTIER_SOURCES := README.md "content/**/*.md" ".github/**/*.yml"
 ##@ Development
 
 .PHONY: build
-build: kumbuka ## Build the production documentation site.
-	$(call run-tool,$(KUMBUKA),build --config "$(SITE_CONFIG)" $(BUILD_ARGS))
+build: kumbuka-cli ## Build the production documentation site.
+	$(call run-tool,$(KUMBUKA_CLI),build --config "$(SITE_CONFIG)" $(BUILD_ARGS))
 
 .PHONY: check
 check: build ## Build and verify the static site artifacts required by GitHub Pages.
@@ -83,13 +83,14 @@ fmt-check: ## Check Markdown and workflow formatting.
 
 ##@ Dependencies
 
-.PHONY: kumbuka
-kumbuka: $(GITHUB_RELEASE_INSTALL) ## Install the pinned Kumbuka CLI.
+.PHONY: kumbuka-cli
+kumbuka-cli: $(GITHUB_RELEASE_INSTALL) ## Install the pinned Kumbuka CLI.
 	@$(GITHUB_RELEASE_INSTALL) \
-		--repo kumbuka-me/kumbuka \
-		--tag "$(KUMBUKA_VERSION)" \
-		--asset "$(KUMBUKA_ASSET)" \
-		--binary kumbuka \
-		--target "$(KUMBUKA)"
+		--repo kumbuka-me/cli \
+		--tag "$(KUMBUKA_CLI_VERSION)" \
+		--asset "$(KUMBUKA_CLI_ASSET)" \
+		--binary kumbuka-cli \
+		--target "$(KUMBUKA_CLI)"
+
 
 
