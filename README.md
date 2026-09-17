@@ -47,7 +47,6 @@ make screenshots
 
 By default this expects the server at `../kumbuka`. Override `KUMBUKA_SERVER_DIR` when it lives elsewhere. Screenshot generation additionally requires Go, Docker, `zip`, and Playwright's Chromium browser. The manual **Documentation Screenshots** workflow checks out the server automatically and commits changed PNGs under `assets/screenshots/`.
 
-## Links
+# License
 
-- [Documentation](https://kumbuka.me/)
-- [License](./LICENSE)
+Licensed under the [Apache License, Version 2.0](LICENSE).
