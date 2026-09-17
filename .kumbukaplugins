@@ -17,7 +17,7 @@ id = "me.kumbuka.subpages"
 repository = "kumbuka-me/plugins"
 tag_prefix = "subpages/v"
 asset = "subpages"
-version = "1.0.4"
+version = "1.0.5"
 
 [[plugin]]
 id = "me.kumbuka.tables"
