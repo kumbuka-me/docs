@@ -24,6 +24,9 @@ KUMBUKA_CLI := bin/kumbuka-cli
 KUMBUKA_CLI_ASSET ?= kumbuka-cli_{version}_{os}_{arch}.tar.gz
 FAVICON_GENERATE := $(DEV_TOOLS_BIN)/favicon-generate
 SVG_TO_PNG := $(DEV_TOOLS_BIN)/svg-to-png
+SCREENSHOT_SCRIPT := scripts/screenshots/run.sh
+NODE_MODULES := node_modules/.package-lock.json
+NPM ?= npm
 NPX ?= npx
 
 ## Site Configuration
@@ -55,7 +58,7 @@ LOGO_PNG_WIDTH ?= 1200
 
 ## Formatting
 
-PRETTIER_SOURCES := README.md "content/**/*.md" ".github/**/*.{yml,yaml,json}"
+PRETTIER_SOURCES := README.md package.json package-lock.json "content/**/*.md" ".github/**/*.{yml,yaml,json}"
 
 
 ##@ Development
@@ -87,18 +90,19 @@ serve: $(DEV_PORT) $(OPEN_BROWSER) ## Build, serve, and open the documentation l
 		--directory "$(SITE_OUTPUT)"
 
 .PHONY: screenshots
-screenshots: ## Regenerate product screenshots from the canonical documentation Markdown.
+screenshots: $(NODE_MODULES) ## Regenerate product screenshots from the canonical documentation Markdown.
 	@test -f "$(KUMBUKA_SERVER_DIR)/go.mod" || { \
 		echo "Kumbuka server repository not found: $(KUMBUKA_SERVER_DIR)" >&2; \
 		exit 2; \
 	}
-	@$(MAKE) -C "$(KUMBUKA_SERVER_DIR)" screenshots \
-		SCREENSHOT_CONTENT="$(CURDIR)/content" \
-		SCREENSHOT_OUTPUT="$(CURDIR)/$(SCREENSHOT_OUTPUT)" \
-		SCREENSHOT_EDITOR_SLUG="$(SCREENSHOT_EDITOR_SLUG)" \
-		SCREENSHOT_VISITS="$(SCREENSHOT_VISITS)" \
-		SCREENSHOT_BROWSER_CHANNEL="$(SCREENSHOT_BROWSER_CHANNEL)" \
-		SCREENSHOT_SKIP_BROWSER_INSTALL="$(SCREENSHOT_SKIP_BROWSER_INSTALL)"
+	@SCREENSHOT_BROWSER_CHANNEL="$(SCREENSHOT_BROWSER_CHANNEL)" \
+		SCREENSHOT_SKIP_BROWSER_INSTALL="$(SCREENSHOT_SKIP_BROWSER_INSTALL)" \
+		$(SCREENSHOT_SCRIPT) \
+			--server "$(KUMBUKA_SERVER_DIR)" \
+			--content "$(CURDIR)/content" \
+			--output "$(CURDIR)/$(SCREENSHOT_OUTPUT)" \
+			--editor-slug "$(SCREENSHOT_EDITOR_SLUG)" \
+			--visits "$(SCREENSHOT_VISITS)"
 
 .PHONY: ports-reset
 ports-reset: $(DEV_PORT) ## Clear saved local development ports.
@@ -129,6 +133,9 @@ fmt-check: ## Check documentation and GitHub configuration formatting.
 
 ##@ Dependencies
 
+$(NODE_MODULES): package.json package-lock.json
+	$(NPM) ci
+
 $(FAVICON_GENERATE): | $(DEV_TOOLS_BIN)
 	$(call download-dev-tool,favicon-generate,$@)
 
@@ -146,5 +153,3 @@ cli: $(GITHUB_RELEASE_INSTALL) ## Install the pinned Kumbuka CLI.
 		--asset "$(KUMBUKA_CLI_ASSET)" \
 		--binary kumbuka-cli \
 		--target "$(KUMBUKA_CLI)"
-
-

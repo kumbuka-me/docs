@@ -46,14 +46,20 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-          cache-dependency-path: .kumbuka-server/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            .kumbuka-server/package-lock.json
+
+      - name: Install documentation screenshot dependencies
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
 
       - name: Install Kumbuka dependencies
         working-directory: .kumbuka-server
         run: |
           npm ci
           go mod download
-          npx playwright install --with-deps chromium
 
       - name: Generate screenshots from documentation content
         run: |
