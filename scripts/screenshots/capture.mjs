@@ -41,13 +41,11 @@ try {
   page.setDefaultTimeout(15_000);
 
   await page.goto(`${baseURL}/setup`, { waitUntil: "networkidle" });
-  await page.getByLabel("Username", { exact: true }).fill("admin");
-  await page.getByLabel("Display name", { exact: true }).fill("Administrator");
+  await page.locator('input[name="username"]').fill("admin");
+  await page.locator('input[name="display_name"]').fill("Administrator");
+  await page.locator('input[name="password"]').fill("kumbuka-screenshot-admin");
   await page
-    .getByLabel("Password", { exact: true })
-    .fill("kumbuka-screenshot-admin");
-  await page
-    .getByLabel("Confirm password", { exact: true })
+    .locator('input[name="password_confirm"]')
     .fill("kumbuka-screenshot-admin");
   await Promise.all([
     page.waitForURL(/\/admin\/configuration$/),
