@@ -109,6 +109,8 @@ Kumbuka wiki links use the same Kumbuka renderer and are rewritten to static rou
 
 ## Logos, favicons, and extra assets
 
+The server logo configured under **Administration → Branding** is stored in PostgreSQL and is not read by `kumbuka-cli build`. Static sites use only the branding files configured in `site.toml`.
+
 Branding is entirely opt-in. The builder does not copy Kumbuka logos or favicons into a generated site.
 
 ```toml
