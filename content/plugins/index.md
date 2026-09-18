@@ -8,13 +8,15 @@ Plugins do not need Go code merely to be plugins. Prefer a declarative module su
 
 This is also a security boundary: declarative packages have no guest code to execute, while executable packages receive only the capabilities declared by their manifest and granted by the host.
 
-## Install a plugin
+## Install and update plugins
 
 1. Download the plugin's `.kumbukaplugin` file.
 2. Open **Administration → Plugins**.
 3. Upload the package and select **Install and enable**.
 
-See [Plugin administration](../administration/plugins.md) for upgrades, enable/disable behavior, dependencies, and uninstalling plugins.
+First-party releases are also published through `https://kumbuka.me/plugins/catalog.json`. Kumbuka uses that catalog to offer compatible updates directly from the administration page while retaining manual package upload for custom and third-party plugins.
+
+See [Plugin administration](../administration/plugins.md) for updates, manual upgrades, enable/disable behavior, dependencies, and uninstalling plugins.
 
 ## Develop plugins
 
