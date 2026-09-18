@@ -130,6 +130,17 @@ Go code is formatted with `gofmt`; tests use the standard testing package plus T
 
 Read [Architecture](architecture.md) for dependency rules.
 
+### Server package responsibilities
+
+Keep HTTP coordination and HTML presentation separate:
+
+- `internal/handler` owns request parsing, transport validation, service coordination, HTTP status/redirect decisions, and translation of expected service failures;
+- `internal/webview` owns shared view data, presentation-only models, theme/plugin presentation metadata, template helpers, and HTML rendering;
+- `internal/service` owns application use cases and business mutation policy;
+- `pkg/store` owns PostgreSQL persistence and transactions.
+
+Handlers may depend on `webview`, but `webview` must not depend back on handlers. Shared view-data loading uses narrow read-only interfaces so presentation code does not need the broad handler contracts or concrete persistence layer.
+
 ### PostgreSQL integration tests
 
 Set `KUMBUKA_TEST_DATABASE_URL` to a disposable PostgreSQL database URL, then run `go test -race ./pkg/store`. These tests create and remove isolated schemas and require schema creation privileges. Without the variable they are skipped. Coverage includes simultaneous application startup, OIDC identity persistence across database reconnections, and saved-search update conflicts with their original database cause.
@@ -138,7 +149,7 @@ Startup migrations run together in one transaction under a database advisory loc
 
 ### HTTP error contracts
 
-Handlers translate expected service errors into HTTP responses. `httpresponse.InternalServerError` logs the original error and always writes a safe 500 response with a generated reference. The same reference is written as `error_reference` in the server log so an administrator can correlate a browser error with its diagnostic cause. It is the fallback after expected errors are handled; it does not classify errors itself. Application validation belongs in services; request parsing and transport validation belong in handlers. `httpresponse` only serializes the response.
+Handlers translate expected service errors into HTTP responses. `httpresponse.InternalServerError` logs the original error and always writes a safe 500 response with a generated reference. The same reference is written as `error_reference` in the server log so an administrator can correlate a browser error with its diagnostic cause. It is the fallback after expected errors are handled; it does not classify errors itself. Application validation belongs in services; request parsing and transport validation belong in handlers; shared HTML presentation and template data belong in `internal/webview`. `httpresponse` only serializes transport-level responses.
 
 `domain.ValidationError` carries safe field messages and an optional diagnostic cause; the service aliases use the same type. Persistence validation never depends on HTTP. Known SQL constraints are translated by name and code, preserving their causes for `errors.Is` and `errors.As`. Unknown constraints remain infrastructure failures.
 

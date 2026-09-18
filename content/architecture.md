@@ -6,8 +6,10 @@ The normal request path is:
 
 ```text
 HTTP -> routes/middleware -> handler -> service -> repository contract -> store -> PostgreSQL
-                                      |                                |
-                                      +------------> domain <------------+
+                              |          |                                |
+                              |          +------------> domain <----------+
+                              |
+                              +-> webview -> narrow read-only contracts
 ```
 
 ## Main layers
@@ -15,7 +17,8 @@ HTTP -> routes/middleware -> handler -> service -> repository contract -> store 
 - `cmd/kumbuka` is the minimal server process entry point. `kumbuka` starts the server directly; there is no server subcommand.
 - `internal/app` owns server startup orchestration and is the composition root. It loads assets, opens PostgreSQL, constructs services/authentication/views, and builds the router.
 - `internal/routes` registers routes and applies authentication/role policies to already-constructed dependencies.
-- `internal/handler`, `internal/middleware`, and `internal/auth` are inbound HTTP adapters.
+- `internal/handler`, `internal/middleware`, and `internal/auth` are inbound HTTP adapters. Handlers parse transport input, coordinate use cases, translate expected failures into HTTP responses, and choose redirects or rendered views.
+- `internal/webview` owns server-side HTML presentation: shared template data, view-only models, theme/plugin presentation metadata, common authenticated/public view-data loading, and template rendering. It consumes narrow read-only capabilities and does not own application mutation policy.
 - `internal/service` owns application use cases and mutation policy.
 - reusable runtime packages under `pkg/` contain domain records, PostgreSQL storage, Markdown rendering, navigation, plugin/runtime support, revisions, icons, logging, and themes. These packages are intentionally consumable by the standalone CLI.
 - server-only HTTP, authentication, routing, and application composition remain under `internal/`.
@@ -24,7 +27,9 @@ HTTP -> routes/middleware -> handler -> service -> repository contract -> store 
 
 ## Boundaries
 
-Handlers do not import the concrete store. Services and authenticators declare the persistence capabilities they consume. `internal/app` is the place where concrete store implementations satisfy those contracts for the running server. SQL and `pgx` stay in `pkg/store`.
+Handlers do not import the concrete store. They coordinate service contracts and `internal/webview`; presentation code does not live in the handler package. `internal/webview` must not depend back on `internal/handler`, and services must not depend on HTTP or presentation packages. The webview loader may consume narrow read-only capabilities that application services satisfy.
+
+Services and authenticators declare the persistence capabilities they consume. `internal/app` is the composition root where concrete services, view dependencies, authentication, and store implementations are wired for the running server. SQL and `pgx` stay in `pkg/store`.
 
 The static builder and mirror exporter are intentionally outside the server repository's composition path. `kumbuka-cli build` reads files, renders them, and writes static output without opening PostgreSQL; `kumbuka-cli mirror` opens PostgreSQL only to write its deterministic snapshot. Both reuse the public runtime packages under `github.com/kumbuka-me/kumbuka/pkg/...`.
 
