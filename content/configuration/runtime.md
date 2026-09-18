@@ -2,26 +2,29 @@
 
 The Kumbuka server uses command-line flags and matching `KUMBUKA__` environment variables. The database URL is required when starting `kumbuka`. Static-site and mirror commands belong to the separate `kumbuka-cli` binary.
 
-| Flag                     | Environment                     | Purpose                                                                                   |
-| ------------------------ | ------------------------------- | ----------------------------------------------------------------------------------------- |
-| `--listen-address`       | `KUMBUKA__LISTEN_ADDRESS`       | HTTP listen address; defaults to `127.0.0.1:8080`.                                        |
-| `--database-url`         | `KUMBUKA__DATABASE_URL`         | PostgreSQL connection URL.                                                                |
-| `--public-url`           | `KUMBUKA__PUBLIC_URL`           | Externally visible base URL; defaults to `http://localhost:8080`.                         |
-| `--pdf-url`              | `KUMBUKA__PDF_URL`              | Optional runtime override for the configured HTML-to-PDF render endpoint.                 |
-| `--local-login`          | `KUMBUKA__LOCAL_LOGIN`          | Exposes local recovery login alongside another configured authentication mode.            |
-| `--theme-directory`      | `KUMBUKA__THEME_DIRECTORY`      | Optional directory of TOML theme files that override or extend embedded themes.           |
-| `--auth-mode`            | `KUMBUKA__AUTH_MODE`            | Emergency authentication override.                                                        |
-| `--oidc-issuer`          | `KUMBUKA__OIDC_ISSUER`          | OIDC issuer used with the runtime override.                                               |
-| `--oidc-client-id`       | `KUMBUKA__OIDC_CLIENT_ID`       | OIDC client ID used with the runtime override.                                            |
-| `--oidc-client-secret`   | `KUMBUKA__OIDC_CLIENT_SECRET`   | OIDC client secret used when OIDC is enabled.                                             |
-| `--oidc-session-secret`  | `KUMBUKA__OIDC_SESSION_SECRET`  | Signs OIDC login state/session cookies; when set it must be at least 32 characters.       |
-| `--encryption-key`       | `KUMBUKA__ENCRYPTION_KEY`       | Base64-encoded 32-byte key used to encrypt sensitive persisted application settings.      |
-| `--log-format`           | `KUMBUKA__LOG_FORMAT`           | `json` or `text`.                                                                         |
-| `--debug`                | `KUMBUKA__DEBUG`                | Enables verbose diagnostics.                                                              |
-| `--debug-render-timings` | `KUMBUKA__DEBUG_RENDER_TIMINGS` | Logs detailed page-handler, Markdown-stage, and WASM-boundary timings for rendered pages. |
-| `--access-log`           | `KUMBUKA__ACCESS_LOG`           | Enables HTTP access logging.                                                              |
+| Flag                             | Environment                             | Purpose                                                                                                                           |
+| -------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `--listen-address`               | `KUMBUKA__LISTEN_ADDRESS`               | HTTP listen address; defaults to `127.0.0.1:8080`.                                                                                |
+| `--database-url`                 | `KUMBUKA__DATABASE_URL`                 | PostgreSQL connection URL.                                                                                                        |
+| `--public-url`                   | `KUMBUKA__PUBLIC_URL`                   | Externally visible base URL; defaults to `http://localhost:8080`.                                                                 |
+| `--pdf-url`                      | `KUMBUKA__PDF_URL`                      | Optional runtime override for the configured HTML-to-PDF render endpoint.                                                         |
+| `--plugin-update-check-interval` | `KUMBUKA__PLUGIN_UPDATE_CHECK_INTERVAL` | Reuses successful first-party plugin catalog checks for this duration; defaults to `15m`. Set to `0` to disable automatic checks. |
+| `--local-login`                  | `KUMBUKA__LOCAL_LOGIN`                  | Exposes local recovery login alongside another configured authentication mode.                                                    |
+| `--theme-directory`              | `KUMBUKA__THEME_DIRECTORY`              | Optional directory of TOML theme files that override or extend embedded themes.                                                   |
+| `--auth-mode`                    | `KUMBUKA__AUTH_MODE`                    | Emergency authentication override.                                                                                                |
+| `--oidc-issuer`                  | `KUMBUKA__OIDC_ISSUER`                  | OIDC issuer used with the runtime override.                                                                                       |
+| `--oidc-client-id`               | `KUMBUKA__OIDC_CLIENT_ID`               | OIDC client ID used with the runtime override.                                                                                    |
+| `--oidc-client-secret`           | `KUMBUKA__OIDC_CLIENT_SECRET`           | OIDC client secret used when OIDC is enabled.                                                                                     |
+| `--oidc-session-secret`          | `KUMBUKA__OIDC_SESSION_SECRET`          | Signs OIDC login state/session cookies; when set it must be at least 32 characters.                                               |
+| `--encryption-key`               | `KUMBUKA__ENCRYPTION_KEY`               | Base64-encoded 32-byte key used to encrypt sensitive persisted application settings.                                              |
+| `--log-format`                   | `KUMBUKA__LOG_FORMAT`                   | `json` or `text`.                                                                                                                 |
+| `--debug`                        | `KUMBUKA__DEBUG`                        | Enables verbose diagnostics.                                                                                                      |
+| `--debug-render-timings`         | `KUMBUKA__DEBUG_RENDER_TIMINGS`         | Logs detailed page-handler, Markdown-stage, and WASM-boundary timings for rendered pages.                                         |
+| `--access-log`                   | `KUMBUKA__ACCESS_LOG`                   | Enables HTTP access logging.                                                                                                      |
 
 Trusted-proxy username, email, and display-name header lists also have deployment flags and environment-variable forms. Their built-in defaults cover common reverse-proxy headers.
+
+Plugin update checks are demand-driven: Kumbuka refreshes the catalog when an administrator opens plugin administration and the last successful catalog response is older than `--plugin-update-check-interval`. It does not poll in the background or install updates automatically. Failed catalog requests use a short internal retry backoff. Set the interval to `0` for manual package management only.
 
 `--debug-render-timings` / `KUMBUKA__DEBUG_RENDER_TIMINGS=true` is intended for short-lived performance diagnosis. It emits one page-handler summary, one Markdown summary per page render, and one record per WASM call. Handler stages cover page lookups, shared view-data loading, Markdown rendering, and template execution; WASM records include guest gate wait, JSON encode/decode, guest allocation/execution, memory copies, and request/response byte counts. It never logs page or plugin payload contents. Disable it again after profiling because the additional timing and log output add overhead. Stage timings are cumulative; nested handler stages such as `view_data` and its individual lookups, plus nested Markdown rendering and annotation passes, can therefore make the sum of individual stages larger than the wall-clock `duration_ms`. Compare `page_handler_timing.duration_ms` with the access log `request_complete` duration to identify time spent before the handler in routing, authentication, or middleware.
 

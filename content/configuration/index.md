@@ -2,7 +2,7 @@
 
 Kumbuka separates deployment-level configuration from mutable application settings.
 
-Deployment-level values are supplied as flags or `KUMBUKA__` environment variables. They include the listen address, PostgreSQL URL, public URL, recovery authentication overrides, OIDC secrets, theme directory, and logging controls.
+Deployment-level values are supplied as flags or `KUMBUKA__` environment variables. They include the listen address, PostgreSQL URL, public URL, plugin update check interval, recovery authentication overrides, OIDC secrets, theme directory, and logging controls.
 
 Application settings are stored in PostgreSQL and changed through the administration interface. They include browser authentication mode, user registration, discussions, the public `robots.txt` policy, configurable external header links, the instance-wide application logo, the default content language and typography size, PDF rendering, trusted-proxy header mappings, and non-secret OIDC settings. Deployment-level authentication values override only the authentication fields they manage. The administration UI marks those fields **Managed by deployment** and makes them read-only while the runtime setting is active. Deployment-level PDF configuration can separately override the persisted renderer endpoint.
 
