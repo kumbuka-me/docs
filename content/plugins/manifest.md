@@ -73,7 +73,37 @@ Runs executable WASM to produce one bounded downloadable file for the current au
 
 ### `settings`
 
-Adds host-rendered boolean controls to the plugin's dedicated administration settings page. `requires` can reference other modules in the same package; missing dependencies and cycles are rejected.
+Declares administrator-managed plugin settings. A settings module has two forms:
+
+- without `fields`, it is a boolean feature toggle; `requires` can reference other modules in the same package;
+- with `fields`, it is a typed singleton settings group rendered on the plugin's dedicated administration settings page.
+
+Typed settings use the same generic configuration field schema as `admin-resource`: `text`, `textarea`, `url`, `secret`, `boolean`, and `select`. Typed settings groups can contain up to 16 fields and cannot use `key: true` or `requires`.
+
+For example:
+
+```yaml
+modules:
+  - type: settings
+    id: appearance
+    name: Appearance
+    description: Default presentation for embeds.
+    fields:
+      - id: reference_position
+        name: Reference position
+        type: select
+        required: true
+        default: right
+        options:
+          - right
+          - left
+      - id: highlight_referenced_lines
+        name: Highlight referenced lines
+        type: boolean
+        default: "true"
+```
+
+An executable plugin with `settings:read` reads a typed setting through `Settings().Get("<module>.<field>")`. When the administrator has not saved an explicit value, the host returns the manifest default. Manifest-declared settings are administrator managed; guest `settings:write` calls cannot overwrite them.
 
 ### `content-style`
 
@@ -91,7 +121,7 @@ Adds isolated browser-side rendering from packaged JavaScript and optional CSS. 
 
 Declares a bounded host-rendered record schema owned by the plugin. Kumbuka owns forms, generic type validation, authorization, CSRF protection, namespaced persistence, and encryption of `secret` fields. Plugins that declare `settings` or `admin-resource` modules appear under **Administration → Plugin settings** rather than placing their configuration in the Plugins lifecycle page.
 
-Each resource has exactly one `text` field marked `key: true`. Other fields can use `text`, `textarea`, `url`, `secret`, `boolean`, or `select`. `required` and `max_bytes` apply generically. `boolean` fields may use `default: "true"` or `"false"`; `select` fields declare an `options` list and may choose one option as `default`. Secret fields cannot have defaults and are masked in the browser after saving.
+Each resource has exactly one `text` field marked `key: true`. Other fields use the same configuration field schema as typed `settings`. `required` and `max_bytes` apply generically. `boolean` fields may use `default: "true"` or `"false"`; `select` fields declare an `options` list and may choose one option as `default`. `url` defaults must be absolute HTTP(S) URLs. Secret fields cannot have defaults and are masked in the browser after saving. A configuration group or resource may contain at most 16 fields; a `select` may contain at most 32 unique options.
 
 For example:
 

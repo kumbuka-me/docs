@@ -18,6 +18,10 @@ First-party releases are also published through `https://kumbuka.me/plugins/cata
 
 See [Plugin administration](../administration/plugins.md) for updates, manual upgrades, enable/disable behavior, dependencies, and uninstalling plugins. Plugins with administrator-managed configuration get dedicated pages in the **Plugin settings** section of the administration sidebar.
 
+## First-party plugin guides
+
+- [External Files](external-files.md) — embed bounded text files from configured GitHub or GitLab repositories with line ranges and annotations.
+
 ## Develop plugins
 
 - [Getting started](getting-started.md) — create, test, build, and install a plugin.

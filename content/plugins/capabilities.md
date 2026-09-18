@@ -6,30 +6,30 @@ The Go SDK provides typed clients, so plugins normally do not call the low-level
 
 ## Operations
 
-| Operation               | Manifest permission | Purpose                                                     |
-| ----------------------- | ------------------- | ----------------------------------------------------------- |
-| `pages.get`             | `pages:read`        | Read authorized public page metadata.                       |
-| `pages.search`          | `pages:read`        | Search the authorized page catalog with a bounded limit.    |
-| `pages.navigation`      | `pages:read`        | Read the prepared navigation tree for the render target.    |
-| `pages.links`           | `pages:read`        | Read authorized backlinks and outgoing wiki-link metadata.  |
-| `pages.revisions`       | `pages:read`        | Read bounded revision metadata without stored page bodies.  |
-| `pages.recent`          | `pages:read`        | Read the newest authorized pages.                           |
-| `pages.popular`         | `pages:read`        | Read the most-viewed authorized pages.                      |
-| `pages.recent-viewed`   | `activity:read`     | Read pages recently viewed by the current viewer.           |
-| `pages.favorites`       | `activity:read`     | Read pages favorited by the current viewer.                 |
-| `pages.recent-edits`    | `activity:read`     | Read pages recently edited by the current viewer.           |
-| `drafts.list`           | `drafts:read`       | Read bounded private draft metadata for the current viewer. |
-| `pages.content`         | `pages:content`     | Read authorized Markdown source.                            |
-| `attachments.read`      | `attachments:read`  | Read a bounded authorized attachment byte range.            |
-| `plugin.settings.read`  | `settings:read`     | Read this plugin's simple settings namespace.               |
-| `plugin.settings.write` | `settings:write`    | Write this plugin's simple settings namespace.              |
-| `plugin.resources.get`  | `settings:read`     | Read one manifest-declared structured setting record.       |
-| `plugin.resources.list` | `settings:read`     | List one manifest-declared structured setting collection.   |
-| `plugin.storage.read`   | `storage:read`      | Read this plugin's opaque data namespace.                   |
-| `plugin.storage.write`  | `storage:write`     | Write this plugin's opaque data namespace.                  |
-| `http.do`               | `network:http`      | Perform one bounded host-mediated HTTP(S) request.          |
-| `icons.render`          | none                | Render an icon from the active host icon catalog.           |
-| `log`                   | none                | Write a bounded plugin log message.                         |
+| Operation               | Manifest permission | Purpose                                                       |
+| ----------------------- | ------------------- | ------------------------------------------------------------- |
+| `pages.get`             | `pages:read`        | Read authorized public page metadata.                         |
+| `pages.search`          | `pages:read`        | Search the authorized page catalog with a bounded limit.      |
+| `pages.navigation`      | `pages:read`        | Read the prepared navigation tree for the render target.      |
+| `pages.links`           | `pages:read`        | Read authorized backlinks and outgoing wiki-link metadata.    |
+| `pages.revisions`       | `pages:read`        | Read bounded revision metadata without stored page bodies.    |
+| `pages.recent`          | `pages:read`        | Read the newest authorized pages.                             |
+| `pages.popular`         | `pages:read`        | Read the most-viewed authorized pages.                        |
+| `pages.recent-viewed`   | `activity:read`     | Read pages recently viewed by the current viewer.             |
+| `pages.favorites`       | `activity:read`     | Read pages favorited by the current viewer.                   |
+| `pages.recent-edits`    | `activity:read`     | Read pages recently edited by the current viewer.             |
+| `drafts.list`           | `drafts:read`       | Read bounded private draft metadata for the current viewer.   |
+| `pages.content`         | `pages:content`     | Read authorized Markdown source.                              |
+| `attachments.read`      | `attachments:read`  | Read a bounded authorized attachment byte range.              |
+| `plugin.settings.read`  | `settings:read`     | Read this plugin's settings, including declared typed fields. |
+| `plugin.settings.write` | `settings:write`    | Write ordinary plugin-owned settings keys.                    |
+| `plugin.resources.get`  | `settings:read`     | Read one manifest-declared structured setting record.         |
+| `plugin.resources.list` | `settings:read`     | List one manifest-declared structured setting collection.     |
+| `plugin.storage.read`   | `storage:read`      | Read this plugin's opaque data namespace.                     |
+| `plugin.storage.write`  | `storage:write`     | Write this plugin's opaque data namespace.                    |
+| `http.do`               | `network:http`      | Perform one bounded host-mediated HTTP(S) request.            |
+| `icons.render`          | none                | Render an icon from the active host icon catalog.             |
+| `log`                   | none                | Write a bounded plugin log message.                           |
 
 A permission must be declared by the package and granted by Kumbuka's runtime policy. An undeclared call is denied even if another plugin is allowed to use that capability. Missing grants prevent the plugin from loading in that scope.
 
@@ -47,7 +47,9 @@ Attachment reads are available only when the current render scope explicitly sup
 
 Settings and data are separate namespaces owned by the executing plugin. Keys are 1–256 bytes and values are at most 64 KiB. PostgreSQL-backed storage enforces up to 1,024 keys and 16 MiB per plugin across both namespaces. Reads distinguish an absent value from an empty value.
 
-Plugin data survives renderer/runtime restarts and disabling a plugin does not delete it. Structured `admin-resource` records are stored in the owning plugin's namespace. Fields declared as `secret` are encrypted with `KUMBUKA__ENCRYPTION_KEY`, masked in administration, and decrypted when the owning plugin reads the record through `Resources()`.
+Plugin data survives renderer/runtime restarts and disabling a plugin does not delete it. Manifest-declared typed `settings` groups and structured `admin-resource` records are administrator managed and stored in the owning plugin's settings namespace. Typed settings are read through `Settings().Get("<module>.<field>")`; when no explicit value has been saved, Kumbuka returns the manifest default. Repeatable records are read through `Resources()`. Fields declared as `secret` are encrypted with `KUMBUKA__ENCRYPTION_KEY`, masked in administration, and decrypted only for the owning plugin.
+
+The raw settings API remains available for plugin-owned keys, but manifest-declared configuration and Kumbuka's reserved settings keys cannot be overwritten through `plugin.settings.write`. This keeps administrator-managed configuration authoritative while still allowing plugins to persist unrelated lightweight settings when they declare `settings:write`.
 
 ## Outbound HTTP
 
