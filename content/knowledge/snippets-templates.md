@@ -12,7 +12,7 @@ For example, a service blueprint can provide fields such as `service`, `reposito
 
 ## Knowledge snippets
 
-The bundled **Variables** and **Snippets** plugins provide reusable content referenced by name during page rendering. Manage their data from each plugin detail modal under **Administration → Plugins**:
+The bundled **Variables** and **Snippets** plugins provide reusable content referenced by name during page rendering. Manage their data from the matching entries under **Administration → Plugin settings**:
 
 ```text
 {{var:name}}

@@ -1,6 +1,6 @@
 # Plugin capabilities
 
-WASM plugins do not receive Kumbuka Go pointers, database clients, filesystem handles, credentials, or general network/process access. Host operations are exposed through a small versioned capability API and are checked against both the plugin manifest and the active runtime/render policy.
+WASM plugins do not receive Kumbuka Go pointers, database clients, filesystem handles, raw sockets, or process access. Host operations are exposed through a small versioned capability API and are checked against both the plugin manifest and the active runtime/render policy. Plugins can own credentials in manifest-declared secret settings; Kumbuka encrypts those values at rest and returns them only to the owning plugin.
 
 The Go SDK provides typed clients, so plugins normally do not call the low-level transport directly.
 
@@ -21,10 +21,13 @@ The Go SDK provides typed clients, so plugins normally do not call the low-level
 | `drafts.list`           | `drafts:read`       | Read bounded private draft metadata for the current viewer. |
 | `pages.content`         | `pages:content`     | Read authorized Markdown source.                            |
 | `attachments.read`      | `attachments:read`  | Read a bounded authorized attachment byte range.            |
-| `plugin.settings.read`  | `settings:read`     | Read this plugin's settings namespace.                      |
-| `plugin.settings.write` | `settings:write`    | Write this plugin's settings namespace.                     |
-| `plugin.storage.read`   | `storage:read`      | Read this plugin's data namespace.                          |
-| `plugin.storage.write`  | `storage:write`     | Write this plugin's data namespace.                         |
+| `plugin.settings.read`  | `settings:read`     | Read this plugin's simple settings namespace.               |
+| `plugin.settings.write` | `settings:write`    | Write this plugin's simple settings namespace.              |
+| `plugin.resources.get`  | `settings:read`     | Read one manifest-declared structured setting record.       |
+| `plugin.resources.list` | `settings:read`     | List one manifest-declared structured setting collection.   |
+| `plugin.storage.read`   | `storage:read`      | Read this plugin's opaque data namespace.                   |
+| `plugin.storage.write`  | `storage:write`     | Write this plugin's opaque data namespace.                  |
+| `http.do`               | `network:http`      | Perform one bounded host-mediated HTTP(S) request.          |
 | `icons.render`          | none                | Render an icon from the active host icon catalog.           |
 | `log`                   | none                | Write a bounded plugin log message.                         |
 
@@ -44,7 +47,17 @@ Attachment reads are available only when the current render scope explicitly sup
 
 Settings and data are separate namespaces owned by the executing plugin. Keys are 1–256 bytes and values are at most 64 KiB. PostgreSQL-backed storage enforces up to 1,024 keys and 16 MiB per plugin across both namespaces. Reads distinguish an absent value from an empty value.
 
-Plugin data survives renderer/runtime restarts and disabling a plugin does not delete it.
+Plugin data survives renderer/runtime restarts and disabling a plugin does not delete it. Structured `admin-resource` records are stored in the owning plugin's namespace. Fields declared as `secret` are encrypted with `KUMBUKA__ENCRYPTION_KEY`, masked in administration, and decrypted when the owning plugin reads the record through `Resources()`.
+
+## Outbound HTTP
+
+`HTTP().Do` lets an executable plugin define an HTTP(S) request while Kumbuka performs the network I/O. Core understands generic HTTP method, URL, headers, body, TLS policy, and destination policy; provider-specific endpoints, authentication headers, response formats, and setting names stay in the plugin.
+
+The base operation requires `network:http`. A request that supplies exact RFC1918 or IPv6 ULA destination exceptions additionally requires `network:private`. Setting `InsecureSkipVerify` additionally requires `network:insecure-tls`. These permissions must be present both in the package manifest and Kumbuka's runtime policy.
+
+The host applies bounded request and response bodies, bounded headers, an HTTP(S)-only URL policy, no redirects, timeouts, DNS validation with numeric-address pinning, and SSRF filtering. Private destinations are denied unless the plugin supplies an exact permitted private address and has `network:private`; loopback, link-local, shared-address space, metadata, documentation, and other special-use destinations remain blocked. The generic client honors Kumbuka's process `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY`, `SSL_CERT_FILE`, and `SSL_CERT_DIR` environment settings.
+
+The server enables outbound plugin HTTP only for authenticated invocation contexts. Public-share rendering cannot use it. Static builds do not grant network permissions.
 
 ## Limits
 

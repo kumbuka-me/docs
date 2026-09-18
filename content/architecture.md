@@ -39,6 +39,6 @@ Kumbuka core owns the platform: page/domain state, persistence, authentication a
 
 That split deliberately allows core data to outlive a plugin UI. For example, revisions and favorite/activity data remain core domain capabilities while Revision History, Favorites, Recently Viewed, and similar presentation are plugin contributions. Fundamental application operations such as editing, moving, deleting, authentication, and the structural page tree remain core rather than becoming plugins.
 
-Generic core code must not depend on concrete first-party plugin IDs. When a feature needs special handling, the preferred fix is a reusable module contract or capability that can serve unrelated plugins as well.
+Generic core code must not depend on concrete first-party plugin IDs. When a feature needs special handling, the preferred fix is a reusable module contract or capability that can serve unrelated plugins as well. For example, integration plugins own provider URLs, credentials, response formats, and protocol behavior; Kumbuka supplies generic typed settings/resources and a bounded host-mediated HTTP capability rather than provider-specific services.
 
 Plugin authors should use the least powerful extension surface that can implement a feature: prefer declarative modules, use WASM only when server-side behavior is required, and add a browser module only when isolated browser-side execution is necessary. This keeps simple plugins executable-code-free and reduces permission and runtime surface.

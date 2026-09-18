@@ -73,7 +73,7 @@ Runs executable WASM to produce one bounded downloadable file for the current au
 
 ### `settings`
 
-Adds host-rendered boolean controls to the plugin detail page. `requires` can reference other modules in the same package; missing dependencies and cycles are rejected.
+Adds host-rendered boolean controls to the plugin's dedicated administration settings page. `requires` can reference other modules in the same package; missing dependencies and cycles are rejected.
 
 ### `content-style`
 
@@ -89,7 +89,42 @@ Adds isolated browser-side rendering from packaged JavaScript and optional CSS. 
 
 ### `admin-resource`
 
-Declares a bounded host-rendered record schema owned by the plugin. Kumbuka owns forms, validation, authorization, CSRF protection, and namespaced persistence.
+Declares a bounded host-rendered record schema owned by the plugin. Kumbuka owns forms, generic type validation, authorization, CSRF protection, namespaced persistence, and encryption of `secret` fields. Plugins that declare `settings` or `admin-resource` modules appear under **Administration → Plugin settings** rather than placing their configuration in the Plugins lifecycle page.
+
+Each resource has exactly one `text` field marked `key: true`. Other fields can use `text`, `textarea`, `url`, `secret`, `boolean`, or `select`. `required` and `max_bytes` apply generically. `boolean` fields may use `default: "true"` or `"false"`; `select` fields declare an `options` list and may choose one option as `default`. Secret fields cannot have defaults and are masked in the browser after saving.
+
+For example:
+
+```yaml
+modules:
+  - type: admin-resource
+    id: sources
+    name: Sources
+    fields:
+      - id: name
+        name: Name
+        type: text
+        required: true
+        key: true
+      - id: endpoint
+        name: API endpoint
+        type: url
+        required: true
+      - id: token
+        name: Access token
+        type: secret
+      - id: enabled
+        name: Enabled
+        type: boolean
+        default: "true"
+      - id: provider
+        name: Provider
+        type: select
+        options: [github, gitlab]
+        default: github
+```
+
+Executable plugins with `settings:read` can read their own structured records through the SDK `Resources()` client. Secret fields are decrypted only for the owning plugin.
 
 ### `content-substitution`
 

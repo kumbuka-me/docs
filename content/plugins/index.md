@@ -16,7 +16,7 @@ This is also a security boundary: declarative packages have no guest code to exe
 
 First-party releases are also published through `https://kumbuka.me/plugins/catalog.json`. Kumbuka uses that catalog to offer compatible updates directly from the administration page while retaining manual package upload for custom and third-party plugins.
 
-See [Plugin administration](../administration/plugins.md) for updates, manual upgrades, enable/disable behavior, dependencies, and uninstalling plugins.
+See [Plugin administration](../administration/plugins.md) for updates, manual upgrades, enable/disable behavior, dependencies, and uninstalling plugins. Plugins with administrator-managed configuration get dedicated pages in the **Plugin settings** section of the administration sidebar.
 
 ## Develop plugins
 
