@@ -12,6 +12,8 @@ Kumbuka checks the first-party update catalog at `https://kumbuka.me/plugins/cat
 
 When the catalog contains a newer release for the plugin's current API version, the plugin detail view offers an **Update** action. Kumbuka downloads the release to temporary storage, enforces the same 16 MiB package limit, verifies the catalog SHA-256 checksum and package identity, and then passes the package through the normal plugin upgrade path.
 
+Catalog requests and plugin package downloads honor Go's standard proxy environment variables: `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` (including their lowercase forms). For the HTTPS catalog and GitHub release downloads, configure `HTTPS_PROXY`; use `NO_PROXY` for destinations that should bypass the proxy.
+
 Downloaded packages are temporary. Successful installed and upgraded package bytes are stored in PostgreSQL through the plugin installation store, so an update survives container replacement or restart without requiring a plugin volume. Bundled packages remain part of the Kumbuka image; an installed newer version is persisted as an override and is selected again during startup.
 
 If the catalog is unavailable, plugin administration remains usable and manual package upgrades stay available. To upgrade manually, open the plugin and upload a package with the same plugin ID. Enabled plugins stay enabled, disabled plugins stay disabled, and a failed update or upgrade preserves the current version.
