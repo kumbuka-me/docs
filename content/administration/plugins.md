@@ -2,7 +2,7 @@
 
 Open **Administration → Plugins** to manage Kumbuka's bundled and installed plugins. Only administrators can view these pages or change plugin lifecycle state.
 
-The list shows each plugin's name, version, provider, source, status, and whether a newer compatible first-party release is available. Select a plugin to view its packaged documentation, lifecycle controls, requested permissions, dependencies, modules, technical metadata, and update controls. Provider names are supplied by package authors; they are not verification badges.
+The list shows each plugin's name, version, provider, source, status, and whether a newer compatible first-party release is available. Select a plugin to view its packaged documentation, plugin-owned settings, lifecycle controls, requested permissions, dependencies, modules, technical metadata, and update controls. Provider names are supplied by package authors; they are not verification badges.
 
 ## Install and update
 
@@ -30,6 +30,8 @@ Dependencies must remain enabled while a dependent plugin is active. System plug
 
 Installed plugins can be uninstalled from their detail modal. Plugin settings and namespaced data are retained for reinstall. Removing an installed override leaves any bundled copy disabled. Bundled plugins themselves can be disabled; their embedded package remains part of Kumbuka.
 
-Plugins that declare administrator-managed settings or structured resources appear in a separate **Plugin settings** section below **Recycle bin** in the administration sidebar. Their dedicated pages are generated from the plugin manifest. The Plugins page remains focused on package lifecycle, documentation, permissions, and updates. Kumbuka's built-in application presentation defaults remain under **Administration → Configuration**.
+Plugin-owned rendering features and settings live in the plugin detail modal. Kumbuka's built-in application presentation defaults remain under **Administration → Configuration**.
+
+Plugin documentation can include packaged screenshots. For example, the External Files plugin README and the documentation site both show a rendered annotated file so administrators can understand the result before enabling the plugin.
 
 For package creation and extension APIs, see [Plugin development](../plugins/index.md).

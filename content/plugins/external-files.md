@@ -50,6 +50,16 @@ Repeat `note` to annotate multiple lines or to attach multiple notes to the same
 
 Annotations render in a dedicated gutter rather than being inserted into the source text. Line numbers remain separate, so copying the source block does not copy annotation markers.
 
+## Screenshots
+
+Rendered external file with an annotation:
+
+![Annotated README rendered by the External Files plugin.](../../assets/screenshots/plugins/external-files-annotated-readme.png)
+
+Annotation detail:
+
+![Close-up of the External Files annotation list under the rendered source block.](../../assets/screenshots/plugins/external-files-annotation-detail.png)
+
 ## Presentation
 
 The **Appearance** group configures defaults for every External Files embed:

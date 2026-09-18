@@ -16,11 +16,15 @@ This is also a security boundary: declarative packages have no guest code to exe
 
 First-party releases are also published through `https://kumbuka.me/plugins/catalog.json`. Kumbuka uses that catalog to offer compatible updates directly from the administration page while retaining manual package upload for custom and third-party plugins.
 
-See [Plugin administration](../administration/plugins.md) for updates, manual upgrades, enable/disable behavior, dependencies, and uninstalling plugins. Plugins with administrator-managed configuration get dedicated pages in the **Plugin settings** section of the administration sidebar.
+See [Plugin administration](../administration/plugins.md) for updates, manual upgrades, enable/disable behavior, dependencies, and uninstalling plugins.
 
-## First-party plugin guides
+## Example: External Files
 
-- [External Files](external-files.md) — embed bounded text files from configured GitHub or GitLab repositories with line ranges and annotations.
+The **External Files** plugin can embed source files or focused line ranges from configured repositories and attach explanatory notes to individual lines.
+
+![Annotated README rendered by the External Files plugin.](../../assets/screenshots/plugins/external-files-annotated-readme.png)
+
+See [External Files](external-files.md) for configuration, security, and appearance defaults.
 
 ## Develop plugins
 
