@@ -55,11 +55,11 @@ Annotations render in a dedicated gutter rather than being inserted into the sou
 
 Rendered external file with an annotation:
 
-![Annotated README rendered by the External Files plugin.](../../assets/screenshots/plugins/external-files-annotated-readme.png)
+![Annotated README rendered by the External Files plugin.](/assets/screenshots/plugins/external-files-annotated-readme.png)
 
 Annotation detail:
 
-![Close-up of the External Files annotation list under the rendered source block.](../../assets/screenshots/plugins/external-files-annotation-detail.png)
+![Close-up of the External Files annotation list under the rendered source block.](/assets/screenshots/plugins/external-files-annotation-detail.png)
 
 ## Presentation
 

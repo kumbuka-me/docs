@@ -22,7 +22,7 @@ See [Plugin administration](../administration/plugins.md) for updates, manual up
 
 The **External Files** plugin can embed source files or focused line ranges from configured repositories and attach explanatory notes to individual lines.
 
-![Annotated README rendered by the External Files plugin.](../../assets/screenshots/plugins/external-files-annotated-readme.png)
+![Annotated README rendered by the External Files plugin.](/assets/screenshots/plugins/external-files-annotated-readme.png)
 
 See [External Files](external-files.md) for configuration, security, and appearance defaults.
 
