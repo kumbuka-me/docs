@@ -43,9 +43,19 @@ dist/<plugin-name>.kumbukaplugin
 
 Install that file from **Administration → Plugins**.
 
+Executable builds use the nearest containing `go.mod`, which lets multiple plugins share one parent module. The CLI selects the compiler from that module's `go` directive and builds with `GOOS=wasip1`, `GOARCH=wasm`, and workspace mode disabled. Declarative-only plugins need no Go module.
+
 ## SDK source selection
 
 `kumbuka-plugin init` accepts either `--sdk-version` or `--sdk-path`. When the CLI is built from an SDK checkout and neither option is supplied, it can use that checkout automatically.
+
+Quote local checkout paths when they contain spaces:
+
+```sh
+kumbuka-plugin init my-plugin --sdk-path "/path/to/SDK checkout"
+```
+
+The generated `go.mod` preserves that path as a quoted local replacement. Remove the local replacement and select a released SDK version before publishing a project intended for other developers.
 
 ## Release a first-party plugin
 

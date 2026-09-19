@@ -30,7 +30,7 @@ The **Includes** plugin can insert another page or one of its heading sections:
 {{include:operations/postgres#Restore from backup}}
 ```
 
-Includes can be nested within the supported recursion limit. Variable and snippet values are inserted as content and are not recursively evaluated as new macros.
+A heading include starts at the matching `#`-style heading and ends before the next heading of the same or a higher level, including an empty heading. Headings inside fenced code do not end a section. Includes support up to five nested expansions and reject recursive page or section references. Variable and snippet values are inserted as content and are not recursively evaluated as new macros.
 
 ## Inspect variables on a page
 
