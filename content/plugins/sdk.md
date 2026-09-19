@@ -17,6 +17,7 @@ The root package exposes helpers such as:
 - `RegisterWidget` for typed widget render handlers;
 - `RegisterWidgetWithCommands` when a widget also needs host-mediated state-changing commands;
 - `RegisterExporter` for typed page export handlers;
+- `RegisterAdminAction` for explicit administrator-triggered plugin operations;
 - `Text`, `Markdown`, and `Failure` for render results;
 - `Pages`, `Drafts`, `Settings`, `Resources`, `Storage`, `Attachments`, `HTTP`, `Icon`, and `Log` for host capabilities;
 - public wire and page/storage/attachment types used by plugin code.
@@ -32,6 +33,12 @@ The host still sanitizes resulting HTML and enforces manifest permissions. SDK h
 `Settings()` reads and writes the plugin's own simple settings namespace. A manifest can additionally declare administrator-managed typed singleton settings. Those fields are read through the same client with keys in `<module>.<field>` form. Kumbuka returns the manifest default until an administrator saves an explicit value, decrypts declared secret values for the owning plugin, and rejects guest writes to manifest-declared settings.
 
 Use `Resources()` for repeatable `admin-resource` records such as repository connections, endpoints, or reusable named values. Resource schemas use host-rendered typed fields, and secret values are decrypted only for the owning plugin. Both typed settings and resources require `settings:read` when executable plugin code reads them.
+
+## Administrator actions
+
+`RegisterAdminAction(id, run)` registers the callback for a manifest-declared `admin-action` module with the same ID. Kumbuka renders the button under **Administration → Plugin settings**, accepts the administrator POST request, and dispatches the action with the `admin-action` stage only while the plugin is active.
+
+The callback has no arbitrary request or response surface: it performs the plugin-owned operation and returns an error on failure. Kumbuka retains ownership of browser authentication, administrator authorization, CSRF protection, routing, and the surrounding administration UI.
 
 ## Outbound HTTP
 

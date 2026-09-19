@@ -76,7 +76,7 @@ Runs executable WASM to produce one bounded downloadable file for the current au
 Declares administrator-managed plugin settings. A settings module has two forms:
 
 - without `fields`, it is a boolean feature toggle; `requires` can reference other modules in the same package;
-- with `fields`, it is a typed singleton settings group rendered on the plugin's dedicated administration settings page.
+- with `fields`, it is a typed singleton settings group rendered on the plugin's page under **Administration → Plugin settings**.
 
 Typed settings use the same generic configuration field schema as `admin-resource`: `text`, `textarea`, `url`, `secret`, `boolean`, and `select`. Typed settings groups can contain up to 16 fields and cannot use `key: true` or `requires`.
 
@@ -119,7 +119,7 @@ Adds isolated browser-side rendering from packaged JavaScript and optional CSS. 
 
 ### `admin-resource`
 
-Declares a bounded host-rendered record schema owned by the plugin. Kumbuka owns forms, generic type validation, authorization, CSRF protection, namespaced persistence, and encryption of `secret` fields. Plugins that declare `settings` or `admin-resource` modules appear under **Administration → Plugin settings** rather than placing their configuration in the Plugins lifecycle page.
+Declares a bounded host-rendered record schema owned by the plugin. Kumbuka owns forms, generic type validation, authorization, CSRF protection, namespaced persistence, and encryption of `secret` fields. Plugins that declare `settings`, `admin-resource`, or `admin-action` modules appear under **Administration → Plugin settings** rather than placing their configuration in the Plugins lifecycle page.
 
 Each resource has exactly one `text` field marked `key: true`. Other fields use the same configuration field schema as typed `settings`. `required` and `max_bytes` apply generically. `boolean` fields may use `default: "true"` or `"false"`; `select` fields declare an `options` list and may choose one option as `default`. `url` defaults must be absolute HTTP(S) URLs. Secret fields cannot have defaults and are masked in the browser after saving. A configuration group or resource may contain at most 16 fields; a `select` may contain at most 32 unique options.
 
@@ -155,6 +155,23 @@ modules:
 ```
 
 Executable plugins with `settings:read` can read their own structured records through the SDK `Resources()` client. Secret fields are decrypted only for the owning plugin.
+
+### `admin-action`
+
+Declares one explicit administrator-triggered executable operation. Kumbuka renders the action under **Administration → Plugin settings** and owns authentication, authorization, CSRF handling, and the POST route. The action is disabled while the plugin is disabled; plugins do not receive an arbitrary administration HTTP route.
+
+`name` is required. `description` and `icon` are optional; icons use the normal identifier syntax. The module ID identifies the action dispatched to the guest.
+
+```yaml
+modules:
+  - type: admin-action
+    id: refresh-cache
+    name: Refresh cache
+    description: Mark all cached files stale.
+    icon: refresh-cw-lucide
+```
+
+Executable plugins register the matching module ID with `sdk.RegisterAdminAction`. The callback returns an error when the operation fails; successful callbacks return no content because Kumbuka owns the administration UI.
 
 ### `content-substitution`
 
