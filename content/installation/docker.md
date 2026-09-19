@@ -1,19 +1,21 @@
 # Docker
 
-The included Compose file starts Kumbuka, PostgreSQL 18, and the optional `html2pdf` renderer.
+The included Compose file starts Kumbuka, PostgreSQL 18, and the optional `html2pdf` service used for PDF export.
 
 ```sh
 docker compose -f deploy/compose.yaml up -d
 ```
 
-The development stack publishes Kumbuka on `127.0.0.1:8080`, the HTML-to-PDF service on `127.0.0.1:8081`, and PostgreSQL on `127.0.0.1:5432`. The Kumbuka service receives a PostgreSQL URL through `KUMBUKA__DATABASE_URL` and uses `KUMBUKA__PUBLIC_URL=http://localhost:8080`.
+The development stack publishes:
 
-## Container image
+- Kumbuka on `127.0.0.1:8080`;
+- the HTML-to-PDF service on `127.0.0.1:8081`;
+- PostgreSQL on `127.0.0.1:5432`.
 
-The production image is multi-stage. A Node build stage compiles the TypeScript frontend, a Go build stage embeds the generated web assets into the Kumbuka binary, and the final distroless image contains only the application and its writable runtime directories. PDF rendering stays in the separate `html2pdf` container. Node.js and npm are build dependencies only and are not present in the Kumbuka runtime image.
+Kumbuka is configured with `KUMBUKA__DATABASE_URL` and `KUMBUKA__PUBLIC_URL=http://localhost:8080`.
 
 ## Persistent data
 
-PostgreSQL owns the persistent Kumbuka data. The Compose deployment uses the `kumbuka-postgres` volume. Kumbuka itself does not require an application data volume for pages or uploads because those are stored in PostgreSQL.
+The Compose deployment stores Kumbuka data in PostgreSQL using the `kumbuka-postgres` volume. Pages, uploaded images, and attachments do not require a separate Kumbuka data volume.
 
 See [Runtime configuration](../configuration/runtime.md) for environment variables.

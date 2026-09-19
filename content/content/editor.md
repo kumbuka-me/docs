@@ -1,14 +1,14 @@
 # Editor and drafts
 
-The editor is available to `admin` and `editor` accounts. It works with Markdown source and server-rendered preview so preview behavior matches persisted page rendering.
+The editor is available to `admin` and `editor` users and works directly with Markdown.
 
 ![Kumbuka Markdown editor showing this page in split view](../assets/screenshots/editor.png)
 
-The editor opens in your last **Write** or **Split** view. **Preview** is temporary and never becomes the starting view.
+The editor opens in your last **Write** or **Split** view. **Preview** is temporary and is not saved as the starting view.
 
 ## Page fields
 
-A save can include:
+A page can include:
 
 - path and title;
 - optional icon and content-language override;
@@ -21,25 +21,26 @@ A save can include:
 
 ## Quick insert
 
-The Markdown editor provides the same reusable insert actions from the keyboard and toolbar:
+The editor provides reusable insert actions from the keyboard and toolbar:
 
-- type `@` to search for and insert a user mention;
-- type `{{` to search stored variables and insert the canonical `{{var:name}}` macro;
+- type `@` to search users and insert a mention;
+- type `{{` to search stored variables and insert `{{var:name}}`;
 - use **Insert → Mention** or **Insert → Variable** for the same pickers;
-- type `/` at the start of a line to open editor commands. Plugin-owned inserts and reusable Variables/Snippets entries are added to the same command menu when their plugins are enabled.
+- type `/` at the start of a line to open editor commands. Enabled plugins can add their own insert actions.
 
-Autocomplete is suppressed inside fenced code blocks where Kumbuka keeps knowledge macros literal.
+Autocomplete is disabled inside fenced code blocks.
 
-The Markdown source editor always disables coding ligatures so operator sequences remain visually literal while editing. Enable the **Coding Ligatures** plugin under **Administration → Plugins** to show operator ligatures in ordinary text, inline code, and fenced code in previews and rendered pages. When enabled alongside the bundled **Typographer** plugin, ASCII operators such as `-->`, `<<`, and `>>` are preserved instead of being converted to punctuation.
+The source editor also disables coding ligatures so operator sequences remain literal while editing. The **Coding Ligatures** plugin affects previews and rendered pages, not the Markdown source editor.
 
 ## Draft protection
 
-Kumbuka has two draft mechanisms with different purposes.
+Kumbuka has two different kinds of drafts:
 
-Browser autosave protects unsaved form state in the current browser. Private server drafts persist editor state per user in PostgreSQL so unfinished work can resume on another device. Saving or explicitly discarding removes the private server draft. Server drafts track the page revision they started from and can indicate that the persisted page changed underneath them.
+- **Browser autosave** protects unsaved form state in the current browser.
+- **Private server drafts** let a user resume unfinished editor state on another device. Saving or explicitly discarding the draft removes it. If the page changed after the draft was created, Kumbuka warns about the newer saved revision.
 
-A page whose lifecycle status is `draft` is different: it is a real persisted page visible through normal page/history behavior. See [Page lifecycle](lifecycle.md).
+A page whose lifecycle state is `draft` is different: it is a saved page with normal page and history behavior. See [Page lifecycle](lifecycle.md).
 
 ## Revision history
 
-Every persisted page update creates immutable revision history. When the bundled **Revision History** plugin is enabled, page details show recent revision metadata and link to the full history. Editors can restore an older revision by creating a new revision from its Markdown rather than mutating history in place.
+Every saved page update creates a revision. When the **Revision History** plugin is enabled, page details show recent revisions and link to the full history. Restoring an older revision creates a new revision from that Markdown; existing history is not rewritten.

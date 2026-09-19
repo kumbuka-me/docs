@@ -1,19 +1,36 @@
 # Configuration
 
-Kumbuka separates deployment-level configuration from mutable application settings.
+Kumbuka has two kinds of configuration:
 
-Deployment-level values are supplied as flags or `KUMBUKA__` environment variables. They include the listen address, PostgreSQL URL, public URL, plugin update check interval, recovery authentication overrides, OIDC secrets, theme directory, and logging controls.
+- **Deployment settings** are supplied as command-line flags or `KUMBUKA__` environment variables. They cover values such as the listen address, database URL, public URL, authentication overrides, deployment secrets, logging, and optional service endpoints.
+- **Application settings** are changed under **Administration → Configuration**. They cover authentication mode, registration, discussions, crawler settings, external header links, language and presentation defaults, PDF rendering, trusted-proxy headers, and non-secret OIDC settings.
 
-Application settings are stored in PostgreSQL and changed through the administration interface. They include browser authentication mode, user registration, discussions, the public `robots.txt` policy, configurable external header links, the instance-wide application logo, the default content language and typography size, PDF rendering, trusted-proxy header mappings, and non-secret OIDC settings. Deployment-level authentication values override only the authentication fields they manage. The administration UI marks those fields **Managed by deployment** and makes them read-only while the runtime setting is active. Deployment-level PDF configuration can separately override the persisted renderer endpoint.
+When a deployment override controls a setting, the administration UI marks that field **Managed by deployment** and makes it read-only.
 
-The regular server exposes `/robots.txt` without authentication. Administrators can choose **Disallow crawling**, **Allow crawling**, or **Disabled** under **Administration → Configuration**. New installations default to disallowing crawling. When crawling is allowed, Kumbuka also exposes `/sitemap.xml`, advertises it from `robots.txt`, and lists the home page plus verified and deprecated pages. Draft and archived pages are omitted. Disallowing or disabling crawling makes `/sitemap.xml` return 404; disabling also makes `/robots.txt` return 404.
+See [Runtime configuration](runtime.md) for the complete flag and environment-variable reference.
 
-External links are rendered beside global search for all authenticated users. Each link has a label and HTTP(S) URL plus optional icon and description. The icon picker always includes Lucide interface icons and can include icon resources contributed by enabled plugins. The first-party Simple Icons plugin contributes brand logos; built-in Lucide identifiers use `-lucide`, while that plugin uses `-simple`. The description is secondary header text and can carry information such as a version or environment. Each link can independently use the **Highlight**, **Lift**, or **None** hover effect. Its optional hover-text template accepts `{{label}}` and `{{description}}` placeholders; when omitted, Kumbuka uses the existing `Label — Description` title (or just the label when no description is set).
+## Search-engine crawling
 
-The application logo is managed separately under **Administration → Branding**. Kumbuka uses the embedded `favicon.svg` by default; an administrator can replace it with an instance-wide custom image stored in PostgreSQL and restore the built-in favicon at any time. See [Branding](../administration/branding.md).
+Under **Administration → Configuration**, choose one of:
 
-The PDF integration supports arbitrary request headers for bearer tokens, API keys, gateways, and other service-specific authentication. Each header can be marked **Sensitive**. Sensitive values are encrypted in PostgreSQL with the deployment-managed `KUMBUKA__ENCRYPTION_KEY`, are masked in the normal configuration response, and are returned to the browser only after an administrator explicitly chooses **Reveal**. Kumbuka rejects transport-controlled and renderer-protocol headers such as `Host`, `Content-Length`, `Content-Type`, `Accept`, `Transfer-Encoding`, and `Connection`.
+- **Disallow crawling** — serve `robots.txt` with `Disallow: /`;
+- **Allow crawling** — allow crawling and expose `sitemap.xml`;
+- **Disabled** — do not expose `robots.txt` or `sitemap.xml`.
 
-The PDF service test uses the endpoint and headers currently entered in the form, including unsaved replacements. Kumbuka renders a fixed two-page diagnostic document, verifies that a PDF was returned, reports its page count and size, and shows the generated document so an administrator can judge the visual result.
+New installations default to disallowing crawling. The sitemap contains the home page plus verified and deprecated pages; draft and archived pages are omitted.
 
-{{subpages}}
+## External header links
+
+External links appear beside global search for authenticated users. Each link has a label and HTTP(S) URL, plus optional icon, description, hover effect, and hover text.
+
+Built-in Lucide icons use the `-lucide` suffix. Enabled plugins can contribute additional icons; the first-party Simple Icons plugin uses the `-simple` suffix.
+
+## Branding
+
+The application logo is managed under **Administration → Branding**. See [Branding](../administration/branding.md).
+
+## PDF service
+
+Configure the HTML-to-PDF endpoint and optional request headers under **Administration → Configuration**. Headers such as bearer tokens or API keys can be marked sensitive; configure `KUMBUKA__ENCRYPTION_KEY` so sensitive values can be encrypted at rest.
+
+Use the PDF service test to verify the current endpoint and headers before saving them. A deployment can override only the PDF endpoint with `KUMBUKA__PDF_URL`.

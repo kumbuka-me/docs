@@ -28,4 +28,4 @@ Editors can review images they uploaded from their settings area. The list start
 
 Administrators can manage uploads across every user under **Administration → Images**. That view also starts with the 30 newest images, supports search by filename or uploader, and loads additional matches on demand.
 
-Static sites have no account settings. Their read-only navigation/page-content toggles use browser-local state only and never call a Kumbuka server.
+Static sites have no account settings. Read-only presentation preferences are stored in the browser.

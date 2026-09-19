@@ -1,28 +1,26 @@
 # Static sites
 
-Kumbuka can work like a small MkDocs-style generator: write ordinary Markdown files in a directory and build a complete read-only site without PostgreSQL or a running Kumbuka instance.
-
-This repository's own documentation is configured by `site.toml`; the published Markdown lives under `content/`.
+`kumbuka-cli build` turns a directory of Markdown files into a read-only documentation site. No Kumbuka server or PostgreSQL database is required to serve the generated files.
 
 ## Build
-
-The standalone Kumbuka CLI contains the read-only browser assets needed by the generator, so it can build a site without the server binary:
 
 ```sh
 kumbuka-cli build
 ```
 
-In this documentation repository, the convenience target downloads the pinned Kumbuka CLI and runs the generator:
+By default, the CLI looks for `kumbuka-site.toml`. Use `--config` to select another file.
 
-```sh
-make build
-```
+Without a configuration file, the defaults are:
 
-By default, `kumbuka-cli build` looks for `kumbuka-site.toml`. The configuration file can be changed with `--config`; this repository deliberately uses `site.toml`. When no configuration file is present, `kumbuka-cli` uses `Documentation` as the site name, `docs` as the source directory, and `site` as the output directory. Static presentation defaults to sidebar navigation, comfortable density, and a 280-pixel sidebar. Command-line flags can override the configuration.
+- site name: `Documentation`;
+- source directory: `docs`;
+- output directory: `site`;
+- sidebar navigation with comfortable density;
+- 280-pixel sidebar width.
 
 ## Configuration
 
-A complete `site.toml` can use all of the following settings:
+Example `site.toml`:
 
 ```toml
 site_name = "My Documentation"
@@ -38,10 +36,10 @@ navigation_density = "comfortable"
 sidebar_width = 280
 robots = "allow"
 
-logo = "../branding/logo.svg"
-favicon = "../branding/favicon.svg"
-favicon_ico = "../branding/favicon.ico"
-assets_dir = "../assets"
+logo = "assets/logo.svg"
+favicon = "assets/favicon.svg"
+favicon_ico = "assets/favicon.ico"
+assets_dir = "assets"
 
 [[external_links]]
 label = "Repository"
@@ -52,21 +50,21 @@ hover_effect = "lift"
 hover_text = "{{label}} | {{description}}"
 ```
 
-`logo`, `favicon`, `favicon_ico`, and `assets_dir` are resolved relative to the configuration file. Normal relative paths, including `../`, are supported, so assets may live in a parent directory. Absolute paths are supported too. `source_dir` and `output_dir` are resolved relative to the process working directory.
+`site_url` sets the public URL prefix used in generated links. Set it correctly when the site is hosted below a path, such as a GitHub Pages project site.
 
-`site_url` determines the URL prefix used by generated links. This matters for project sites such as GitHub Pages, where a site may be hosted below a repository path rather than at the domain root.
+`navigation_style` accepts `sidebar`, `topbar`, or `tree`. `navigation_density` accepts `comfortable` or `compact`. `sidebar_width` must be between 220 and 420 pixels.
 
-`navigation_style` controls the desktop navigation layout and accepts `sidebar` (the default), `topbar`, or `tree`. `navigation_density` accepts `comfortable` (the default) or `compact`. `sidebar_width` sets the navigation width in pixels and must be between 220 and 420; the default is 280. The width is used by sidebar/tree navigation and by the mobile navigation drawer; desktop top-bar navigation does not use it. The same values can be overridden for one build with `--navigation-style`, `--navigation-density`, and `--sidebar-width`.
+`robots` accepts:
 
-`robots` controls generated crawler guidance. `allow` writes a `robots.txt` that permits crawling and links to `sitemap.xml` when `site_url` is absolute. `disallow` writes `Disallow: /`, while `none` omits the file entirely. Static builds default to `allow`; the regular Kumbuka application has its own administrator-controlled setting and defaults to `disallow`.
+- `allow` — allow crawling and generate a sitemap when `site_url` is an absolute HTTP(S) URL;
+- `disallow` — generate `robots.txt` with `Disallow: /`;
+- `none` — do not generate `robots.txt`.
 
-`external_links` adds optional links beside search in the generated header. Each entry requires `label` and an absolute HTTP(S) `url`; `icon` is an optional icon identifier and `description` is optional secondary text such as a version, environment, or provider name. `hover_effect` accepts `highlight` (the default), `lift`, or `none`. `hover_text` customizes the browser tooltip and can contain `{{label}}` and `{{description}}`. Built-in Lucide identifiers use the `-lucide` suffix, for example `book-open-lucide`. The first-party Simple Icons plugin contributes names such as `github-simple`; other `icon-resource` plugins define their own names. Multiple entries are rendered in configuration order.
+Each `external_links` entry requires a label and absolute HTTP(S) URL. Icons and descriptions are optional. Enabled static-site plugins can contribute additional icon sets.
 
 ## Project plugins
 
-Static builds use the project-level `.kumbukaplugins` file to resolve optional rendering and presentation features. The file pins plugin IDs, repositories, tag prefixes, release assets, and versions; `kumbuka-cli build` resolves those packages and selects the declared plugins required by the discovered Markdown and static renderer. The default dependency file is `.kumbukaplugins`; use `--plugins FILE` to select another file for one build.
-
-Manage the file with the CLI instead of downloading package archives by hand:
+Static builds use `.kumbukaplugins` to pin optional rendering and presentation plugins. Manage the file with the CLI:
 
 ```sh
 kumbuka-cli plugins list
@@ -78,11 +76,11 @@ kumbuka-cli plugins add \
 kumbuka-cli plugins remove --id com.example.chart
 ```
 
-This documentation repository pins its static-site plugins in `.kumbukaplugins`: Subpages renders the section indexes, Tables renders Markdown tables used throughout these pages, Simple Icons supplies the `github-simple` header icon, and Coding Ligatures plus Typographer define the selected text presentation behavior.
+Use `--plugins FILE` to select a different plugin dependency file for one build.
 
 ## Filesystem routes
 
-Markdown paths map directly to clean static URLs. The source directory must contain a root `index.md`, which becomes the site home page:
+The source directory must contain a root `index.md`, which becomes the site home page. Markdown paths map to clean URLs:
 
 ```text
 docs/index.md                   -> /
@@ -91,73 +89,45 @@ docs/installation/index.md      -> /installation/
 docs/installation/docker.md     -> /installation/docker/
 ```
 
-When `site_url` contains a path prefix, that prefix is prepended to every generated URL.
+When `site_url` contains a path prefix, the prefix is added to generated URLs.
 
 ## Links and assets
 
-Ordinary relative Markdown links are supported:
+Normal relative Markdown links are rewritten to generated routes:
 
 ```markdown
 [Docker](installation/docker.md)
 ```
 
-Kumbuka resolves the source file at build time and rewrites the link to the generated HTML route. A `.md` link to a missing source file fails the build.
+A link to a missing Markdown source file fails the build. Kumbuka wiki links are also resolved during the build, and unresolved or ambiguous targets fail validation.
 
-Non-Markdown files under the source directory are copied into the output tree. Relative image and asset URLs are rewritten so they continue to work after page routes become directory-style URLs.
+Non-Markdown files under the source directory are copied to the generated site. Relative image and asset links are rewritten to remain valid after page URLs become directory-style routes.
 
-Kumbuka wiki links use the same Kumbuka renderer and are rewritten to static routes. Unresolved or ambiguous wiki-link targets fail the build, so a published static site does not silently ship broken Kumbuka links. When the Subpages plugin is declared, `{{subpages}}` reads the filesystem page hierarchy through the static navigation capability and supports the same optional `title="..."` heading override as server-rendered pages.
+The Subpages plugin supports `{{subpages}}` in static builds when it is declared in `.kumbukaplugins`.
 
 ## Logos, favicons, and extra assets
 
-The server logo configured under **Administration → Branding** is stored in PostgreSQL and is not read by `kumbuka-cli build`. Static sites use only the branding files configured in `site.toml`.
-
-Branding is entirely opt-in. The builder does not copy Kumbuka logos or favicons into a generated site.
+Static-site branding is configured in the site configuration and is independent of branding configured in the Kumbuka server.
 
 ```toml
-# These paths are relative to the configuration file.
 logo = "assets/logo.svg"
-favicon = "content/assets/favicon.svg"
-favicon_ico = "content/favicon.ico"
+favicon = "assets/favicon.svg"
+favicon_ico = "assets/favicon.ico"
 assets_dir = "assets"
 ```
 
-These path-resolution rules are the same as in the complete configuration example above.
+These paths are resolved relative to the configuration file. Relative paths may use `../`, and absolute paths are also supported.
 
-Configured branding files keep a natural public path instead of being renamed:
+Supported image formats are SVG, PNG, JPEG, WebP, GIF, and ICO. `favicon_ico` must reference an ICO file. If `logo`, `favicon`, or `favicon_ico` is omitted, that branding element is omitted from the generated site.
 
-- a file below `source_dir` keeps its path relative to `source_dir`;
-- a file below `assets_dir` is published below `assets/` with the same relative path;
-- a branding file outside both trees is published below `assets/` using its own filename;
-- `assets_dir` itself is copied recursively below `assets/`, preserving subdirectories and skipping hidden directories.
+Do not edit the output directory manually; each build recreates it.
 
-This documentation repository can publish additional files from the configured `assets_dir`. Branding is opt-in: add `logo`, `favicon`, or `favicon_ico` paths relative to `site.toml` when those files are present.
+## Generated output
 
-Logo and favicon images support SVG, PNG, JPEG, WebP, GIF, and ICO. `favicon_ico` must point to an ICO file; Kumbuka copies images without converting them. Missing paths, incorrect file/directory types, and paths overlapping `output_dir` fail validation before existing output is cleared.
+A static build includes the generated pages, a `404.html` page, search data, selected theme and plugin assets, source assets, and `.nojekyll`. It can also include `robots.txt` and `sitemap.xml` according to the site configuration.
 
-When `logo` is omitted, the header displays `site_name` as text. When `favicon` or `favicon_ico` is omitted, the corresponding icon link is omitted. There is no implicit Kumbuka branding fallback.
-
-Build assets are copied in this order: configured `assets_dir`, the static browser runtime, non-Markdown files from `source_dir`, and explicit branding files. Later copies take precedence. Avoid placing user files at the runtime-owned `assets/js/` and `assets/css/` paths.
-
-For images used inside Markdown, you can continue placing them under `source_dir` and linking with relative paths, such as `![Logo](images/logo.svg)` from the root `index.md`. Do not edit files directly in `output_dir`: each build deletes and recreates it.
-
-## What the build contains
-
-A static build includes:
-
-- generated HTML pages and a `404.html` page;
-- the static-site CSS runtime and selected theme data;
-- only the read-only TypeScript modules needed for navigation, page contents, Markdown enhancements, and static search;
-- no built-in logo, mark, or favicon files unless the user explicitly configures them;
-- `search-index.json` for browser-side search;
-- source assets such as images;
-- `.nojekyll` for GitHub Pages;
-- `sitemap.xml` when `site_url` is an absolute HTTP(S) URL;
-- `robots.txt` unless `robots = "none"`.
-
-It intentionally does **not** ship the Kumbuka editor, authentication, account menus, admin UI, drafts, notifications, API tokens, or write APIs. The output is ordinary static files and can be hosted by GitHub Pages, Cloudflare Pages, S3-compatible storage, or any web server.
+Static sites do not include the editor, authentication, account settings, administration UI, drafts, notifications, API tokens, or write APIs. The generated directory can be hosted by GitHub Pages, Cloudflare Pages, S3-compatible storage, or any normal web server.
 
 ## GitHub Pages
 
-A typical CI job installs `kumbuka-cli`, runs `kumbuka-cli build`, and publishes the generated `site/` directory as the Pages artifact. No PostgreSQL service is needed for that job.
-
-For local preview, override the site URL to match your local server root if the checked-in configuration uses a GitHub Pages project prefix.
+A typical Pages workflow installs `kumbuka-cli`, runs `kumbuka-cli build`, and publishes the configured output directory. No PostgreSQL service is needed for the build.

@@ -1,17 +1,17 @@
 # Markdown
 
-Kumbuka uses Goldmark for its core Markdown renderer. Wiki links remain a built-in Kumbuka feature; optional syntax and presentation features such as callouts, tabs, details, tables, task lists, autolinks, syntax highlighting, footnotes, definition lists, and typographic substitutions are provided by plugins and managed under **Administration → Plugins**.
+Kumbuka supports standard Markdown plus Kumbuka-specific features and optional plugin syntax. Wiki links are built in; features such as callouts, tabs, details, tables, task lists, autolinks, syntax highlighting, footnotes, definition lists, and typographic substitutions are provided by plugins.
 
 ## Images
 
-Use ordinary Markdown image syntax, optionally followed immediately by a width:
+Use normal Markdown image syntax. Kumbuka also supports an optional width directly after the image:
 
 ```markdown
 ![Diagram](images/diagram.png){width=640}
 ![Diagram](images/diagram.png){width=50%}
 ```
 
-Widths may be whole pixels (with an optional `px` suffix) or a percentage of the containing content area. Height scales proportionally. See [Image sizing](media.md#image-sizing) for limits, reference-style images, and export behavior.
+See [Image sizing](media.md#image-sizing) for supported values and export behavior.
 
 ## Wiki links
 
@@ -23,7 +23,7 @@ Widths may be whole pixels (with an optional `px` suffix) or a percentage of the
 [[operations/postgres/restore#Verify the restore|verification steps]]
 ```
 
-Append `#Heading` to link directly to a rendered heading. Heading fragments use the same stable lowercase anchor form as the page renderer, while the page path remains the backlink and broken-link target. Wiki links are ignored inside fenced code blocks.
+Append `#Heading` to link to a heading on the target page. Wiki-link syntax inside fenced code blocks remains literal.
 
 ## Callouts
 
@@ -62,24 +62,24 @@ Use `???+` to render the details block initially open.
 
 ## Page functions
 
-The bundled **Subpages** plugin provides a standalone function that inserts the current page's child navigation:
+The **Subpages** plugin can insert links to the current page's children:
 
 ```markdown
 {{subpages}}
 ```
 
-The default heading is **Pages in this section**. Set a custom heading with the `title` option, or use an empty title to hide the heading while keeping the child navigation:
+Set a custom heading or hide it entirely:
 
 ```markdown
 {{subpages title="Related pages"}}
 {{subpages title=""}}
 ```
 
-Static builds support the same `{{subpages}}` title behavior when the project declares the Subpages plugin in `.kumbukaplugins`.
+Static builds support the same syntax when the project includes the Subpages plugin.
 
-## Server-only knowledge macros
+## Reusable content
 
-The Kumbuka server can expand reusable knowledge content before Markdown rendering:
+The Variables, Snippets, and Includes plugins provide reusable content:
 
 ```text
 {{var:name}}
@@ -87,6 +87,6 @@ The Kumbuka server can expand reusable knowledge content before Markdown renderi
 {{include:path/to/page}}
 ```
 
-Variables, snippets, and page includes are provided by separate bundled plugins; Includes inserts another page's Markdown. Plugin content expansion is skipped inside fenced code, and includes are recursion-bounded. Disable the corresponding plugin to keep that syntax literal.
+These macros remain literal inside fenced code blocks. Includes may be nested only within the supported recursion limit.
 
-See [Tables](tables.md) for Kumbuka's table directive syntax.
+See [Templates and snippets](../knowledge/snippets-templates.md) for authoring details and [Tables](tables.md) for Kumbuka's table directive syntax.

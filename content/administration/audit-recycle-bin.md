@@ -2,7 +2,7 @@
 
 ## Audit log
 
-Application services record administrative and content-management actions such as page deletion/moves/reviews, settings changes, plugin data changes, imports, and other mutations. Administrators can inspect recent audit events with actor, action, object type/key, detail, and timestamp.
+Kumbuka records administrative and content-management actions such as page deletes, moves, reviews, settings changes, plugin-data changes, and imports. Administrators can inspect recent events with the actor, action, affected object, details, and timestamp.
 
 ## Recycle bin
 

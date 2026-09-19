@@ -1,14 +1,20 @@
 # Authentication
 
-The full Kumbuka server supports `local`, `trusted-proxy`, and `oidc` browser authentication. A `none` mode exists for local recovery/development scenarios. API and media endpoints can additionally accept personal access tokens where their route policy allows it.
+Kumbuka supports three browser authentication modes:
 
-Authentication establishes an account; authorization then restricts privileged routes by role. Kumbuka uses three roles: `admin`, `editor`, and `viewer`.
+- `local` — Kumbuka-managed usernames and passwords;
+- `trusted-proxy` — identity supplied by a trusted reverse proxy;
+- `oidc` — login through an OpenID Connect provider.
 
-- `admin` can administer Kumbuka and perform destructive page operations.
-- `editor` can create and edit content and use editor-only APIs.
+A `none` mode is available for local development and recovery scenarios. API and media routes can additionally accept [personal access tokens](../api/tokens.md) where supported.
+
+Kumbuka has three roles:
+
+- `admin` can administer Kumbuka and perform destructive page operations;
+- `editor` can create and edit content;
 - `viewer` can use authenticated read features.
 
-OIDC and trusted-proxy modes can additionally grant effective administrator access from one configured external group. External elevation never replaces the manually assigned Kumbuka role. Account suspension is global: a disabled account cannot authenticate through any browser mode or personal API token.
+OIDC and trusted-proxy authentication can grant effective administrator access from a configured external group without changing the user's assigned Kumbuka role. Disabling a Kumbuka account blocks all browser authentication modes and personal access tokens.
 
 New-user registration is controlled by an application setting. Unknown OIDC identities can be queued for administrator approval when registration is closed.
 
@@ -18,4 +24,4 @@ Read the mode-specific pages:
 - [Trusted proxy](trusted-proxy.md)
 - [OIDC](oidc.md)
 
-Static site mode has no authentication at all; see [Static sites](../static-sites.md).
+Generated static sites have no authentication; see [Static sites](../static-sites.md).

@@ -12,4 +12,4 @@ Kumbuka ships bundled widgets for:
 
 Users can show or hide individual enabled widgets under **Settings → Plugin widgets**. Disabling or uninstalling the owning plugin removes its widgets for everyone.
 
-Opening a page records a view for the authenticated user and supplies the activity used by Recently Viewed and Popular Pages. The static filesystem site has no accounts, plugin widgets, or server-side view tracking, so it does not generate a personalized dashboard.
+Opening a page contributes to **Recently Viewed** and **Popular Pages** activity. Static sites have no accounts or personalized dashboard widgets.

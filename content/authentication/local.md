@@ -1,47 +1,37 @@
 # Local authentication
 
-Local authentication uses Kumbuka-managed username/password credentials and opaque browser sessions.
+Local authentication uses Kumbuka-managed usernames and passwords. Local credentials can also be added to users who normally sign in through OIDC or a trusted proxy.
 
 ## Accounts and local credentials
 
-Kumbuka users are not permanently classified as local, OIDC, or trusted-proxy accounts. A single user can have an OIDC identity, authenticate through trusted proxy headers, and also have a local password.
+Accounts created automatically through OIDC or trusted-proxy login do not receive a local password. An administrator can add one under **Administration → Users**. The user can then sign in through `/auth/local` when local login is enabled and can change their own password under **Account → Settings**.
 
-Accounts created automatically by OIDC or trusted-proxy login start without a local password. They cannot use `/auth/local` until an administrator creates their first local password in **Administration → Users**. Users cannot grant themselves this additional login method. After an administrator grants it and the user signs in locally, the user can change it under **Account → Settings** by providing the current password.
+Administrators can also disable an individual local credential while an external authentication mode is active. This blocks local sign-in for that account without disabling its OIDC, trusted-proxy, or personal-token access.
 
-The local username is the account's current Kumbuka username. Creating a local password does not expose the local endpoint: `/auth/local` must separately be enabled by selecting local authentication mode or setting `KUMBUKA__LOCAL_LOGIN=true`.
+Passwords must contain at least 12 Unicode characters and be no more than 72 UTF-8 bytes. Replacing a local password invalidates the account's previous local sessions. Local browser sessions expire after 12 hours.
 
-While OIDC or trusted-proxy authentication is active, administrators can disable an individual local credential from **Administration → Users**. The control appears only for accounts that have a local password. A disabled credential cannot create a new local session, and disabling it revokes its existing local sessions. OIDC identities, trusted-proxy authentication, and API tokens belonging to the same Kumbuka user are not affected. Kumbuka does not allow this state to be changed from the user editor while local authentication is active, preventing an administrator from disabling the login method currently protecting the installation.
-
-Administrators can create or replace another account's local password from the same user editor. Passwords must contain at least 12 Unicode characters and at most 72 UTF-8 bytes. Setting a password enables the local credential and revokes its previous local sessions.
-
-The first administrator is created through `/setup` on a fresh database. Passwords must contain at least 12 Unicode characters and at most 72 UTF-8 bytes. Password hashes use bcrypt.
-
-A successful sign-in creates a random 32-byte session token. Kumbuka stores only a SHA-256 representation of that token in PostgreSQL and sends the raw value in an HTTP-only cookie. Local sessions expire after 12 hours.
-
-Users signed in with a local password can change their own password from **Account → Settings**. They must provide their current password. Changing it revokes their other local sessions and keeps the current browser signed in with a fresh session.
+The first administrator is created through `/setup` on a fresh database.
 
 ## Enable local authentication on an existing installation
 
-An existing installation can reuse its current Kumbuka administrator; no replacement administrator or manual database change is required for the normal upgrade path.
+To switch an existing installation to local authentication:
 
-While still signed in with the current authentication mode:
-
-1. Open **Administration → Users** and edit an enabled administrator account.
-2. Open **Set local password**, enter and confirm a password, and save the user.
+1. Open **Administration → Users** and edit an enabled administrator.
+2. Use **Set local password** to create a password for that account.
 3. Open **Administration → Configuration → Authentication**.
-4. Select **Local account** and save the authentication settings.
+4. Select **Local account** and save.
 
-Kumbuka validates local mode before enabling it. At least one enabled administrator must already have an enabled local credential, so create the password before switching the authentication mode.
+Kumbuka requires at least one enabled administrator with an enabled local credential before local mode can be selected.
 
-If `KUMBUKA__AUTH_MODE` is configured, the authentication mode is managed by the deployment and cannot be changed in the administration UI. Set the administrator's local password first, then change the deployment override to `local` and restart Kumbuka. Do not switch the runtime override to `local` before the credential exists, because startup validation rejects local mode without a usable local administrator.
+If `KUMBUKA__AUTH_MODE` is set by the deployment, the authentication mode is read-only in the administration UI. Create the administrator's local password first, then change the deployment override to `local` and restart Kumbuka.
 
-For OIDC or trusted-proxy deployments that only need a break-glass password, keep the external mode active and set `KUMBUKA__LOCAL_LOGIN=true` instead of changing the primary authentication mode.
+For an OIDC or trusted-proxy installation that only needs a recovery login, keep the external mode active and set `KUMBUKA__LOCAL_LOGIN=true` instead.
 
 ## Recovery login
 
-`KUMBUKA__LOCAL_LOGIN=true` can expose `/auth/local` alongside another configured mode as a break-glass login. Administrators can set or replace their local recovery password from the configuration area.
+`KUMBUKA__LOCAL_LOGIN=true` exposes `/auth/local` alongside another authentication mode. Administrators can set or replace their recovery password from the user administration page.
 
-If every application login path is unavailable, an operator with PostgreSQL access can re-enable a local credential directly:
+If all application login paths are unavailable, an operator with PostgreSQL access can re-enable the local credential for an administrator:
 
 ```sql
 UPDATE local_credentials
@@ -49,9 +39,9 @@ SET enabled = true, updated_at = now()
 WHERE user_id = (SELECT id FROM users WHERE username = 'admin');
 ```
 
-The `/auth/local` endpoint must also be exposed, either by local authentication mode or `KUMBUKA__LOCAL_LOGIN=true`.
+The `/auth/local` endpoint must also be enabled through local mode or `KUMBUKA__LOCAL_LOGIN=true`.
 
-For database-only emergency recovery when the endpoint is not exposed, enable the credential and temporarily select local mode together:
+If the endpoint is not available, temporarily switch the stored authentication mode to `local` at the same time:
 
 ```sql
 BEGIN;
@@ -64,11 +54,9 @@ WHERE singleton = true;
 COMMIT;
 ```
 
-After signing in, restore the intended authentication mode in **Administration → Configuration**. A deployment-level `KUMBUKA__AUTH_MODE` override takes precedence over these database settings.
+After signing in, restore the intended authentication mode. A deployment-level `KUMBUKA__AUTH_MODE` override takes precedence over the stored setting.
 
-Use local recovery deliberately: it is intended to keep access possible when an external identity provider or proxy is unavailable.
-
-If the Kumbuka account itself was disabled, enabling only its local credential is not enough. Re-enable both records during database recovery:
+If the Kumbuka account itself is disabled, re-enable both the account and its local credential:
 
 ```sql
 BEGIN;

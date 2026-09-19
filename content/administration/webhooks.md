@@ -1,12 +1,12 @@
 # Webhooks
 
-Administrators can configure outgoing HTTP webhooks under **Administration → Webhooks**. Each webhook has a name, an absolute HTTP(S) endpoint, an enabled flag, a JSON payload template, optional request headers, retry settings, and an event allow-list.
+Administrators can configure outgoing HTTP webhooks under **Administration → Webhooks**. Each webhook has a name, an HTTP(S) endpoint, an enabled flag, a JSON payload template, optional request headers, retry settings, and an event allow-list.
 
 ## Payload templates
 
-Kumbuka uses Notifykit to render the request body with Go `text/template`. The rendered result must be valid JSON. Notifykit's default template helpers are available, including `json`; use it whenever a template value is inserted into JSON.
+Payloads use Go template syntax and must render to valid JSON. Use the `json` helper when inserting values into JSON strings or fields.
 
-The template context contains a stable event input and Kumbuka payload data:
+The template context includes:
 
 ```text
 .Input.Event
@@ -20,7 +20,7 @@ The template context contains a stable event input and Kumbuka payload data:
 .Title
 ```
 
-For example, a Slack-style payload can be configured as:
+For example:
 
 ```gotemplate
 {
@@ -37,22 +37,22 @@ For example, a Slack-style payload can be configured as:
 }
 ```
 
-`Payload.URL` is populated for page events when `KUMBUKA__PUBLIC_URL` is configured. **Send test** renders the same configured template against a `webhook.test` event, regardless of the webhook's event allow-list.
+`Payload.URL` is populated for page events when `KUMBUKA__PUBLIC_URL` is configured. **Send test** renders the configured template with a `webhook.test` event.
 
 ## Request headers
 
-Webhooks can send arbitrary application-level HTTP request headers, for example `Authorization`, `X-API-Key`, or receiver-specific metadata. Kumbuka always sends `X-Kumbuka-Event` and a `Kumbuka-Webhook/1` user agent unless the webhook configuration overrides them. Transport-controlled headers such as `Host`, `Content-Length`, and `Content-Type` cannot be configured; the request body is JSON and Notifykit supplies its JSON content type.
+Webhooks can send application-level request headers such as `Authorization` or `X-API-Key`. Headers containing credentials can be marked sensitive; configure `KUMBUKA__ENCRYPTION_KEY` so Kumbuka can encrypt those values at rest.
 
-Headers containing credentials can be marked sensitive. Sensitive values are encrypted in PostgreSQL using `KUMBUKA__ENCRYPTION_KEY`, masked in the administration UI, and decrypted only for delivery or an explicit administrator reveal action.
+`Host`, `Content-Length`, and `Content-Type` cannot be configured manually. Kumbuka sends JSON requests and includes `X-Kumbuka-Event` unless it is overridden.
 
 ## Retries
 
-Retries are optional per webhook and disabled by default. When enabled, Kumbuka explicitly uses Notifykit's `DefaultRetryPolicy`. The policy retries classified network and timeout failures, HTTP `408`, HTTP `429`, and HTTP `5xx` responses. Other client responses and permanent configuration or template failures are not retried.
+Retries are disabled by default. When enabled, Kumbuka retries network and timeout failures, HTTP `408`, HTTP `429`, and HTTP `5xx` responses.
 
-The retry count is the number of attempts **after** the initial request. Backoff is exponential from the configured initial value up to the configured maximum. Jitter can randomize the local wait, and a receiver-provided HTTP `Retry-After` value is honored as a minimum delay. Disabling retries makes exactly one delivery attempt.
+The retry count is the number of attempts after the initial request. Backoff grows from the configured initial delay up to the configured maximum, optional jitter can vary the delay, and `Retry-After` is honored as a minimum wait when provided by the receiver.
 
 ## Delivery behavior
 
-Page creates/updates/moves/deletes, review requests/updates/cancellations/decisions, revision restores, comments, imports, and bulk operations emit events after the primary mutation commits. Webhook delivery remains a best-effort side effect: an unavailable endpoint does not roll back a successful page change.
+Page changes, reviews, revision restores, comments, imports, and bulk operations can emit webhook events. Delivery happens after the primary Kumbuka operation succeeds, so an unavailable webhook endpoint does not roll back the page change.
 
-Kumbuka records the final HTTP status or delivery error together with the number of attempts in the recent-deliveries list. The webhook HTTP client uses a five-second timeout for each attempt.
+Recent deliveries show the final HTTP status or error and the number of attempts. Each delivery attempt has a five-second timeout.

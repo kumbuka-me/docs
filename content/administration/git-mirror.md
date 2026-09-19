@@ -1,6 +1,6 @@
 # Git-friendly mirror
 
-Kumbuka can export the current PostgreSQL-backed knowledge base into a deterministic directory tree that is suitable for committing to Git or copying into a normal backup system.
+`kumbuka-cli mirror` exports the current knowledge base as a directory tree that can be committed to Git or copied into a backup system.
 
 ```sh
 kumbuka-cli mirror \
@@ -8,9 +8,7 @@ kumbuka-cli mirror \
   --output kumbuka-mirror
 ```
 
-The database remains the only source of truth. The mirror is intentionally **one-way**: Kumbuka never reads changes back from the generated directory and it does not invoke Git.
-
-Each run replaces the selected output directory with a complete snapshot:
+The mirror is one-way: editing the generated files does not change Kumbuka. Each run replaces the selected output directory with a complete snapshot.
 
 ```text
 kumbuka-mirror/
@@ -25,6 +23,6 @@ kumbuka-mirror/
     └── 17/checklist.pdf
 ```
 
-`pages/` contains the original Markdown source without front-matter changes. `metadata/` contains portable JSON sidecars with the page identity, title, lifecycle data, groups, tags, ownership/review settings, properties, authorship and timestamps. Uploaded images and attachments are copied byte-for-byte under their stable Kumbuka identifiers. `manifest.json` records the mirror format version and the stable object inventory.
+`pages/` contains the original Markdown. `metadata/` contains page metadata such as title, lifecycle state, groups, tags, ownership, review settings, properties, authorship, and timestamps. Images and attachments are exported under stable identifiers, and `manifest.json` describes the snapshot contents.
 
-The output intentionally contains no generation timestamp, so running the command twice against unchanged content does not create a meaningless Git diff. Treat the mirror as potentially sensitive: it contains all non-deleted pages and uploaded files regardless of page access rules.
+Unchanged content produces stable output, which keeps Git diffs useful. Treat a mirror as sensitive: it contains all non-deleted pages and uploaded files, including content hidden by page-access rules.

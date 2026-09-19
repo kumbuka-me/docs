@@ -2,14 +2,12 @@
 
 Users can create personal access tokens with a name and optional expiration. Administrators can also manage tokens across accounts.
 
-The plaintext secret is shown only when the token is issued. Kumbuka stores a hashed representation for later authentication and records metadata such as creation time, creator, optional expiration, and last use.
+The token secret is shown only when it is created, so copy it immediately and store it securely. Kumbuka keeps the information needed to validate the token along with metadata such as creation time, creator, optional expiration, and last use.
 
-Send a token as a bearer credential:
+Send the token as a bearer credential:
 
 ```http
 Authorization: Bearer <token>
 ```
 
-Malformed or rejected explicit bearer credentials are treated as invalid credentials rather than as an anonymous request.
-
-Tokens authenticate API/media routes that permit bearer authentication; role authorization still applies to the resolved Kumbuka user.
+Tokens work only on API and media routes that allow bearer authentication. The token uses the permissions of its Kumbuka user, including role and page-access restrictions.

@@ -1,6 +1,6 @@
 # API
 
-The normal Kumbuka server exposes a JSON API under `/api`. API routes accept an authenticated browser session or a bearer token according to route policy. Role middleware further protects editor and administrator operations.
+Kumbuka exposes a JSON API under `/api`. Requests can use an authenticated browser session or, where supported, a personal access token. Individual endpoints enforce the same role and page-access rules as the application.
 
 Important endpoints include:
 
@@ -26,6 +26,6 @@ Important endpoints include:
 | `POST`           | `/api/notifications/{id}/read` | Mark one notification read.                 |
 | `POST`           | `/api/notifications/all/read`  | Mark the complete notification inbox read.  |
 
-API error responses use Kumbuka's JSON problem structure rather than plain text.
+Errors are returned as JSON problem responses.
 
-See [Personal access tokens](tokens.md) for bearer authentication. Static sites expose no Kumbuka API.
+See [Personal access tokens](tokens.md) for bearer authentication. Static sites do not expose the Kumbuka API.

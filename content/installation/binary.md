@@ -1,28 +1,20 @@
 # Binary
 
-Kumbuka can run as a normal Go binary when PostgreSQL is reachable.
+Kumbuka can run directly as a compiled binary when PostgreSQL is reachable. Release archives are available for Linux and macOS on AMD64 and ARM64.
 
-Release archives are available for Linux and macOS on both AMD64 and ARM64.
-
-A development build can be started with:
+After extracting the archive, start Kumbuka with a database URL:
 
 ```sh
-make run
+./kumbuka \
+  --database-url 'postgres://kumbuka:secret@localhost:5432/kumbuka?sslmode=disable'
 ```
 
-A release-style local binary can be built with:
+The same setting can be supplied with `KUMBUKA__DATABASE_URL`. Run `./kumbuka --help` for the complete server flag reference, or see [Runtime configuration](../configuration/runtime.md).
 
-```sh
-make build
-./kumbuka --database-url 'postgres://kumbuka:kumbuka@localhost:5432/kumbuka?sslmode=disable'
-```
-
-Run `./kumbuka --help` to see the server runtime flags. Static-site builds, mirrors, and project plugin management are provided by the separate `kumbuka-cli` binary.
-
-## Frontend assets
-
-The Go binary embeds `web/dist`. Run `make web` before compiling manually so TypeScript and CSS are emitted. Normal `make build`, `make run`, and the Docker build already do this.
+Static-site builds, mirrors, and plugin-project commands are provided by the separate `kumbuka-cli` binary.
 
 ## PDF support
 
-The Kumbuka binary does not contain a PDF renderer. Configure a compatible HTML-to-PDF `POST` endpoint in **Administration → Configuration**. A deployment can override the persisted endpoint with `KUMBUKA__PDF_URL`. If the service requires a bearer token, API key, or other request header, add it there; mark credentials sensitive and configure `KUMBUKA__ENCRYPTION_KEY` so Kumbuka encrypts them at rest.
+PDF export uses a separate HTML-to-PDF service. Configure its endpoint and optional request headers under **Administration → Configuration**. A deployment can override the endpoint with `KUMBUKA__PDF_URL`.
+
+If request headers contain credentials, mark them sensitive and configure `KUMBUKA__ENCRYPTION_KEY`.

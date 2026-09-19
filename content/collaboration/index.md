@@ -1,7 +1,7 @@
 # Collaboration
 
-Kumbuka's collaboration model combines authenticated users, roles, groups, page ownership, discussions, notifications, favorites, and private drafts.
+Kumbuka collaboration includes users, roles, groups, page ownership, reviews, discussions, notifications, watches, favorites, and private drafts.
 
-Static sites are deliberately read-only and contain none of these account-backed features.
+Generated static sites are read-only and do not provide account-backed collaboration features.
 
 {{subpages}}
