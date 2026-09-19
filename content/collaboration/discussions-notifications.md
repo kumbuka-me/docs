@@ -4,6 +4,14 @@ Administrators can enable or disable page discussions globally.
 
 When discussions are enabled, readers can add comments to a page. Comments may include an anchor copied from selected page text. Editors can resolve or reopen discussion items.
 
+## Inline comments and suggestions
+
+Select rendered page text and choose **Comment** to start a discussion anchored to that passage. Kumbuka highlights the matching text and places the thread in a side panel so feedback stays next to the content it refers to.
+
+For uniquely mapped plain text, switch the composer to **Suggest change**. A suggestion stores the exact current Markdown range plus the proposed replacement. Editors can apply a still-current suggestion directly from the thread; Kumbuka creates a normal new page revision rather than editing revision history in place. If the page changed and the stored source range is no longer current, the suggestion cannot be applied blindly.
+
+![Inline discussion showing a proposed Markdown replacement](../assets/screenshots/inline-suggestion.png)
+
 ## Replies, quotes, and mentions
 
 Each discussion comment has a stable permalink and can be used as the target of a reply. **Reply** opens the composer with the parent comment attached as context. Replies to replies keep their exact parent relationship, while the page displays replies with only one visual indentation level so long conversations do not become progressively narrower.

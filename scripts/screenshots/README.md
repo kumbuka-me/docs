@@ -2,7 +2,7 @@
 
 The documentation repository owns the complete screenshot scenario. Kumbuka provides only the server source that is built and started for the capture.
 
-The runner creates an isolated PostgreSQL instance, builds the selected Kumbuka checkout, completes first-run setup, imports the canonical Markdown from `content/`, visits the configured pages, and captures the dashboard and editor with Playwright.
+The runner creates an isolated PostgreSQL instance, builds the selected Kumbuka checkout, completes first-run setup, imports the canonical Markdown from `content/`, visits the configured pages, and captures representative application features with Playwright. It also creates deterministic discussion and review fixtures so those screenshots contain useful inline feedback instead of empty states.
 
 From the documentation repository:
 
@@ -16,4 +16,16 @@ By default the server checkout is expected at `../kumbuka`. Override it when nec
 make screenshots KUMBUKA_SERVER_DIR=/path/to/kumbuka
 ```
 
-The runner writes `dashboard.png` and `editor.png` under `assets/screenshots/`. Use `SCREENSHOT_VISITS` to control which imported pages are visited before capturing the dashboard and `SCREENSHOT_EDITOR_SLUG` to choose the page opened in the editor screenshot.
+The runner writes these generated images under `assets/screenshots/`:
+
+- `dashboard.png`
+- `editor.png`
+- `knowledge-graph.png`
+- `admin-plugins.png`
+- `inline-suggestion.png`
+- `review-suggestion.png`
+- `documentation-health.png`
+
+Plugin-owned screenshots can live in subdirectories such as `assets/screenshots/plugins/`; the runner only replaces generated PNGs directly under `assets/screenshots/`.
+
+Use `SCREENSHOT_VISITS` to control which imported pages are visited before capturing the dashboard and `SCREENSHOT_EDITOR_SLUG` to choose the page opened in the editor screenshot.

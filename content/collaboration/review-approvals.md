@@ -16,6 +16,14 @@ While a request is pending, its requester or an administrator can edit the assig
 
 The requester or an administrator can also cancel a pending request. A canceled request remains in audit history and cannot be reopened or rewritten. When the page has not changed since the request was opened, canceling restores the lifecycle state that the page had before the request.
 
+## Review changes and suggestions
+
+**Review changes** opens the exact requested revision as a line-oriented Markdown diff. Reviewers can attach feedback to individual changed lines. On current-revision lines they can also propose replacement Markdown instead of only leaving a comment.
+
+Pending suggestions remain bound to the requested revision. An editor can apply one suggestion or apply all non-overlapping suggestions together; either action creates a new page revision and supersedes the review because the reviewed content has changed. Existing feedback remains part of the review history.
+
+![Review diff with an inline Markdown suggestion](../assets/screenshots/review-suggestion.png)
+
 ## Decide a review
 
 An assigned reviewer can **Approve** or **Request changes**. Administrators can always make either decision.

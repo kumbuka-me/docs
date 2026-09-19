@@ -113,7 +113,7 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 mkdir -p "$output"
-rm -f "$output/dashboard.png" "$output/editor.png"
+rm -f "$output"/*.png
 
 make -C "$server_dir" generate web
 

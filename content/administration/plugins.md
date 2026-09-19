@@ -4,6 +4,8 @@ Open **Administration → Plugins** to manage Kumbuka's bundled and installed pl
 
 The list shows each plugin's name, version, provider, source, status, and whether a newer compatible first-party release is available. Select a plugin to view its packaged documentation, lifecycle controls, requested permissions, dependencies, modules, technical metadata, and update controls. Provider names are supplied by package authors; they are not verification badges. Plugins that declare administrator-managed settings, structured resources, or administrator actions also appear under **Administration → Plugin settings**.
 
+![Plugin administration with bundled plugin status and update controls](../assets/screenshots/admin-plugins.png)
+
 ## Install and update
 
 Upload one `.kumbukaplugin` package, up to 16 MiB, and select **Install and enable**. Kumbuka validates the package format, API compatibility, dependencies, and permission policy before publishing its contributions. A package requesting capabilities that the current runtime policy does not grant cannot be installed.

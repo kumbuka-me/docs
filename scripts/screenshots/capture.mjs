@@ -40,6 +40,37 @@ try {
 
   page.setDefaultTimeout(15_000);
 
+  async function capture(path, filename, readySelector = "") {
+    await page.goto(new URL(path, baseURL).toString(), {
+      waitUntil: "networkidle",
+    });
+    if (readySelector) {
+      await page.locator(readySelector).first().waitFor({ state: "visible" });
+    }
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({
+      path: `${output}/${filename}`,
+      animations: "disabled",
+    });
+  }
+
+  async function postFixture(path, form) {
+    const response = await context.request.post(new URL(path, baseURL).toString(), {
+      form,
+      maxRedirects: 0,
+    });
+    if (response.status() !== 303) {
+      throw new Error(
+        `Fixture request ${path} returned ${response.status()}: ${await response.text()}`,
+      );
+    }
+
+    const location = response.headers().location;
+    if (!location) throw new Error(`Fixture request ${path} returned no location.`);
+
+    return location;
+  }
+
   await page.goto(`${baseURL}/setup`, { waitUntil: "networkidle" });
   await page.locator('input[name="username"]').fill("admin");
   await page.locator('input[name="display_name"]').fill("Administrator");
@@ -62,15 +93,12 @@ try {
   ]);
 
   for (const path of visitPaths) {
-    await page.goto(new URL(path, baseURL).toString(), { waitUntil: "networkidle" });
+    await page.goto(new URL(path, baseURL).toString(), {
+      waitUntil: "networkidle",
+    });
   }
 
-  await page.goto(`${baseURL}/`, { waitUntil: "networkidle" });
-  await page.evaluate(() => document.fonts.ready);
-  await page.screenshot({
-    path: `${output}/dashboard.png`,
-    animations: "disabled",
-  });
+  await capture("/", "dashboard.png");
 
   await page.goto(`${baseURL}/edit/${editorSlug}`, {
     waitUntil: "networkidle",
@@ -86,6 +114,72 @@ try {
     path: `${output}/editor.png`,
     animations: "disabled",
   });
+
+  await capture(
+    "/graph",
+    "knowledge-graph.png",
+    "[data-graph-svg] .graph-node",
+  );
+  await capture("/admin/plugins", "admin-plugins.png", ".plugin-table");
+
+  const discussionSlug = "collaboration/discussions-notifications";
+  const discussionTarget = await postFixture(
+    `/page-comments/${discussionSlug}`,
+    {
+      kind: "suggestion",
+      anchor:
+        "Each discussion comment has a stable permalink and can be used as the target of a reply.",
+      body: "Make the sentence a little more direct.",
+      replacement:
+        "Each discussion comment has a stable permalink that can be used as a reply target.",
+    },
+  );
+  await capture(
+    discussionTarget,
+    "inline-suggestion.png",
+    "[data-inline-comment-panel]:not([hidden]) .page-comment-suggestion",
+  );
+
+  const reviewSlug = "collaboration/review-approvals";
+  await postFixture(`/pages/approval/request/${reviewSlug}`, {
+    reviewers: "@admin",
+    reviewer_group_id: "",
+    note: "Please verify the workflow wording and examples.",
+  });
+  await page.goto(new URL(`/pages/${reviewSlug}`, baseURL).toString(), {
+    waitUntil: "networkidle",
+  });
+  const reviewPath = await page
+    .locator('a[href^="/reviews/"]')
+    .first()
+    .getAttribute("href");
+  if (!reviewPath) throw new Error("Review fixture did not expose its review URL.");
+
+  const reviewID = reviewPath.match(/^\/reviews\/(\d+)\//)?.[1];
+  if (!reviewID) throw new Error(`Unexpected review URL: ${reviewPath}`);
+
+  const reviewTarget = await postFixture(
+    `/reviews/${reviewID}/comments/${reviewSlug}`,
+    {
+      side: "new",
+      start_line: "1",
+      end_line: "1",
+      kind: "suggestion",
+      body: "Use a more explicit heading for the workflow.",
+      replacement: "# Review and approval workflow",
+    },
+  );
+  await capture(
+    reviewTarget,
+    "review-suggestion.png",
+    ".review-suggestion",
+  );
+
+  await capture(
+    "/admin/health",
+    "documentation-health.png",
+    ".health-grid",
+  );
 } finally {
   await browser.close();
 }
