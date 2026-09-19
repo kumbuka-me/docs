@@ -6,6 +6,7 @@ theme = "Light"
 language = "en"
 navigation_style = "sidebar"
 navigation_density = "comfortable"
+expand_content_when_hidden = true
 sidebar_width = 280
 robots = "allow"
 
