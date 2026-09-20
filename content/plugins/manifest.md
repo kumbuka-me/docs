@@ -11,6 +11,7 @@ api_version: 1
 provider: Example
 id: com.example.greeting
 name: Greeting
+icon: message-circle-lucide
 version: 1.0.0
 default_enabled: true
 modules:
@@ -28,6 +29,7 @@ Top-level fields are:
 | `provider`        | Optional author/provider label. It is metadata, not a trust grant. |
 | `id`              | Globally unique plugin identifier.                                 |
 | `name`            | Human-readable plugin name.                                        |
+| `icon`            | Optional host icon used for plugin identity in administration.     |
 | `version`         | Plugin version in `MAJOR.MINOR.PATCH` form.                        |
 | `description`     | Optional plugin description.                                       |
 | `default_enabled` | Whether the plugin starts enabled by default.                      |
@@ -36,6 +38,8 @@ Top-level fields are:
 | `permissions`     | Host capabilities the package may request.                         |
 
 A manifest can declare up to 32 modules. Plugin and module identifiers are lowercase identifiers using letters, digits, `.`, `_`, and `-` within the public format limits.
+
+The optional top-level `icon` uses the same host icon identifiers exposed by Kumbuka's icon catalog. Kumbuka uses it for plugin identity in administration, including the **Plugin settings** navigation. If the declared icon is unavailable, the host falls back to its generic plugin icon. Module-level icons remain separate and describe individual actions such as editor inserts or administrator actions.
 
 ## Module types
 
