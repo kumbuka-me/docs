@@ -25,6 +25,7 @@ Example `site.toml`:
 ```toml
 site_name = "My Documentation"
 site_url = "https://docs.example.com/"
+footer = "© 2026 Example Corp"
 
 source_dir = "content"
 output_dir = "site"
@@ -51,6 +52,8 @@ hover_text = "{{label}} | {{description}}"
 ```
 
 `site_url` sets the public URL prefix used in generated links. Set it correctly when the site is hosted below a path, such as a GitHub Pages project site.
+
+`footer` is optional plain text rendered below generated pages. HTML is escaped rather than interpreted. Omit it or set it to an empty string to render no footer.
 
 `navigation_style` accepts `sidebar`, `topbar`, or `tree`. `navigation_density` accepts `comfortable` or `compact`. `sidebar_width` must be between 220 and 420 pixels.
 
