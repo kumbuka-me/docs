@@ -51,14 +51,16 @@ Node.js, npm, and TypeScript are build-time dependencies; they are not needed by
 
 ## Backend
 
-Go code is formatted with `gofmt`. PostgreSQL queries and migrations live under `internal/store`. See [Architecture](architecture.md) for the package boundaries used by the server.
+Go code is formatted with `gofmt`. PostgreSQL queries, migrations, and `pgx` usage live under `internal/postgres`. See [Architecture](architecture.md) for the package boundaries used by the server.
+
+`internal/app` is intentionally small: `run.go` is the process composition root. HTTP construction and route registration live under `internal/http/server`, application use cases under `internal/application`, and plugin/Markdown runtime construction under `internal/pluginruntime`.
 
 Run the normal test suite with `make test` and the race-enabled suite with `make test-race`.
 
-PostgreSQL integration tests require a disposable database. Set `KUMBUKA_TEST_DATABASE_URL` and run the relevant store tests, for example:
+PostgreSQL integration tests require a disposable database. Set `KUMBUKA_TEST_DATABASE_URL` and run the relevant PostgreSQL adapter tests, for example:
 
 ```sh
-KUMBUKA_TEST_DATABASE_URL='postgres://...' go test -race ./internal/store
+KUMBUKA_TEST_DATABASE_URL='postgres://...' go test -race ./internal/postgres
 ```
 
 Each integration test creates and removes its own schema. Use a development or test database whose account can create schemas. Without that environment variable, database integration tests are skipped.
@@ -70,6 +72,8 @@ Build browser assets before running backend commands directly: the Go server emb
 Document every non-test function with at least one line explaining its purpose. Document each production struct and field, including local response structs, with meaning, units, ownership, or invariants that help a reader. Preserve comments in generators when generated declarations need documentation.
 
 Group function bodies by validation, preparation, execution, and result handling where those phases apply. Extract complicated conditions into helpers named for the rule they enforce. Keep straightforward checks inline and avoid helpers that merely hide an expression.
+
+Keep dependency direction visible during review: HTTP may depend on application and presentation packages, application use cases should depend on narrow capabilities rather than concrete adapters, PostgreSQL owns SQL/`pgx`, and webview remains passive. Prefer behavioral regression tests for important contracts such as authorization and bounded database access rather than tests that enforce source-tree shape.
 
 Review and commit changes in dependency order: server core, SDK, first-party plugins, then documentation. Each repository has its own Git history. Use focused commits for independent fixes, add regression tests for changed behavior, and run the relevant formatting, tests, vet, lint, and build targets before moving on. Plugin builds use their pinned SDK dependency until a new SDK version is released and adopted.
 
