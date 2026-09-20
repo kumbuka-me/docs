@@ -32,6 +32,14 @@ Autocomplete is disabled inside fenced code blocks.
 
 The source editor also disables coding ligatures so operator sequences remain literal while editing. The **Coding Ligatures** plugin affects previews and rendered pages, not the Markdown source editor.
 
+## Find and replace
+
+Use **Find and replace** in the editor toolbar or press `⌘/Ctrl+F` to search the Markdown source. If a single-line selection is active when the panel opens, Kumbuka uses that text as the initial search term.
+
+Search is plain text and case-insensitive by default. Enable **Match case** for case-sensitive matching. **Next match** and **Previous match** wrap at the end or beginning of the document, and the status shows the line containing the selected match.
+
+Press `Enter` in the find field for the next match or `Shift+Enter` for the previous match. **Replace** changes the selected match, **Replace all** changes every match, and `Escape` closes the panel.
+
 ## Draft protection
 
 Kumbuka has two different kinds of drafts:
