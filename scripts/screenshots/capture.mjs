@@ -127,11 +127,9 @@ try {
     `/page-comments/${discussionSlug}`,
     {
       kind: "suggestion",
-      anchor:
-        "Each discussion comment has a stable permalink and can be used as the target of a reply.",
-      body: "Make the sentence a little more direct.",
-      replacement:
-        "Each discussion comment has a stable permalink that can be used as a reply target.",
+      anchor: "Every discussion comment has a permalink.",
+      body: "Make the sentence a little more explicit.",
+      replacement: "Every discussion comment has a stable permalink.",
     },
   );
   await capture(
