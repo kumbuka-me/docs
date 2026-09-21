@@ -55,10 +55,13 @@ try {
   }
 
   async function postFixture(path, form) {
-    const response = await context.request.post(new URL(path, baseURL).toString(), {
-      form,
-      maxRedirects: 0,
-    });
+    const response = await context.request.post(
+      new URL(path, baseURL).toString(),
+      {
+        form,
+        maxRedirects: 0,
+      },
+    );
     if (response.status() !== 303) {
       throw new Error(
         `Fixture request ${path} returned ${response.status()}: ${await response.text()}`,
@@ -66,7 +69,8 @@ try {
     }
 
     const location = response.headers().location;
-    if (!location) throw new Error(`Fixture request ${path} returned no location.`);
+    if (!location)
+      throw new Error(`Fixture request ${path} returned no location.`);
 
     return location;
   }
@@ -151,7 +155,8 @@ try {
     .locator('a[href^="/reviews/"]')
     .first()
     .getAttribute("href");
-  if (!reviewPath) throw new Error("Review fixture did not expose its review URL.");
+  if (!reviewPath)
+    throw new Error("Review fixture did not expose its review URL.");
 
   const reviewID = reviewPath.match(/^\/reviews\/(\d+)\//)?.[1];
   if (!reviewID) throw new Error(`Unexpected review URL: ${reviewPath}`);
@@ -167,17 +172,9 @@ try {
       replacement: "# Review and approval workflow",
     },
   );
-  await capture(
-    reviewTarget,
-    "review-suggestion.png",
-    ".review-suggestion",
-  );
+  await capture(reviewTarget, "review-suggestion.png", ".review-suggestion");
 
-  await capture(
-    "/admin/health",
-    "documentation-health.png",
-    ".health-grid",
-  );
+  await capture("/admin/health", "documentation-health.png", ".health-grid");
 } finally {
   await browser.close();
 }

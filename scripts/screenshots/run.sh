@@ -19,65 +19,104 @@ visits=""
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    --server)
-      [ "$#" -ge 2 ] || { usage >&2; exit 2; }
-      server_dir=$2
-      shift 2
-      ;;
-    --content)
-      [ "$#" -ge 2 ] || { usage >&2; exit 2; }
-      content_dir=$2
-      shift 2
-      ;;
-    --output)
-      [ "$#" -ge 2 ] || { usage >&2; exit 2; }
-      output=$2
-      shift 2
-      ;;
-    --editor-slug)
-      [ "$#" -ge 2 ] || { usage >&2; exit 2; }
-      editor_slug=$2
-      shift 2
-      ;;
-    --visits)
-      [ "$#" -ge 2 ] || { usage >&2; exit 2; }
-      visits=$2
-      shift 2
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    *)
-      echo "Unknown argument: $1" >&2
+  --server)
+    [ "$#" -ge 2 ] || {
       usage >&2
       exit 2
-      ;;
+    }
+    server_dir=$2
+    shift 2
+    ;;
+  --content)
+    [ "$#" -ge 2 ] || {
+      usage >&2
+      exit 2
+    }
+    content_dir=$2
+    shift 2
+    ;;
+  --output)
+    [ "$#" -ge 2 ] || {
+      usage >&2
+      exit 2
+    }
+    output=$2
+    shift 2
+    ;;
+  --editor-slug)
+    [ "$#" -ge 2 ] || {
+      usage >&2
+      exit 2
+    }
+    editor_slug=$2
+    shift 2
+    ;;
+  --visits)
+    [ "$#" -ge 2 ] || {
+      usage >&2
+      exit 2
+    }
+    visits=$2
+    shift 2
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  *)
+    echo "Unknown argument: $1" >&2
+    usage >&2
+    exit 2
+    ;;
   esac
 done
 
-[ -n "$server_dir" ] || { echo "--server is required" >&2; exit 2; }
-[ -n "$content_dir" ] || { echo "--content is required" >&2; exit 2; }
-[ -n "$output" ] || { echo "--output is required" >&2; exit 2; }
-[ -n "$editor_slug" ] || { echo "--editor-slug is required" >&2; exit 2; }
-[ -d "$server_dir" ] || { echo "Kumbuka server repository not found: $server_dir" >&2; exit 1; }
-[ -f "$server_dir/go.mod" ] || { echo "Kumbuka server go.mod not found: $server_dir/go.mod" >&2; exit 1; }
-[ -d "$content_dir" ] || { echo "Screenshot content directory not found: $content_dir" >&2; exit 1; }
-[ -x "$repository/node_modules/.bin/playwright" ] || { echo "Playwright is not installed. Run npm ci in the docs repository." >&2; exit 1; }
+[ -n "$server_dir" ] || {
+  echo "--server is required" >&2
+  exit 2
+}
+[ -n "$content_dir" ] || {
+  echo "--content is required" >&2
+  exit 2
+}
+[ -n "$output" ] || {
+  echo "--output is required" >&2
+  exit 2
+}
+[ -n "$editor_slug" ] || {
+  echo "--editor-slug is required" >&2
+  exit 2
+}
+[ -d "$server_dir" ] || {
+  echo "Kumbuka server repository not found: $server_dir" >&2
+  exit 1
+}
+[ -f "$server_dir/go.mod" ] || {
+  echo "Kumbuka server go.mod not found: $server_dir/go.mod" >&2
+  exit 1
+}
+[ -d "$content_dir" ] || {
+  echo "Screenshot content directory not found: $content_dir" >&2
+  exit 1
+}
+[ -x "$repository/node_modules/.bin/playwright" ] || {
+  echo "Playwright is not installed. Run npm ci in the docs repository." >&2
+  exit 1
+}
 
 case "$server_dir" in
-  /*) ;;
-  *) server_dir="$PWD/$server_dir" ;;
+/*) ;;
+*) server_dir="$PWD/$server_dir" ;;
 esac
 
 case "$content_dir" in
-  /*) ;;
-  *) content_dir="$PWD/$content_dir" ;;
+/*) ;;
+*) content_dir="$PWD/$content_dir" ;;
 esac
 
 case "$output" in
-  /*) ;;
-  *) output="$PWD/$output" ;;
+/*) ;;
+*) output="$PWD/$output" ;;
 esac
 
 work_dir=$(mktemp -d "${TMPDIR:-/tmp}/kumbuka-screenshots.XXXXXX")
