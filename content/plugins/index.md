@@ -12,13 +12,9 @@ First-party plugins can also be updated directly from the administration page wh
 
 See [Plugin administration](../administration/plugins.md) for updates, dependencies, enable/disable behavior, and uninstalling plugins.
 
-## Example: External Files
+## Browse plugins
 
-The **External Files** plugin embeds source files or selected line ranges from configured repositories and can attach notes to individual lines.
-
-![Annotated README rendered by the External Files plugin.](/assets/screenshots/plugins/external-files-annotated-readme.png)
-
-See [External Files](external-files.md) for configuration and usage.
+Explore the [Plugin catalog](catalog.md) for descriptions, previews, permissions, and usage documentation for every first-party plugin.
 
 ## Develop plugins
 

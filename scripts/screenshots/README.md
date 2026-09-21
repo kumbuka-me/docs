@@ -26,6 +26,6 @@ The runner writes these generated images under `assets/screenshots/`:
 - `review-suggestion.png`
 - `documentation-health.png`
 
-Plugin-owned screenshots can live in subdirectories such as `assets/screenshots/plugins/`; the runner only replaces generated PNGs directly under `assets/screenshots/`.
+Plugin previews are maintained in the plugins repository and synchronized into `assets/plugins/` with their generated documentation. This runner only replaces application screenshots directly under `assets/screenshots/`.
 
 Use `SCREENSHOT_VISITS` to control which imported pages are visited before capturing the dashboard and `SCREENSHOT_EDITOR_SLUG` to choose the page opened in the editor screenshot.

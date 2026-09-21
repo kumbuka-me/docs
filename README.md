@@ -51,3 +51,9 @@ By default this expects the server at `../kumbuka`. Override `KUMBUKA_SERVER_DIR
 # License
 
 Licensed under the [Apache License, Version 2.0](LICENSE).
+
+## Plugin documentation
+
+The plugins repository generates `content/plugins/catalog.md`, `content/plugins/packages/`, and `assets/plugins/` from each plugin's manifest, README, and canonical preview. Edit the sources in `kumbuka-me/plugins`; its documentation workflow commits updates here and triggers the normal site build.
+
+To refresh locally, run `make docs DOCS_DIR=../docs` from the sibling plugins checkout. Installation and developer guides remain maintained in this repository. The application screenshot workflow is independent of plugin previews.
