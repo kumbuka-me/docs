@@ -7,7 +7,7 @@ Transclude complete pages or heading sections into Markdown.
 ![Includes preview](/assets/plugins/includes/preview.png)
 
 - Plugin ID: `me.kumbuka.includes`
-- Source version: `1.0.9`
+- Source version: `1.2.0`
 - Permissions: `pages:content`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/includes) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=includes%2Fv) · [Installation](../../administration/plugins.md)
@@ -33,3 +33,7 @@ Includes may nest. Kumbuka limits nesting depth and rejects recursive include ch
 Variables and Snippets are processed after Includes, so macros already present in an included page can resolve normally. Content inserted later by Variables or Snippets is not rescanned as an Include.
 
 The plugin receives page Markdown only through Kumbuka's authorized `pages.content` capability. It cannot bypass the current render scope's page access policy.
+
+## Visual editor
+
+In Visual mode, include macros render as compact Include references. Select a reference to edit the target page or heading while keeping the saved Markdown syntax unchanged.

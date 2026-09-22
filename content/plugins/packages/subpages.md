@@ -7,7 +7,7 @@ Show child pages as generated navigation.
 ![Subpages preview](/assets/plugins/subpages/preview.png)
 
 - Plugin ID: `me.kumbuka.subpages`
-- Source version: `1.0.13`
+- Source version: `1.2.0`
 - Permissions: `pages:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/subpages) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=subpages%2Fv) · [Installation](../../administration/plugins.md)
@@ -26,6 +26,10 @@ The default heading is **Pages in this section**. Set a custom heading or hide i
 {{subpages title="Related pages"}}
 {{subpages title=""}}
 ```
+
+## Visual editor
+
+In Visual mode, subpages macros render as navigation cards with their configured heading. Select the card to edit the heading; child pages are resolved when the page is rendered.
 
 ## Permissions
 

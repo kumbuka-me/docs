@@ -7,7 +7,7 @@ Render GitHub-style strikethrough text.
 ![Strikethrough preview](/assets/plugins/strikethrough/preview.png)
 
 - Plugin ID: `me.kumbuka.strikethrough`
-- Source version: `1.0.8`
+- Source version: `1.1.0`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/strikethrough) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=strikethrough%2Fv) · [Installation](../../administration/plugins.md)

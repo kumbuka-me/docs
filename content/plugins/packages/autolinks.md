@@ -7,7 +7,7 @@ Turn plain URLs and email addresses into links.
 ![Automatic Links preview](/assets/plugins/autolinks/preview.png)
 
 - Plugin ID: `me.kumbuka.autolinks`
-- Source version: `1.0.7`
+- Source version: `1.1.0`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/autolinks) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=autolinks%2Fv) · [Installation](../../administration/plugins.md)

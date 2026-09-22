@@ -7,7 +7,7 @@ Build filtered page reports from Kumbuka content.
 ![Page Report preview](/assets/plugins/page-report/preview.png)
 
 - Plugin ID: `me.kumbuka.page-report`
-- Source version: `1.0.11`
+- Source version: `1.2.0`
 - Permissions: `pages:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/page-report) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=page-report%2Fv) · [Installation](../../administration/plugins.md)
@@ -27,6 +27,10 @@ A more detailed report can select columns, presentation, sorting, and a result l
 ```
 
 `query` is required. `columns` defaults to `title,status,owner,updated`; supported columns are `title`, `path`, `status`, `owner`, `updated`, `author`, `tags`, `views`, and `property:<key>`. `view` supports `table`, `list`, and `cards`. `sort` supports `relevance`, `updated`, `title`, and `path`. `limit` defaults to 20 and accepts values from 1 to 100.
+
+## Visual editor
+
+In Visual mode, page-report macros render as report cards showing the query, view, sort, and limit. Select the card to edit report settings; live results are still resolved when the page is rendered.
 
 ## Permissions
 

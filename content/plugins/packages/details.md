@@ -7,7 +7,7 @@ Render collapsible Markdown detail blocks with optional open state.
 ![Collapsible Details preview](/assets/plugins/details/preview.png)
 
 - Plugin ID: `me.kumbuka.details`
-- Source version: `1.0.11`
+- Source version: `1.2.0`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/details) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=details%2Fv) · [Installation](../../administration/plugins.md)
@@ -31,6 +31,10 @@ Use `???+` to start the section open:
 ```
 
 The declaration must start at the beginning of a line. Body content is indented by four spaces or one tab. Detail declarations inside fenced code blocks remain literal.
+
+## Visual editor
+
+In Visual mode, details blocks render as native collapsible details with their current title, open state, and content. Select the block to edit those settings or its Markdown source.
 
 ## Permissions
 

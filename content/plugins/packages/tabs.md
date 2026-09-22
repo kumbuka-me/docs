@@ -7,7 +7,7 @@ Render Material-style tab groups with Markdown content.
 ![Tabs preview](/assets/plugins/tabs/preview.png)
 
 - Plugin ID: `me.kumbuka.tabs`
-- Source version: `1.0.11`
+- Source version: `1.2.0`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/tabs) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=tabs%2Fv) · [Installation](../../administration/plugins.md)
@@ -31,6 +31,10 @@ Tabs renders consecutive Material-style tab declarations as an interactive tab g
 ````
 
 Tab declarations must start at the beginning of a line. Panel content is indented by four spaces or one tab. Tabs inside fenced code blocks remain literal.
+
+## Visual editor
+
+In Visual mode, tab groups render with their published tab controls and panel content. Select the group to edit tab titles and bodies in a structured table or edit the source directly.
 
 ## Permissions
 

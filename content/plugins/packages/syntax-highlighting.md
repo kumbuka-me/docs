@@ -7,7 +7,7 @@ Highlight fenced code blocks with Chroma's full lexer registry.
 ![Syntax Highlighting preview](/assets/plugins/syntax-highlighting/preview.png)
 
 - Plugin ID: `me.kumbuka.syntax-highlighting`
-- Source version: `1.4.10`
+- Source version: `1.5.0`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/syntax-highlighting) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=syntax-highlighting%2Fv) · [Installation](../../administration/plugins.md)

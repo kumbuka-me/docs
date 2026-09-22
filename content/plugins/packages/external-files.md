@@ -7,7 +7,7 @@ Embed GitHub and GitLab files with line ranges, annotations, and revision metada
 ![External Files preview](/assets/plugins/external-files/preview.png)
 
 - Plugin ID: `me.kumbuka.external-files`
-- Source version: `1.5.9`
+- Source version: `1.7.0`
 - Permissions: `settings:read`, `network:http`, `network:private`, `network:insecure-tls`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/external-files) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=external-files%2Fv) · [Installation](../../administration/plugins.md)
@@ -124,6 +124,10 @@ Kumbuka's generic plugin HTTP client honors conventional deployment networking s
 - `SSL_CERT_DIR`
 
 Proxy configuration belongs to the Kumbuka process, not to this plugin. Proxy TLS verification is never disabled by a plugin source's **Skip TLS certificate verification** setting.
+
+## Visual editor
+
+In Visual mode, external-file macros render as file cards showing the configured source, path, line range, and presentation options without fetching repository content. Select the card to edit the embed settings or its Markdown source.
 
 ## Build
 

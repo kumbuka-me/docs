@@ -7,7 +7,7 @@ Note, warning, and other callout blocks
 ![Callouts preview](/assets/plugins/callouts/preview.png)
 
 - Plugin ID: `me.kumbuka.callouts`
-- Source version: `1.0.10`
+- Source version: `1.2.0`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/callouts) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=callouts%2Fv) · [Installation](../../administration/plugins.md)
@@ -22,6 +22,10 @@ Back up the database before continuing.
 ```
 
 Supported kinds are `note`, `info`, `tip`, `success`, `warning`, `danger`, and `error`. The callout body is rendered as Markdown. Callout syntax inside fenced code blocks stays literal.
+
+## Visual editor
+
+In Visual mode, callouts render as their colored panel with the selected kind and content. Select a callout to edit its type and body or switch to source editing.
 
 ## Permissions
 

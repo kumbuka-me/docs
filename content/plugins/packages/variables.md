@@ -7,7 +7,7 @@ Reusable text values with editor completion, page inspection, and temporary expo
 ![Variables preview](/assets/plugins/variables/preview.png)
 
 - Plugin ID: `me.kumbuka.variables`
-- Source version: `1.0.8`
+- Source version: `1.2.0`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/variables) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=variables%2Fv) · [Installation](../../administration/plugins.md)
@@ -39,3 +39,7 @@ Pages that use variables expose a Variables inspector. It lists each distinct va
 The Share and export dialog lets readers temporarily override variables used by the page. Overrides apply only to that export request, may intentionally be empty, and never update the saved variable or page source.
 
 Inserted values are not recursively evaluated as new Kumbuka macros.
+
+## Visual editor
+
+In Visual mode, variable macros render as compact Variable references. Select a reference to edit the variable name while preserving the underlying macro.

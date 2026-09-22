@@ -7,7 +7,7 @@ Interactive inline status dropdowns with page-local or reusable choices and pers
 ![Status Dropdowns preview](/assets/plugins/status-dropdowns/preview.png)
 
 - Plugin ID: `me.kumbuka.status-dropdowns`
-- Source version: `1.3.0`
+- Source version: `1.5.0`
 - Permissions: `browser:render`, `settings:read`, `storage:read`, `storage:write`, `pages:content`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/status-dropdowns) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=status-dropdowns%2Fv) · [Installation](../../administration/plugins.md)
@@ -47,6 +47,12 @@ Available attributes are:
 - `style` — `solid` (default) or `outline`.
 
 Status declarations inside fenced code blocks or inline code stay literal.
+
+## Visual editing
+
+Kumbuka versions that support the optional plugin visual-editor contract render a status as its real badge in Visual mode. Select the badge to edit its ID, reusable set, page-local choices, colors, initial value, prefix, and style in a popover. Page-local choices use separate **Status** and **Color** columns with a color picker; `workflow` and `approval` are offered as reusable-set suggestions. Markdown remains the canonical saved format, and switching modes preserves the status declaration.
+
+Plugins and older Kumbuka versions that do not understand `assets/visual-editor.json` continue to use the Markdown declaration normally; the asset does not change the plugin runtime syntax.
 
 ## Reusable status sets
 

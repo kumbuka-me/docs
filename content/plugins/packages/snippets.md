@@ -7,7 +7,7 @@ Reusable Markdown blocks with editor completion.
 ![Snippets preview](/assets/plugins/snippets/preview.png)
 
 - Plugin ID: `me.kumbuka.snippets`
-- Source version: `1.0.8`
+- Source version: `1.2.0`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/snippets) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=snippets%2Fv) · [Installation](../../administration/plugins.md)
@@ -27,3 +27,7 @@ The editor includes stored snippets in `{{` completion and slash-command results
 Snippet content is inserted once and is not recursively evaluated as more plugin macros. This keeps reusable content predictable and prevents a stored snippet from unexpectedly invoking Variables, Includes, or another content plugin.
 
 Fenced code blocks keep snippet syntax literal.
+
+## Visual editor
+
+In Visual mode, snippet macros render as compact Snippet references. Select a reference to edit the snippet name while preserving the underlying macro.

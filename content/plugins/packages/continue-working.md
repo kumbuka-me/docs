@@ -7,7 +7,7 @@ Show private drafts and pages recently edited by the current user on Home.
 ![Continue Working preview](/assets/plugins/continue-working/preview.png)
 
 - Plugin ID: `me.kumbuka.continue-working`
-- Source version: `1.0.9`
+- Source version: `1.1.0`
 - Permissions: `activity:read`, `drafts:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/continue-working) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=continue-working%2Fv) · [Installation](../../administration/plugins.md)

@@ -7,7 +7,7 @@ Show favorite pages on the dashboard and pinned pages in the sidebar.
 ![Favorites preview](/assets/plugins/favorites/preview.png)
 
 - Plugin ID: `me.kumbuka.favorites`
-- Source version: `1.0.11`
+- Source version: `1.1.0`
 - Permissions: `activity:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/favorites) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=favorites%2Fv) · [Installation](../../administration/plugins.md)

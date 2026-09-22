@@ -7,7 +7,7 @@ Show pages related by shared tags in page details.
 ![Related Pages preview](/assets/plugins/related-pages/preview.png)
 
 - Plugin ID: `me.kumbuka.related-pages`
-- Source version: `1.0.9`
+- Source version: `1.1.0`
 - Permissions: `pages:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/related-pages) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=related-pages%2Fv) · [Installation](../../administration/plugins.md)

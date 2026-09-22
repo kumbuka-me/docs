@@ -7,7 +7,7 @@ Add term and definition list syntax to Markdown.
 ![Definition Lists preview](/assets/plugins/definition-lists/preview.png)
 
 - Plugin ID: `me.kumbuka.definition-lists`
-- Source version: `1.0.7`
+- Source version: `1.1.0`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/definition-lists) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=definition-lists%2Fv) · [Installation](../../administration/plugins.md)

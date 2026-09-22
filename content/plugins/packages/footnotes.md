@@ -7,7 +7,7 @@ Add Markdown footnote references and definitions.
 ![Footnotes preview](/assets/plugins/footnotes/preview.png)
 
 - Plugin ID: `me.kumbuka.footnotes`
-- Source version: `1.0.7`
+- Source version: `1.1.0`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/footnotes) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=footnotes%2Fv) · [Installation](../../administration/plugins.md)
