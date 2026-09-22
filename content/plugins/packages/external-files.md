@@ -130,7 +130,7 @@ Proxy configuration belongs to the Kumbuka process, not to this plugin. Proxy TL
 Build the package with the repository tooling:
 
 ```sh
-./scripts/build-plugin.sh external-files dist
+./scripts/build/plugin.sh external-files dist
 ```
 
 ## References
