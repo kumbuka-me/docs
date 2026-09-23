@@ -7,7 +7,7 @@ Render Material-style tab groups with Markdown content.
 ![Tabs preview](/assets/plugins/tabs/preview.png)
 
 - Plugin ID: `me.kumbuka.tabs`
-- Source version: `1.2.0`
+- Source version: `1.3.0`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/tabs) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=tabs%2Fv) · [Installation](../../administration/plugins.md)

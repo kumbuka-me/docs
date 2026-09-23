@@ -7,7 +7,7 @@ Show child pages as generated navigation.
 ![Subpages preview](/assets/plugins/subpages/preview.png)
 
 - Plugin ID: `me.kumbuka.subpages`
-- Source version: `1.2.0`
+- Source version: `1.3.0`
 - Permissions: `pages:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/subpages) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=subpages%2Fv) · [Installation](../../administration/plugins.md)
