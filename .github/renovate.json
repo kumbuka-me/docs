@@ -25,6 +25,16 @@
   ],
   "packageRules": [
     {
+      "matchPackageNames": ["/^(?:github\\.com\\/)?kumbuka-me\\//"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "matchPackageNames": ["prettier", "golangci/golangci-lint"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
       "matchManagers": ["custom.regex"],
       "matchPackageNames": ["kumbuka-me/plugins"],
       "groupName": "Kumbuka plugins"
