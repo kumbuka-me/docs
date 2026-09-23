@@ -187,7 +187,72 @@ Exposes an `admin-resource` through a bounded editor-completion trigger and repl
 
 ### `editor-insert`
 
-Adds a static insertion action to the editor without loading plugin code into Kumbuka's editor DOM.
+Adds a static insertion action to both editor modes without loading plugin code into Kumbuka's editor DOM. `group` is the preferred host-owned toolbar slot and defaults to `insert`. The stable groups are `text`, `blocks`, `insert`, `tools`, and `plugins`. `allowed_groups` is the bounded set an administrator may choose; when omitted, the contribution stays in its preferred group. `order` is a hint from `-1000` to `1000`; Kumbuka applies administrator ordering first and uses the stable `plugin-id:module-id` contribution ID to break ties.
+
+A single action remains a direct toolbar button:
+
+```yaml
+- type: editor-insert
+  id: strikethrough
+  name: Strikethrough
+  markdown: "~~"
+  suffix: "~~"
+  placeholder: strikethrough text
+  mode: wrap
+  group: text
+  allowed_groups: [text]
+  order: 20
+  icon: strikethrough-lucide
+```
+
+### `editor-menu`
+
+Groups closely related `editor-insert` modules behind one host-rendered toolbar icon. The menu owns its stable ID, label, icon, preferred and allowed groups, and default order. `children` contains two to sixteen unique editor-insert IDs in plugin-owned order. Administrators move, hide, or order the menu as a unit; they cannot reorder its children.
+
+```yaml
+modules:
+  - type: editor-insert
+    id: note
+    name: Note
+    markdown: "!!! note\nImportant information."
+    icon: message-square-lucide
+  - type: editor-insert
+    id: info
+    name: Info
+    markdown: "!!! info\nInformation."
+    icon: info-lucide
+  - type: editor-insert
+    id: tip
+    name: Tip
+    markdown: "!!! tip\nHelpful tip."
+    icon: lightbulb-lucide
+  - type: editor-insert
+    id: success
+    name: Success
+    markdown: "!!! success\nCompleted successfully."
+    icon: circle-check-lucide
+  - type: editor-insert
+    id: warning
+    name: Warning
+    markdown: "!!! warning\nImportant warning."
+    icon: triangle-alert-lucide
+  - type: editor-insert
+    id: danger
+    name: Danger
+    markdown: "!!! danger\nDangerous operation."
+    icon: octagon-alert-lucide
+  - type: editor-menu
+    id: callouts
+    name: Callouts
+    description: Insert a callout block.
+    icon: message-square-warning-lucide
+    group: insert
+    allowed_groups: [insert, blocks, plugins]
+    order: 30
+    children: [note, info, tip, success, warning, danger]
+```
+
+Toolbar metadata is declarative. Plugins cannot provide toolbar HTML, CSS, JavaScript, pixel positions, DOM locations, or relative placement such as “after button X”. Icons are names from Kumbuka's validated host icon catalog; an omitted icon uses the host fallback.
 
 ### `icon-resource`
 
