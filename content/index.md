@@ -15,7 +15,7 @@ Kumbuka is a self-hosted, Markdown-first wiki. The server runs as a single Go bi
 - [Collaboration](collaboration/index.md) — roles, groups, discussions, reviews, watches, and notifications.
 - [User experience](user/index.md) — dashboard, preferences, saved searches, and account tools.
 - [Administration](administration/index.md) — health, access, plugins, imports, exports, audit, and recovery tools.
-- [Plugins](plugins/index.md) — install plugins or develop extensions.
+- [Extensions](extensions/index.md) — browse first-party extensions and their usage documentation.
 - [API](api/index.md) — JSON endpoints and personal access tokens.
 - [Static sites](static-sites.md) — build a read-only site from Markdown files.
-- [Development](development.md) and [architecture](architecture.md) — contributor documentation for the Kumbuka codebase.
+- [Development](development/index.md) — contributor architecture, repository boundaries, and plugin development.

@@ -30,4 +30,4 @@ A plugin cannot be disabled while another enabled plugin depends on it. Plugins 
 
 Installed plugins can be uninstalled from their detail view. Their settings and plugin data are retained for a later reinstall. Bundled plugins can be disabled but remain part of the Kumbuka installation.
 
-For package creation and extension APIs, see [Plugin development](../plugins/index.md).
+For package creation and extension APIs, see [Plugin development](../development/plugins/index.md).
