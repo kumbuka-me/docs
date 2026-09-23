@@ -40,6 +40,14 @@ try {
 
   page.setDefaultTimeout(15_000);
 
+  async function screenshot(filename) {
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({
+      path: `${output}/${filename}`,
+      animations: "disabled",
+    });
+  }
+
   async function capture(path, filename, readySelector = "") {
     await page.goto(new URL(path, baseURL).toString(), {
       waitUntil: "networkidle",
@@ -47,11 +55,57 @@ try {
     if (readySelector) {
       await page.locator(readySelector).first().waitFor({ state: "visible" });
     }
-    await page.evaluate(() => document.fonts.ready);
-    await page.screenshot({
-      path: `${output}/${filename}`,
-      animations: "disabled",
+    await screenshot(filename);
+  }
+
+  async function openEditor(slug) {
+    await page.goto(`${baseURL}/edit/${slug}`, {
+      waitUntil: "networkidle",
     });
+    await page.locator("[data-editor-workspace]").waitFor({ state: "visible" });
+  }
+
+  async function selectEditorMode(mode) {
+    await page.locator(`button[data-editor-mode="${mode}"]`).click();
+    await page
+      .locator(`[data-editor-workspace][data-editor-mode="${mode}"]`)
+      .waitFor({ state: "visible" });
+  }
+
+  async function captureMarkdownPreview() {
+    await openEditor(editorSlug);
+    await selectEditorMode("write");
+    await page.locator("[data-editor-preview-toggle]").click();
+    await page
+      .locator('[data-editor-workspace][data-editor-mode="split"]')
+      .waitFor({ state: "visible" });
+    await page.locator("[data-editor-preview-status]").waitFor({
+      state: "hidden",
+    });
+    await page.locator("[data-editor-preview-content] > *").first().waitFor();
+    await screenshot("editor.png");
+  }
+
+  async function captureVisualEditor(slug, filename) {
+    await openEditor(slug);
+    await selectEditorMode("visual");
+    await page
+      .locator("[data-visual-editor-pane] .tiptap")
+      .waitFor({ state: "visible" });
+    await screenshot(filename);
+  }
+
+  async function captureVisualTable() {
+    await openEditor("content/lifecycle");
+    await selectEditorMode("visual");
+
+    const table = page.locator("[data-visual-editor-pane] table").first();
+    await table.waitFor({ state: "visible" });
+    await table.locator("th, td").first().click();
+    await page
+      .locator("[data-table-context-toolbar]")
+      .waitFor({ state: "visible" });
+    await screenshot("editor-visual-table.png");
   }
 
   async function postFixture(path, form) {
@@ -104,20 +158,9 @@ try {
 
   await capture("/", "dashboard.png");
 
-  await page.goto(`${baseURL}/edit/${editorSlug}`, {
-    waitUntil: "networkidle",
-  });
-  await page.getByRole("button", { name: "Split" }).click();
-  await page.locator("[data-editor-workspace]").waitFor({ state: "visible" });
-  await page.locator("[data-editor-preview-status]").waitFor({
-    state: "hidden",
-  });
-  await page.locator("[data-editor-preview-content] > *").first().waitFor();
-  await page.evaluate(() => document.fonts.ready);
-  await page.screenshot({
-    path: `${output}/editor.png`,
-    animations: "disabled",
-  });
+  await captureMarkdownPreview();
+  await captureVisualEditor(editorSlug, "editor-visual.png");
+  await captureVisualTable();
 
   await capture(
     "/graph",
@@ -125,6 +168,16 @@ try {
     "[data-graph-svg] .graph-node",
   );
   await capture("/admin/plugins", "admin-plugins.png", ".plugin-table");
+  await capture(
+    "/admin/editor-toolbar",
+    "admin-editor-toolbar.png",
+    ".admin-table",
+  );
+  await capture(
+    "/admin/plugin-settings/me.kumbuka.tables",
+    "admin-plugin-settings.png",
+    ".plugin-settings-panel",
+  );
 
   const discussionSlug = "collaboration/discussions-notifications";
   const discussionTarget = await postFixture(

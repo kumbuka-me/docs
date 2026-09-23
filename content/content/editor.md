@@ -2,9 +2,15 @@
 
 The editor is available to `admin` and `editor` users and works directly with Markdown.
 
-![Kumbuka Markdown editor showing this page in split view](../assets/screenshots/editor.png)
+![Kumbuka Markdown editor with the preview panel open](../assets/screenshots/editor.png)
 
-The editor opens in your last **Write** or **Split** view. **Preview** is temporary and is not saved as the starting view.
+The editor opens in your last **Markdown** or **Visual** mode. **Preview** is a temporary Markdown subview and is not saved as the starting mode.
+
+## Visual editing
+
+Choose **Visual** to edit rendered content directly while Kumbuka keeps the Markdown source synchronized.
+
+![Kumbuka visual editor showing the imported documentation](../assets/screenshots/editor-visual.png)
 
 ## Page fields
 

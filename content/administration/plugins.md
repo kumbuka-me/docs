@@ -4,7 +4,9 @@ Open **Administration → Plugins** to manage bundled and installed plugins. Onl
 
 The plugin list shows the name, version, provider, source, status, and available first-party updates. Open a plugin to view its documentation, permissions, dependencies, modules, and lifecycle actions. Provider names come from the package author and are not verification badges.
 
-Plugins with administrator-managed configuration appear under **Administration → Plugin settings**.
+Plugins with administrator-managed configuration appear under **Plugin settings** in the administration sidebar.
+
+![Plugin settings for the bundled Tables plugin](../assets/screenshots/admin-plugin-settings.png)
 
 ![Plugin administration with bundled plugin status and update controls](../assets/screenshots/admin-plugins.png)
 

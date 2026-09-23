@@ -23,3 +23,5 @@ gray blue purple green yellow orange red
 `sortable` enables client-side column sorting. `filterable` adds per-column filtering controls. Disable the Tables plugin to stop table rendering. Its settings independently control table colors, sorting, and filtering.
 
 The editor's table tools can apply the same directive-based formatting without requiring authors to memorize the syntax.
+
+![Visual editor with a Markdown table selected and table controls visible](../assets/screenshots/editor-visual-table.png)

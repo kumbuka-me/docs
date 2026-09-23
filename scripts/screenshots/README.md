@@ -20,12 +20,16 @@ The runner writes these generated images under `assets/screenshots/`:
 
 - `dashboard.png`
 - `editor.png`
+- `editor-visual.png`
+- `editor-visual-table.png`
 - `knowledge-graph.png`
 - `admin-plugins.png`
+- `admin-editor-toolbar.png`
+- `admin-plugin-settings.png`
 - `inline-suggestion.png`
 - `review-suggestion.png`
 - `documentation-health.png`
 
 Plugin previews are maintained in the plugins repository and synchronized into `assets/plugins/` with their generated documentation. This runner only replaces application screenshots directly under `assets/screenshots/`.
 
-Use `SCREENSHOT_VISITS` to control which imported pages are visited before capturing the dashboard and `SCREENSHOT_EDITOR_SLUG` to choose the page opened in the editor screenshot.
+Use `SCREENSHOT_VISITS` to control which imported pages are visited before capturing the dashboard and `SCREENSHOT_EDITOR_SLUG` to choose the page used for the Markdown-preview and primary visual-editor screenshots. The visual table screenshot uses the imported `content/lifecycle` page so it always has a real Markdown table to select.
