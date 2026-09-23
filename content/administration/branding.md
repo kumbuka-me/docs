@@ -10,7 +10,7 @@ SVG files must not contain active content such as scripts, event handlers, embed
 
 ## Restore the default
 
-Select **Use default favicon** to return to Kumbuka's built-in logo.
+Select **Use default logo** to return to Kumbuka's built-in logo.
 
 ## Static sites
 

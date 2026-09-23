@@ -8,6 +8,16 @@
 - Build-time validation for documentation links and static routes.
 - Automatic deployment to GitHub Pages from `main`.
 
+## Repository ownership
+
+Kumbuka is maintained as separate repositories with explicit ownership boundaries:
+
+- [`kumbuka-me/kumbuka`](https://github.com/kumbuka-me/kumbuka) — PostgreSQL-backed server, web application, and reusable runtime packages.
+- [`kumbuka-me/cli`](https://github.com/kumbuka-me/cli) — static-site builds, Git-friendly mirrors, and `.kumbukaplugins` project tooling.
+- [`kumbuka-me/sdk`](https://github.com/kumbuka-me/sdk) — plugin manifest/package contract, WASI guest API, typed capability clients, and the `kumbuka-plugin` development CLI.
+- [`kumbuka-me/plugins`](https://github.com/kumbuka-me/plugins) — first-party plugin source, releases, previews, and generated plugin documentation.
+- [`kumbuka-me/docs`](https://github.com/kumbuka-me/docs) — installation, administration, user, architecture, and cross-repository documentation plus application screenshots.
+
 ## Requirements
 
 - GNU Make

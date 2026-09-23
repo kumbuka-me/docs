@@ -53,6 +53,10 @@ For a command, Kumbuka owns the POST route and invokes the same module with stag
 
 For an `exporter` module, Kumbuka invokes stage `export` with an `export` context containing the authorized current page and stored Markdown source. The result contains exactly one `file` with a base filename, media type, and bytes. Render parts and widget actions are rejected for this stage, and Kumbuka validates the file again before sending it as a download.
 
+## Administrator actions
+
+For an `admin-action` module, Kumbuka invokes stage `admin-action`. The SDK callback receives no arbitrary HTTP request or browser payload; a successful action returns an empty result and a failed action returns the normal result error. Kumbuka owns the administrator route, authentication, authorization, CSRF handling, and surrounding UI.
+
 ## Host capability import
 
 Guests can import:

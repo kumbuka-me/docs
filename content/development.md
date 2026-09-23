@@ -1,6 +1,16 @@
 # Development
 
-This page is for contributors working on the Kumbuka server repository.
+This page is for contributors working on the Kumbuka server repository. Related components live in sibling repositories rather than subdirectories of the server checkout.
+
+## Repositories
+
+- `kumbuka-me/kumbuka` owns the server, web application, PostgreSQL adapter, plugin host/runtime, and reusable `pkg/` packages.
+- `kumbuka-me/sdk` owns the plugin package schema, WASI guest API, capability clients, and `kumbuka-plugin` tooling.
+- `kumbuka-me/cli` owns static sites, Git-friendly mirrors, and `.kumbukaplugins` project tooling.
+- `kumbuka-me/plugins` owns first-party plugin source, packages, previews, and the release catalog.
+- `kumbuka-me/docs` owns user, administrator, contributor, and cross-repository documentation plus application screenshots.
+
+Each repository has its own module, CI, release history, and dependency updates. Use a local Go workspace when testing compatible unreleased Go changes across sibling checkouts instead of committing `replace` directives to shared modules.
 
 ## Common commands
 
@@ -75,7 +85,7 @@ Group function bodies by validation, preparation, execution, and result handling
 
 Keep dependency direction visible during review: HTTP may depend on application and presentation packages, application use cases should depend on narrow capabilities rather than concrete adapters, PostgreSQL owns SQL/`pgx`, and webview remains passive. Prefer behavioral regression tests for important contracts such as authorization and bounded database access rather than tests that enforce source-tree shape.
 
-Review and commit changes in dependency order: server core, SDK, first-party plugins, then documentation. Each repository has its own Git history. Use focused commits for independent fixes, add regression tests for changed behavior, and run the relevant formatting, tests, vet, lint, and build targets before moving on. Plugin builds use their pinned SDK dependency until a new SDK version is released and adopted.
+For cross-repository work, publish shared contracts before their consumers. An SDK change is released first; the server, CLI, and affected plugins then adopt that released SDK version as needed. Server and CLI releases are independent, and first-party plugins are versioned and released independently from one another. Update the documentation repository after the behavior and package versions it describes are available. Use focused commits and run each repository's formatting, tests, vet/lint, and build targets before release.
 
 ## Development tools
 

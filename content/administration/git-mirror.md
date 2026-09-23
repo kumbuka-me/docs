@@ -8,7 +8,7 @@ kumbuka-cli mirror \
   --output kumbuka-mirror
 ```
 
-The mirror is one-way: editing the generated files does not change Kumbuka. Each run replaces the selected output directory with a complete snapshot.
+The mirror is one-way: editing the generated files does not change Kumbuka. Each run stages a complete snapshot before replacing the selected output directory, so a failed export leaves the previous snapshot in place. The CLI rejects destructive destinations such as a filesystem root, the current working directory, or one of its ancestors, including paths that resolve there through symlinks.
 
 ```text
 kumbuka-mirror/

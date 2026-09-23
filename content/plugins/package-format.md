@@ -14,7 +14,7 @@ assets/
   ...
 ```
 
-`README.md` and `plugin.yaml` are required. `plugin.wasm` is required when the manifest contains an executable `renderer-extension`, `macro`, `code-highlighter`, `widget`, or `exporter`. Declarative-only packages do not need WASM.
+`README.md` and `plugin.yaml` are required. `plugin.wasm` is required when the manifest contains an executable `renderer-extension`, `macro`, `code-highlighter`, `widget`, `exporter`, or `admin-action`. Declarative-only packages do not need WASM.
 
 The packaged README is sanitized and displayed on the plugin detail page in **Administration → Plugins**.
 

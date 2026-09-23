@@ -51,7 +51,7 @@ hover_effect = "lift"
 hover_text = "{{label}} | {{description}}"
 ```
 
-`site_url` sets the public URL prefix used in generated links. Set it correctly when the site is hosted below a path, such as a GitHub Pages project site.
+`site_url` sets the public URL prefix used in generated links. When set, it must be a clean absolute HTTP(S) URL without credentials, a query string, or a fragment. Set it correctly when the site is hosted below a path, such as a GitHub Pages project site. A build that publishes browser-module plugins requires `site_url` because the generated sandbox frames need the site's absolute origin for their content-security policy; builds without browser modules may leave it empty.
 
 `footer` is optional plain text rendered below generated pages. HTML is escaped rather than interpreted. Omit it or set it to an empty string to render no footer.
 
@@ -79,7 +79,7 @@ kumbuka-cli plugins add \
 kumbuka-cli plugins remove --id com.example.chart
 ```
 
-Use `--plugins FILE` to select a different plugin dependency file for one build.
+Use `--plugins FILE` to select a different plugin dependency file for one build. `plugins sync` downloads and validates every pinned package and validates the declared plugin dependency graph; a missing dependency or dependency cycle fails the command instead of being deferred until the site build.
 
 ## Filesystem routes
 
@@ -92,7 +92,7 @@ docs/installation/index.md      -> /installation/
 docs/installation/docker.md     -> /installation/docker/
 ```
 
-When `site_url` contains a path prefix, the prefix is added to generated URLs.
+When `site_url` contains a path prefix, the prefix is added to generated URLs. Source paths remain normal filesystem paths; emitted links percent-encode URL-reserved and non-ASCII path characters, so filenames containing spaces, `#`, `%`, or Unicode characters still produce valid links.
 
 ## Links and assets
 
@@ -119,11 +119,11 @@ favicon_ico = "assets/favicon.ico"
 assets_dir = "assets"
 ```
 
-These paths are resolved relative to the configuration file. Relative paths may use `../`, and absolute paths are also supported.
+These paths are resolved relative to the configuration file. Relative paths may use `../`, and absolute paths are also supported. Symbolic links inside copied source or asset trees are rejected, and the CLI rejects source, asset, and output layouts that overlap after resolving existing symlinked path components.
 
 Supported image formats are SVG, PNG, JPEG, WebP, GIF, and ICO. `favicon_ico` must reference an ICO file. If `logo`, `favicon`, or `favicon_ico` is omitted, that branding element is omitted from the generated site.
 
-Do not edit the output directory manually; each build recreates it.
+Do not edit the output directory manually; each build stages a complete replacement and installs it only after generation succeeds. The output cannot be the current working directory or one of its ancestors, including an equivalent location reached through symlinks.
 
 ## Generated output
 

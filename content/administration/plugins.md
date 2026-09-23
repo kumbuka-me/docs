@@ -14,7 +14,7 @@ Plugins with administrator-managed configuration appear under **Plugin settings*
 
 Upload a `.kumbukaplugin` package of up to 16 MiB and select **Install and enable**. Kumbuka checks package compatibility, dependencies, and requested permissions before installation.
 
-Kumbuka checks the first-party plugin catalog every 15 minutes by default. The interval can be changed with `--plugin-update-check-interval` or `KUMBUKA__PLUGIN_UPDATE_CHECK_INTERVAL`; set it to `0` to disable scheduled checks. **Check for updates** remains available for manual checks.
+Kumbuka checks the first-party plugin catalog every hour by default. The interval can be changed with `--plugin-update-check-interval` or `KUMBUKA__PLUGIN_UPDATE_CHECK_INTERVAL`; set it to `0` to disable scheduled checks. **Check for updates** remains available for manual checks.
 
 Update checks never install plugins automatically. When a compatible update is available, the plugin page shows **Update**. Kumbuka verifies the downloaded package before applying it, and a failed update leaves the current version in place. Administrators can also upgrade manually by uploading a package with the same plugin ID.
 

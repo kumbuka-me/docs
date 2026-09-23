@@ -82,7 +82,7 @@ Declares administrator-managed plugin settings. A settings module has two forms:
 - without `fields`, it is a boolean feature toggle; `requires` can reference other modules in the same package;
 - with `fields`, it is a typed singleton settings group rendered on the plugin's page under **Administration → Plugin settings**.
 
-Typed settings use the same generic configuration field schema as `admin-resource`: `text`, `textarea`, `url`, `secret`, `boolean`, and `select`. Typed settings groups can contain up to 16 fields and cannot use `key: true` or `requires`.
+Typed settings use bounded scalar configuration fields: `text`, `textarea`, `url`, `secret`, `boolean`, `select`, and `color`. Typed settings groups can contain up to 16 fields and cannot use `key: true`, `list` fields, or `requires`. Color values use canonical six-digit CSS hexadecimal form such as `#64748b`.
 
 For example:
 
@@ -125,7 +125,9 @@ Adds isolated browser-side rendering from packaged JavaScript and optional CSS. 
 
 Declares a bounded host-rendered record schema owned by the plugin. Kumbuka owns forms, generic type validation, authorization, CSRF protection, namespaced persistence, and encryption of `secret` fields. Plugins that declare `settings`, `admin-resource`, or `admin-action` modules appear under **Administration → Plugin settings** rather than placing their configuration in the Plugins lifecycle page.
 
-Each resource has exactly one `text` field marked `key: true`. Other fields use the same configuration field schema as typed `settings`. `required` and `max_bytes` apply generically. `boolean` fields may use `default: "true"` or `"false"`; `select` fields declare an `options` list and may choose one option as `default`. `url` defaults must be absolute HTTP(S) URLs. Secret fields cannot have defaults and are masked in the browser after saving. A configuration group or resource may contain at most 16 fields; a `select` may contain at most 32 unique options.
+Each resource has exactly one required `text` field marked `key: true`. Scalar fields use the same types as typed settings: `text`, `textarea`, `url`, `secret`, `boolean`, `select`, and `color`. Admin resources can additionally use bounded `list` fields for structured rows. `required` and `max_bytes` apply generically. `boolean` fields may use `default: "true"` or `"false"`; `select` fields declare an `options` list and may choose one option as `default`; options must fit the field's byte limit. `url` defaults must be absolute HTTP(S) URLs. `color` values are canonical `#RRGGBB` values. Secret fields cannot have defaults and are masked in the browser after saving.
+
+A `list` field declares one to eight typed columns and can set `max_items` up to 64. List columns can use `text`, `url`, `select`, or `color`; nested lists, secrets, textareas, booleans, and key columns are not supported. A configuration group or resource may contain at most 16 fields, and a `select` may contain at most 32 unique options.
 
 For example:
 

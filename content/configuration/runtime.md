@@ -2,34 +2,34 @@
 
 The Kumbuka server accepts command-line flags and matching `KUMBUKA__` environment variables. A database URL is required when starting the server. Static-site builds, mirrors, and plugin-project commands use the separate `kumbuka-cli` binary.
 
-| Flag                             | Environment                             | Purpose                                                                                          |
-| -------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `--listen-address`               | `KUMBUKA__LISTEN_ADDRESS`               | HTTP listen address; defaults to `127.0.0.1:8080`.                                               |
-| `--database-url`                 | `KUMBUKA__DATABASE_URL`                 | PostgreSQL connection URL.                                                                       |
-| `--public-url`                   | `KUMBUKA__PUBLIC_URL`                   | Externally visible base URL; defaults to `http://localhost:8080`.                                |
-| `--pdf-url`                      | `KUMBUKA__PDF_URL`                      | Optional deployment override for the HTML-to-PDF endpoint.                                       |
-| `--plugin-update-check-interval` | `KUMBUKA__PLUGIN_UPDATE_CHECK_INTERVAL` | First-party plugin update-check interval; defaults to `15m`, or `0` to disable scheduled checks. |
-| `--allow-user-registration`      | `KUMBUKA__ALLOW_USER_REGISTRATION`      | Override whether unknown OIDC or trusted-proxy identities may create accounts.                   |
-| `--read-only`                    | `KUMBUKA__READ_ONLY`                    | Block state-changing application requests while preserving reads and authentication.             |
-| `--local-login`                  | `KUMBUKA__LOCAL_LOGIN`                  | Expose local recovery login alongside another authentication mode.                               |
-| `--theme-directory`              | `KUMBUKA__THEME_DIRECTORY`              | Optional directory containing additional TOML themes.                                            |
-| `--auth-mode`                    | `KUMBUKA__AUTH_MODE`                    | Deployment override for browser authentication mode.                                             |
-| `--trusted-username-headers`     | `KUMBUKA__TRUSTED_USERNAME_HEADERS`     | Trusted-proxy username header list used with the authentication override.                        |
-| `--trusted-email-headers`        | `KUMBUKA__TRUSTED_EMAIL_HEADERS`        | Trusted-proxy email header list used with the authentication override.                           |
-| `--trusted-display-name-headers` | `KUMBUKA__TRUSTED_DISPLAY_NAME_HEADERS` | Trusted-proxy display-name header list used with the authentication override.                    |
-| `--trusted-group-headers`        | `KUMBUKA__TRUSTED_GROUP_HEADERS`        | Trusted-proxy group header list used with the authentication override.                           |
-| `--trusted-admin-group`          | `KUMBUKA__TRUSTED_ADMIN_GROUP`          | Trusted-proxy group value that grants administrator access.                                      |
-| `--oidc-issuer`                  | `KUMBUKA__OIDC_ISSUER`                  | OIDC issuer used with a deployment-managed OIDC configuration.                                   |
-| `--oidc-client-id`               | `KUMBUKA__OIDC_CLIENT_ID`               | OIDC client ID used with a deployment-managed OIDC configuration.                                |
-| `--oidc-group-claim`             | `KUMBUKA__OIDC_GROUP_CLAIM`             | OIDC group-membership claim used with the authentication override; defaults to `groups`.         |
-| `--oidc-admin-group`             | `KUMBUKA__OIDC_ADMIN_GROUP`             | OIDC group value that grants administrator access.                                               |
-| `--oidc-client-secret`           | `KUMBUKA__OIDC_CLIENT_SECRET`           | OIDC client secret.                                                                              |
-| `--oidc-session-secret`          | `KUMBUKA__OIDC_SESSION_SECRET`          | Secret used for OIDC browser sessions; must be at least 32 characters when set.                  |
-| `--encryption-key`               | `KUMBUKA__ENCRYPTION_KEY`               | Base64-encoded 32-byte key used to encrypt sensitive application settings.                       |
-| `--log-format`                   | `KUMBUKA__LOG_FORMAT`                   | `json` or `text`.                                                                                |
-| `--debug`                        | `KUMBUKA__DEBUG`                        | Enable verbose diagnostics.                                                                      |
-| `--debug-render-timings`         | `KUMBUKA__DEBUG_RENDER_TIMINGS`         | Log detailed page-render timing information for temporary performance diagnosis.                 |
-| `--access-log`                   | `KUMBUKA__ACCESS_LOG`                   | Enable HTTP access logging.                                                                      |
+| Flag                             | Environment                             | Purpose                                                                                         |
+| -------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `--listen-address`               | `KUMBUKA__LISTEN_ADDRESS`               | HTTP listen address; defaults to `127.0.0.1:8080`.                                              |
+| `--database-url`                 | `KUMBUKA__DATABASE_URL`                 | PostgreSQL connection URL.                                                                      |
+| `--public-url`                   | `KUMBUKA__PUBLIC_URL`                   | Externally visible base URL; defaults to `http://localhost:8080`.                               |
+| `--pdf-url`                      | `KUMBUKA__PDF_URL`                      | Optional deployment override for the HTML-to-PDF endpoint.                                      |
+| `--plugin-update-check-interval` | `KUMBUKA__PLUGIN_UPDATE_CHECK_INTERVAL` | First-party plugin update-check interval; defaults to `1h`, or `0` to disable scheduled checks. |
+| `--allow-user-registration`      | `KUMBUKA__ALLOW_USER_REGISTRATION`      | Override whether unknown OIDC or trusted-proxy identities may create accounts.                  |
+| `--read-only`                    | `KUMBUKA__READ_ONLY`                    | Block state-changing application requests while preserving reads and authentication.            |
+| `--local-login`                  | `KUMBUKA__LOCAL_LOGIN`                  | Expose local recovery login alongside another authentication mode.                              |
+| `--theme-directory`              | `KUMBUKA__THEME_DIRECTORY`              | Optional directory containing additional TOML themes.                                           |
+| `--auth-mode`                    | `KUMBUKA__AUTH_MODE`                    | Deployment override for browser authentication mode.                                            |
+| `--trusted-username-headers`     | `KUMBUKA__TRUSTED_USERNAME_HEADERS`     | Trusted-proxy username header list used with the authentication override.                       |
+| `--trusted-email-headers`        | `KUMBUKA__TRUSTED_EMAIL_HEADERS`        | Trusted-proxy email header list used with the authentication override.                          |
+| `--trusted-display-name-headers` | `KUMBUKA__TRUSTED_DISPLAY_NAME_HEADERS` | Trusted-proxy display-name header list used with the authentication override.                   |
+| `--trusted-group-headers`        | `KUMBUKA__TRUSTED_GROUP_HEADERS`        | Trusted-proxy group header list used with the authentication override.                          |
+| `--trusted-admin-group`          | `KUMBUKA__TRUSTED_ADMIN_GROUP`          | Trusted-proxy group value that grants administrator access.                                     |
+| `--oidc-issuer`                  | `KUMBUKA__OIDC_ISSUER`                  | OIDC issuer used with a deployment-managed OIDC configuration.                                  |
+| `--oidc-client-id`               | `KUMBUKA__OIDC_CLIENT_ID`               | OIDC client ID used with a deployment-managed OIDC configuration.                               |
+| `--oidc-group-claim`             | `KUMBUKA__OIDC_GROUP_CLAIM`             | OIDC group-membership claim used with the authentication override; defaults to `groups`.        |
+| `--oidc-admin-group`             | `KUMBUKA__OIDC_ADMIN_GROUP`             | OIDC group value that grants administrator access.                                              |
+| `--oidc-client-secret`           | `KUMBUKA__OIDC_CLIENT_SECRET`           | OIDC client secret.                                                                             |
+| `--oidc-session-secret`          | `KUMBUKA__OIDC_SESSION_SECRET`          | Secret used for OIDC browser sessions; must be at least 32 characters when set.                 |
+| `--encryption-key`               | `KUMBUKA__ENCRYPTION_KEY`               | Base64-encoded 32-byte key used to encrypt sensitive application settings.                      |
+| `--log-format`                   | `KUMBUKA__LOG_FORMAT`                   | `json` or `text`.                                                                               |
+| `--debug`                        | `KUMBUKA__DEBUG`                        | Enable verbose diagnostics.                                                                     |
+| `--debug-render-timings`         | `KUMBUKA__DEBUG_RENDER_TIMINGS`         | Log detailed page-render timing information for temporary performance diagnosis.                |
+| `--access-log`                   | `KUMBUKA__ACCESS_LOG`                   | Enable HTTP access logging.                                                                     |
 
 ## Deployment overrides
 

@@ -50,14 +50,14 @@ The base client requires `network:http`. Requests that explicitly permit exact p
 
 `github.com/kumbuka-me/sdk/markdown` contains small reusable Markdown parsing helpers for plugins:
 
-- `Fence` recognizes opening backtick or tilde fences;
-- `Closes` checks whether a line closes a known fence;
+- `Fence` recognizes CommonMark-compatible opening backtick or tilde fences indented by at most three spaces and rejects backtick info strings containing a backtick;
+- `Closes` checks whether a line closes a known fence with a compatible marker run;
 - `AppendFence` copies a complete fenced block without interpreting its body.
 
 Plugin-specific syntax belongs in the plugin itself rather than this helper package.
 
 ## Package validation
 
-`github.com/kumbuka-me/sdk/pluginpackage` exposes the public manifest and package-validation contract used by tooling and the Kumbuka host. `ParseManifest` strictly validates one manifest and `Read` validates a complete `.kumbukaplugin` archive.
+`github.com/kumbuka-me/sdk/pluginpackage` exposes the public manifest and package-validation contract used by tooling and the Kumbuka host. `ParseManifest` strictly validates one manifest and `Read` validates a complete `.kumbukaplugin` archive. Validated package accessors return independent copies of mutable manifest slices and package bytes so callers cannot mutate cached package state.
 
 See [Package format](package-format.md) for the archive layout and limits.

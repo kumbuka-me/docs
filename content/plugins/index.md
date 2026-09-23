@@ -18,7 +18,7 @@ Explore the [Plugin catalog](catalog.md) for descriptions, previews, permissions
 
 ## Develop plugins
 
-Plugins can be declarative or executable. Use declarative manifest modules where possible; executable server-side behavior uses WASM, while browser modules provide isolated client-side rendering.
+Plugins can be declarative or executable. Use declarative manifest modules where possible; executable server-side behavior uses WASM, while browser modules provide isolated client-side rendering. The public schema, guest ABI, capability clients, and `kumbuka-plugin` tool live in [`kumbuka-me/sdk`](https://github.com/kumbuka-me/sdk); first-party plugin implementations and releases live in [`kumbuka-me/plugins`](https://github.com/kumbuka-me/plugins).
 
 - [Getting started](getting-started.md) — create, test, build, and install a plugin.
 - [SDK](sdk.md) — public Go packages and helpers.

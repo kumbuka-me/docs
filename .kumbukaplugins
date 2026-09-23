@@ -17,14 +17,14 @@ id = "me.kumbuka.subpages"
 repository = "kumbuka-me/plugins"
 tag_prefix = "subpages/v"
 asset = "subpages"
-version = "1.2.0"
+version = "1.3.0"
 
 [[plugin]]
 id = "me.kumbuka.tables"
 repository = "kumbuka-me/plugins"
 tag_prefix = "tables/v"
 asset = "tables"
-version = "1.1.0"
+version = "1.1.1"
 
 [[plugin]]
 id = "me.kumbuka.typographer"
@@ -32,5 +32,3 @@ repository = "kumbuka-me/plugins"
 tag_prefix = "typographer/v"
 asset = "typographer"
 version = "1.1.0"
-
-

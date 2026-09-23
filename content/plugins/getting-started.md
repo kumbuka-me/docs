@@ -61,44 +61,55 @@ The generated `go.mod` preserves that path as a quoted local replacement. Remove
 
 First-party plugins in `kumbuka-me/plugins` are versioned independently. Use a patch bump for compatible fixes, a minor bump for backwards-compatible features, and a major bump for breaking plugin behavior.
 
-Bump one plugin manifest with:
+The normal repository workflow is interactive:
+
+```sh
+make release
+```
+
+Select the plugin and bump type. The release helper validates the repository, updates the plugin version, runs the repository checks, commits the version change, creates the plugin tag, pushes the branch, and pushes the release tag. The tag-triggered GitHub workflow builds only the tagged plugin package and checksum and creates its GitHub Release.
+
+For a manual release, use the lower-level targets:
 
 ```sh
 make version-plugin PLUGIN=simple-icons BUMP=patch
-```
+make test
+make lint
+make build-plugin PLUGIN=simple-icons
 
-`make version` provides the same flow interactively. Run the repository tests and lint checks, then commit and push the version change before creating the release tag.
+git add simple-icons/plugin.yaml
+git commit -m "chore: bump simple-icons version"
+git push origin main
 
-With a clean working tree, create the tag for the version stored in `plugin.yaml`:
-
-```sh
 make tag-plugin PLUGIN=simple-icons
-git push origin simple-icons/v1.0.1
+# Push the exact tag printed by tag-plugin, for example:
+git push origin refs/tags/simple-icons/v1.1.1
 ```
 
-The plugins release workflow verifies that the tag matches the manifest version, runs tests and linting, builds the `.kumbukaplugin` package and checksum, and creates the matching GitHub Release. `make tag-plugin` creates the local tag only; it does not push it.
+`make tag-plugin` creates a local tag only; it does not push it. `make check-releases` verifies the latest published plugin tags against GitHub Releases. `make release-missing` is recovery tooling for a tag that already exists remotely but is missing its release; it is not part of the normal release path.
 
 ### Releasing a new SDK dependency
 
-A Go SDK version must exist as a Git tag before another repository can resolve it. When a plugin needs a new SDK version, release the SDK first:
+A Go SDK version must exist as a Git tag before another repository can resolve it. When a plugin needs an unreleased SDK change, release the SDK first. For example, with the intended release version in a shell variable:
 
 ```sh
 cd ../sdk
-git tag v0.2.0
-git push origin v0.2.0
+SDK_VERSION=v0.15.0
+git tag "$SDK_VERSION"
+git push origin "$SDK_VERSION"
 ```
 
-Pushing an SDK `vMAJOR.MINOR.PATCH` tag runs the SDK test, lint, and build workflow and creates a GitHub Release when those checks pass. The Git tag itself is what makes `github.com/kumbuka-me/sdk@v0.2.0` available to the Go module resolver; the GitHub Release is not required for module resolution.
+Pushing an SDK `vMAJOR.MINOR.PATCH` tag runs the SDK checks and creates a GitHub Release. The Git tag is what makes `github.com/kumbuka-me/sdk@$SDK_VERSION` available to the Go module resolver.
 
-After the SDK tag is available, update the plugins repository and refresh its module files:
+After that tag is available, update the plugins repository and refresh its module files:
 
 ```sh
 cd ../plugins
-go get github.com/kumbuka-me/sdk@v0.2.0
+go get "github.com/kumbuka-me/sdk@$SDK_VERSION"
 go mod tidy
 ```
 
-Only then bump and release the affected plugin version.
+Only then bump and release the affected plugin version. The server and CLI adopt SDK releases independently through their own module dependencies.
 
 ## Next steps
 

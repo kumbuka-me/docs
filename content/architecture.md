@@ -2,7 +2,17 @@
 
 This page is a contributor reference for the Kumbuka server codebase. It is not required for installing or administering Kumbuka.
 
-Kumbuka runs as a modular Go monolith backed by PostgreSQL. A separate `kumbuka-cli` binary provides static-site builds, Git-friendly mirrors, and plugin-project tooling.
+Kumbuka runs as a modular Go monolith backed by PostgreSQL. Static-site tooling, the plugin SDK, first-party plugins, and documentation are maintained in separate repositories.
+
+## Repository boundaries
+
+- [`kumbuka-me/kumbuka`](https://github.com/kumbuka-me/kumbuka) owns the server, web application, PostgreSQL adapter, application use cases, plugin host/runtime, and reusable packages under `pkg/`.
+- [`kumbuka-me/sdk`](https://github.com/kumbuka-me/sdk) owns the versioned plugin package schema, guest ABI, typed capability clients, package validation, and the `kumbuka-plugin` development CLI. It does not depend on the server implementation.
+- [`kumbuka-me/cli`](https://github.com/kumbuka-me/cli) owns offline/project tooling: static-site generation, Git-friendly database mirrors, and static-site plugin dependency management. It consumes released public packages from the server repository and the SDK while keeping CLI-specific code under its own `internal/` tree.
+- [`kumbuka-me/plugins`](https://github.com/kumbuka-me/plugins) owns first-party plugin source and releases. Plugins depend on the public SDK contract rather than server internals.
+- [`kumbuka-me/docs`](https://github.com/kumbuka-me/docs) owns the cross-repository documentation. Generated first-party plugin pages and previews originate in the plugins repository and are synchronized into the documentation repository.
+
+When a shared plugin contract changes, release the SDK before repositories that need that version. The server, CLI, and plugins then adopt released dependencies independently; documentation is updated after the behavior it describes is available.
 
 A normal server request moves through one HTTP orchestration layer into application use cases and persistence:
 
@@ -36,7 +46,7 @@ flowchart LR
 - other packages under `pkg/` provide reusable runtime and public API types such as Markdown, plugins, revisions, icons, logging, themes, and shared domain models.
 - `web` contains the browser assets used by the server.
 
-The standalone CLI reuses public packages from the server repository but has its own command and project-specific code in `github.com/kumbuka-me/cli`.
+The standalone CLI reuses public packages from the server and SDK repositories but does not import server `internal/` packages. Its command handling, static-site builder, mirror adapter, staged filesystem writes, and plugin-project resolver remain owned by `github.com/kumbuka-me/cli`.
 
 ## Composition and dependency boundaries
 
