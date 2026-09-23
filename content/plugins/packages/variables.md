@@ -7,7 +7,7 @@ Reusable text values with editor completion, page inspection, and temporary expo
 ![Variables preview](/assets/plugins/variables/preview.png)
 
 - Plugin ID: `me.kumbuka.variables`
-- Source version: `1.4.0`
+- Source version: `1.4.2`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/variables) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=variables%2Fv) · [Installation](../../administration/plugins.md)

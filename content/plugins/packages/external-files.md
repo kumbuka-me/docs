@@ -7,7 +7,7 @@ Embed GitHub and GitLab files with line ranges, annotations, and revision metada
 ![External Files preview](/assets/plugins/external-files/preview.png)
 
 - Plugin ID: `me.kumbuka.external-files`
-- Source version: `1.7.0`
+- Source version: `1.7.2`
 - Permissions: `settings:read`, `network:http`, `network:private`, `network:insecure-tls`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/external-files) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=external-files%2Fv) · [Installation](../../administration/plugins.md)
