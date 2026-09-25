@@ -32,6 +32,7 @@ A render request contains:
 - `widget` — the host surface plus optional current-page metadata for widget invocations.
 - `widget_command` — validated widget surface, optional page, and action ID for a host-mediated command;
 - `export` — authorized page metadata and stored Markdown source for an exporter invocation.
+- `content_change` — committed page metadata and the previous/current canonical Markdown for a content-change hook.
 
 A result can contain an error, macro match/invocation data, ordered output parts, widget actions, a widget-command result, or an exported file depending on the stage. A part is literal intermediate text or Markdown that Kumbuka renders recursively. Only preprocessing stages may return recursive Markdown fragments; the WASM call finishes before nested rendering occurs.
 
@@ -48,6 +49,10 @@ For a `widget` module, Kumbuka invokes stage `widget`. The request contains the 
 Widget output uses ordinary text parts and is sanitized before it reaches the host template. Recursive Markdown fragments are rejected. A result can additionally request bounded host-rendered actions. API v1 supports `link` and `dialog` actions with a stable action ID, visible label, local application URL, and optional host icon. It also supports `command`, which has no plugin URL and may carry bounded confirmation text.
 
 For a command, Kumbuka owns the POST route and invokes the same module with stage `widget-command` plus `widget_command` context. A command response contains only an optional local redirect. Page-scoped commands are reauthorized by the host before the guest runs.
+
+## Content changes
+
+For a `content-change` module, Kumbuka invokes stage `content-change` only after changed canonical Markdown has been persisted. The `content_change` context contains public metadata for the committed page plus `previous_source` and `source`. A successful hook returns an empty result. Hook failures are logged as post-commit side-effect failures and do not roll back the page save.
 
 ## Exporters
 

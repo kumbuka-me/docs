@@ -48,7 +48,7 @@ Attachment reads are available only when the current render scope explicitly sup
 
 User-directory results contain only stable user ID, canonical mention, and display name. Email addresses, roles, authentication state, and external identities are not exposed to plugins. `users:read` makes executable render output dynamic because user names can change.
 
-`Notifications().Send` is available only in host-recognized mutation contexts such as widget commands. Kumbuka supplies the authenticated actor and calling plugin identity, persists the inbox item, and emits `notification.created`; rendering a page can never create a notification. Plugins must provide an idempotency key so retried mutations do not produce duplicate inbox items or webhook events.
+`Notifications().Send` is available only in host-recognized mutation contexts such as widget commands and committed `content-change` hooks. Kumbuka supplies the authenticated actor and calling plugin identity, persists the inbox item, and emits `notification.created`; rendering a page can never create a notification. Plugins must provide an idempotency key so retried mutations do not produce duplicate inbox items or webhook events.
 
 ## Plugin-owned storage
 

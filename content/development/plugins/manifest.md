@@ -65,6 +65,12 @@ Runs executable WASM to render a bounded widget on a host-owned surface. Support
 
 Widget HTML is sanitized by Kumbuka. A widget can also return bounded host-rendered `link` or `dialog` actions with local application URLs, or a `command` action handled through Kumbuka's host-owned POST endpoint. Command actions do not expose arbitrary plugin routes. They may include optional confirmation text and are executed only after the host revalidates the current page context. Widgets cannot return recursive Markdown fragments.
 
+### `content-change`
+
+Runs executable WASM after a page save commits changed canonical Markdown. The guest receives public metadata for the committed page plus the previous and current source. The hook returns no render output and is not invoked for metadata-only saves.
+
+This module is the generic mutation boundary for plugins that must compare old and new content. Mutation-only capabilities such as `notifications.send` can be supplied in this context; they remain unavailable during rendering.
+
 ### `page-action`
 
 Adds a declarative action to the current page without requiring WASM. `name`, optional `description` and `icon`, `order`, `kind`, and a bounded local `url` describe the host-rendered control. `kind` can be `link` or `dialog` and defaults to `link`. URL templates may use `${slug}` and `${id}`; Kumbuka expands both with path-safe current-page values.
