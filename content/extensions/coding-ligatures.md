@@ -7,7 +7,7 @@ Show programming ligatures in rendered text and code.
 ![Coding Ligatures preview](/assets/plugins/coding-ligatures/preview.png)
 
 - Plugin ID: `me.kumbuka.coding-ligatures`
-- Source version: `1.1.0`
+- Source version: `1.1.1`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/coding-ligatures) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=coding-ligatures%2Fv) · [Installation](../administration/plugins.md)

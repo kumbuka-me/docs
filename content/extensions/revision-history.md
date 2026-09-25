@@ -7,7 +7,7 @@ Show recent revision metadata and expose the full history as a page action.
 ![Revision History preview](/assets/plugins/revision-history/preview.png)
 
 - Plugin ID: `me.kumbuka.revision-history`
-- Source version: `1.1.0`
+- Source version: `1.1.1`
 - Permissions: `pages:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/revision-history) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=revision-history%2Fv) · [Installation](../administration/plugins.md)

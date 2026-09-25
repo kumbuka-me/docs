@@ -7,7 +7,7 @@ Convert common ASCII punctuation into typographic characters.
 ![Typographer preview](/assets/plugins/typographer/preview.png)
 
 - Plugin ID: `me.kumbuka.typographer`
-- Source version: `1.1.0`
+- Source version: `1.1.1`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/typographer) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=typographer%2Fv) · [Installation](../administration/plugins.md)

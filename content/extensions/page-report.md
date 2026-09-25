@@ -7,7 +7,7 @@ Build filtered page reports from Kumbuka content.
 ![Page Report preview](/assets/plugins/page-report/preview.png)
 
 - Plugin ID: `me.kumbuka.page-report`
-- Source version: `1.2.1`
+- Source version: `1.2.2`
 - Permissions: `pages:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/page-report) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=page-report%2Fv) · [Installation](../administration/plugins.md)

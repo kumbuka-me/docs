@@ -7,7 +7,7 @@ Show the most-viewed visible pages on the Home dashboard.
 ![Popular Pages preview](/assets/plugins/popular-pages/preview.png)
 
 - Plugin ID: `me.kumbuka.popular-pages`
-- Source version: `1.1.0`
+- Source version: `1.1.1`
 - Permissions: `pages:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/popular-pages) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=popular-pages%2Fv) · [Installation](../administration/plugins.md)

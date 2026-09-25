@@ -7,7 +7,7 @@ Reusable Markdown blocks with editor completion.
 ![Snippets preview](/assets/plugins/snippets/preview.png)
 
 - Plugin ID: `me.kumbuka.snippets`
-- Source version: `1.2.0`
+- Source version: `1.2.1`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/snippets) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=snippets%2Fv) · [Installation](../administration/plugins.md)

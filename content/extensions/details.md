@@ -7,7 +7,7 @@ Render collapsible Markdown detail blocks with optional open state.
 ![Collapsible Details preview](/assets/plugins/details/preview.png)
 
 - Plugin ID: `me.kumbuka.details`
-- Source version: `1.3.0`
+- Source version: `1.3.1`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/details) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=details%2Fv) · [Installation](../administration/plugins.md)

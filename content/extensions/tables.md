@@ -7,7 +7,7 @@ Markdown tables with colors, sorting, and filtering.
 ![Tables preview](/assets/plugins/tables/preview.png)
 
 - Plugin ID: `me.kumbuka.tables`
-- Source version: `1.1.1`
+- Source version: `1.1.2`
 - Permissions: `browser:render`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/tables) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=tables%2Fv) · [Installation](../administration/plugins.md)

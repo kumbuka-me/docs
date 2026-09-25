@@ -7,7 +7,7 @@ Show pages recently viewed by the current user on Home and in the sidebar.
 ![Recently Viewed preview](/assets/plugins/recently-viewed/preview.png)
 
 - Plugin ID: `me.kumbuka.recently-viewed`
-- Source version: `1.1.0`
+- Source version: `1.1.1`
 - Permissions: `activity:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/recently-viewed) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=recently-viewed%2Fv) · [Installation](../administration/plugins.md)

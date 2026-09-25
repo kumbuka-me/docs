@@ -7,7 +7,7 @@ Transclude complete pages or heading sections into Markdown.
 ![Includes preview](/assets/plugins/includes/preview.png)
 
 - Plugin ID: `me.kumbuka.includes`
-- Source version: `1.4.0`
+- Source version: `1.4.1`
 - Permissions: `pages:content`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/includes) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=includes%2Fv) · [Installation](../administration/plugins.md)

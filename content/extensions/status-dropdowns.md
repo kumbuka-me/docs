@@ -7,7 +7,7 @@ Interactive inline status dropdowns with page-local or reusable choices and pers
 ![Status Dropdowns preview](/assets/plugins/status-dropdowns/preview.png)
 
 - Plugin ID: `me.kumbuka.status-dropdowns`
-- Source version: `1.6.2`
+- Source version: `1.6.3`
 - Permissions: `browser:render`, `settings:read`, `storage:read`, `storage:write`, `pages:content`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/status-dropdowns) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=status-dropdowns%2Fv) · [Installation](../administration/plugins.md)

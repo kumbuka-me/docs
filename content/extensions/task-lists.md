@@ -7,7 +7,7 @@ Render Markdown task list items with visible checkbox state.
 ![Task Lists preview](/assets/plugins/task-lists/preview.png)
 
 - Plugin ID: `me.kumbuka.task-lists`
-- Source version: `1.2.0`
+- Source version: `1.2.1`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/task-lists) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=task-lists%2Fv) · [Installation](../administration/plugins.md)

@@ -7,7 +7,7 @@ Add brand icons from Simple Icons to the Kumbuka icon catalog.
 ![Simple Icons preview](/assets/plugins/simple-icons/preview.png)
 
 - Plugin ID: `me.kumbuka.simple-icons`
-- Source version: `1.1.0`
+- Source version: `1.1.1`
 - Permissions: None
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/simple-icons) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=simple-icons%2Fv) · [Installation](../administration/plugins.md)

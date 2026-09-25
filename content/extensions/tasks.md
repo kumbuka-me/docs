@@ -7,7 +7,7 @@ Add persistent actionable tasks with assignees, due dates, configurable states, 
 ![Tasks preview](/assets/plugins/tasks/preview.png)
 
 - Plugin ID: `me.kumbuka.tasks`
-- Source version: `1.2.0`
+- Source version: `1.2.1`
 - Permissions: `browser:render`, `settings:read`, `storage:read`, `storage:write`, `pages:content`, `users:read`, `notifications:send`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/tasks) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=tasks%2Fv) · [Installation](../administration/plugins.md)

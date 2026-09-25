@@ -7,7 +7,7 @@ Show the newest visible pages on the Home dashboard.
 ![Recent Changes preview](/assets/plugins/recent-changes/preview.png)
 
 - Plugin ID: `me.kumbuka.recent-changes`
-- Source version: `1.1.0`
+- Source version: `1.1.1`
 - Permissions: `pages:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/recent-changes) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=recent-changes%2Fv) · [Installation](../administration/plugins.md)
