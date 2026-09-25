@@ -3,7 +3,7 @@ set -eu
 
 usage() {
   cat <<'USAGE'
-Usage: scripts/screenshots/run.sh --server DIR --content DIR --output DIR --editor-slug SLUG [--visits PATHS]
+Usage: scripts/screenshots/run.sh --binary FILE --content DIR --output DIR --editor-slug SLUG [--visits PATHS]
 
 PATHS is a comma-separated list of application paths to visit before the dashboard capture.
 USAGE
@@ -11,7 +11,7 @@ USAGE
 
 repository=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 compose_file="$repository/scripts/screenshots/compose.yaml"
-server_dir=""
+binary=""
 content_dir=""
 output=""
 editor_slug=""
@@ -19,12 +19,12 @@ visits=""
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
-  --server)
+  --binary)
     [ "$#" -ge 2 ] || {
       usage >&2
       exit 2
     }
-    server_dir=$2
+    binary=$2
     shift 2
     ;;
   --content)
@@ -71,8 +71,8 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-[ -n "$server_dir" ] || {
-  echo "--server is required" >&2
+[ -n "$binary" ] || {
+  echo "--binary is required" >&2
   exit 2
 }
 [ -n "$content_dir" ] || {
@@ -87,26 +87,10 @@ done
   echo "--editor-slug is required" >&2
   exit 2
 }
-[ -d "$server_dir" ] || {
-  echo "Kumbuka server repository not found: $server_dir" >&2
-  exit 1
-}
-[ -f "$server_dir/go.mod" ] || {
-  echo "Kumbuka server go.mod not found: $server_dir/go.mod" >&2
-  exit 1
-}
-[ -d "$content_dir" ] || {
-  echo "Screenshot content directory not found: $content_dir" >&2
-  exit 1
-}
-[ -x "$repository/node_modules/.bin/playwright" ] || {
-  echo "Playwright is not installed. Run npm ci in the docs repository." >&2
-  exit 1
-}
 
-case "$server_dir" in
+case "$binary" in
 /*) ;;
-*) server_dir="$PWD/$server_dir" ;;
+*) binary="$PWD/$binary" ;;
 esac
 
 case "$content_dir" in
@@ -119,9 +103,21 @@ case "$output" in
 *) output="$PWD/$output" ;;
 esac
 
+[ -x "$binary" ] || {
+  echo "Kumbuka binary not found or not executable: $binary" >&2
+  exit 1
+}
+[ -d "$content_dir" ] || {
+  echo "Screenshot content directory not found: $content_dir" >&2
+  exit 1
+}
+[ -x "$repository/node_modules/.bin/playwright" ] || {
+  echo "Playwright is not installed. Run npm ci in the docs repository." >&2
+  exit 1
+}
+
 work_dir=$(mktemp -d "${TMPDIR:-/tmp}/kumbuka-screenshots.XXXXXX")
 archive="$work_dir/content.zip"
-binary="$work_dir/kumbuka"
 server_log="$work_dir/kumbuka.log"
 server_pid=""
 compose_project="kumbuka-screenshots-$$"
@@ -139,7 +135,12 @@ cleanup() {
     wait "$server_pid" 2>/dev/null || true
   fi
 
-  SCREENSHOT_DB_PORT="$database_port" docker compose -f "$compose_file" -p "$compose_project" down --remove-orphans >/dev/null 2>&1 || true
+  SCREENSHOT_DB_PORT="$database_port" \
+    docker compose \
+    -f "$compose_file" \
+    -p "$compose_project" \
+    down \
+    --remove-orphans >/dev/null 2>&1 || true
 
   if [ "$status" -ne 0 ] && [ -s "$server_log" ]; then
     echo "Kumbuka screenshot server log:" >&2
@@ -154,23 +155,23 @@ trap cleanup EXIT INT TERM
 mkdir -p "$output"
 rm -f "$output"/*.png
 
-make -C "$server_dir" generate web
-
 if [ "${SCREENSHOT_SKIP_BROWSER_INSTALL:-0}" != "1" ]; then
   "$repository/node_modules/.bin/playwright" install chromium
 fi
 
-SCREENSHOT_DB_PORT="$database_port" docker compose -f "$compose_file" -p "$compose_project" up -d --wait
+SCREENSHOT_DB_PORT="$database_port" \
+  docker compose \
+  -f "$compose_file" \
+  -p "$compose_project" \
+  up \
+  -d \
+  --wait
 
 (
   cd "$content_dir"
-  find . -type f -name '*.md' -print | LC_ALL=C sort | zip -q "$archive" -@
-)
-
-commit=$(git -C "$server_dir" rev-parse --short HEAD 2>/dev/null || printf '%s' docs)
-(
-  cd "$server_dir"
-  go build -ldflags="-s -w -X main.Version=screenshots -X main.Commit=$commit" -o "$binary" ./cmd/kumbuka
+  find . -type f -name '*.md' -print |
+    LC_ALL=C sort |
+    zip -q "$archive" -@
 )
 
 "$binary" \
@@ -184,6 +185,7 @@ attempt=0
 until curl --fail --silent "$base_url/healthz" >/dev/null; do
   attempt=$((attempt + 1))
   if [ "$attempt" -ge 60 ]; then
+    echo "Kumbuka did not become healthy at $base_url" >&2
     exit 1
   fi
   sleep 0.25

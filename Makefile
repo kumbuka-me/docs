@@ -2,6 +2,9 @@
 
 ## Tool Versions
 
+# renovate: datasource=github-releases depName=kumbuka-me/kumbuka
+KUMBUKA_VERSION ?= v0.29.1
+
 # renovate: datasource=github-releases depName=kumbuka-me/cli
 KUMBUKA_CLI_VERSION ?= v0.6.1
 
@@ -20,6 +23,8 @@ include $(call dev-tools-module,help)
 
 ## Tools
 
+KUMBUKA := bin/kumbuka
+KUMBUKA_ASSET ?= kumbuka_{version}_{os}_{arch}.tar.gz
 KUMBUKA_CLI := bin/kumbuka-cli
 KUMBUKA_CLI_ASSET ?= kumbuka-cli_{version}_{os}_{arch}.tar.gz
 FAVICON_GENERATE := $(DEV_TOOLS_BIN)/favicon-generate
@@ -39,7 +44,6 @@ BUILD_ARGS ?=
 
 ## Screenshots
 
-KUMBUKA_SERVER_DIR ?= ../kumbuka
 SCREENSHOT_OUTPUT ?= assets/screenshots
 SCREENSHOT_EDITOR_SLUG ?= getting-started
 SCREENSHOT_VISITS ?= /pages/getting-started,/pages/content/editor,/pages/knowledge/search
@@ -90,15 +94,11 @@ serve: $(DEV_PORT) $(OPEN_BROWSER) ## Build, serve, and open the documentation l
 		--directory "$(SITE_OUTPUT)"
 
 .PHONY: screenshots
-screenshots: $(NODE_MODULES) ## Regenerate product screenshots from the canonical documentation Markdown.
-	@test -f "$(KUMBUKA_SERVER_DIR)/go.mod" || { \
-		echo "Kumbuka server repository not found: $(KUMBUKA_SERVER_DIR)" >&2; \
-		exit 2; \
-	}
+screenshots: $(NODE_MODULES) $(KUMBUKA) ## Regenerate product screenshots from the canonical documentation Markdown.
 	@SCREENSHOT_BROWSER_CHANNEL="$(SCREENSHOT_BROWSER_CHANNEL)" \
 		SCREENSHOT_SKIP_BROWSER_INSTALL="$(SCREENSHOT_SKIP_BROWSER_INSTALL)" \
 		$(SCREENSHOT_SCRIPT) \
-			--server "$(KUMBUKA_SERVER_DIR)" \
+			--binary "$(CURDIR)/$(KUMBUKA)" \
 			--content "$(CURDIR)/content" \
 			--output "$(CURDIR)/$(SCREENSHOT_OUTPUT)" \
 			--editor-slug "$(SCREENSHOT_EDITOR_SLUG)" \
@@ -142,8 +142,19 @@ $(FAVICON_GENERATE): | $(DEV_TOOLS_BIN)
 $(SVG_TO_PNG): | $(DEV_TOOLS_BIN)
 	$(call download-dev-tool,svg-to-png,$@)
 
+$(KUMBUKA): $(GITHUB_RELEASE_INSTALL)
+	@$(GITHUB_RELEASE_INSTALL) \
+		--repo kumbuka-me/kumbuka \
+		--tag "$(KUMBUKA_VERSION)" \
+		--asset "$(KUMBUKA_ASSET)" \
+		--binary kumbuka \
+		--target "$(KUMBUKA)"
+
 .PHONY: dev-tools
 dev-tools: $(DEV_PORT) $(OPEN_BROWSER) $(MAKE_HELP) $(FAVICON_GENERATE) $(SVG_TO_PNG) ## Download the pinned development tools.
+
+.PHONY: kumbuka
+kumbuka: $(KUMBUKA) ## Install the pinned Kumbuka server.
 
 .PHONY: cli
 cli: $(GITHUB_RELEASE_INSTALL) ## Install the pinned Kumbuka CLI.
