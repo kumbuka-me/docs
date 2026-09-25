@@ -17,6 +17,16 @@ The template context includes:
 .Payload.Data
 .Payload.OccurredAt
 .Payload.URL
+.Payload.Actor.ID
+.Payload.Actor.Mention
+.Payload.Actor.DisplayName
+.Payload.Actor.Email
+.Payload.Actor.Enabled
+.Payload.Recipient.ID
+.Payload.Recipient.Mention
+.Payload.Recipient.DisplayName
+.Payload.Recipient.Email
+.Payload.Recipient.Enabled
 .Receiver
 .Title
 ```
@@ -40,7 +50,9 @@ For example:
 
 `Payload.URL` is populated for page events when `KUMBUKA__PUBLIC_URL` is configured. **Send test** renders the configured template with a `webhook.test` event.
 
-`notification.created` uses `Payload.Data` for structured recipient and notification data. It includes the recipient's stable user ID, canonical mention and display name together with the notification title, body, local URL, and core-controlled source attribution. A trusted receiver can use the user ID with the opt-in integration user directory API to resolve contact details; Kumbuka does not select email, Slack, Teams, or other external channels.
+`Payload.Actor` and `Payload.Recipient` are available only when **Include user details** is enabled for that webhook. They expose the stable ID, canonical mention, display name, email, and enabled state. Some events have no actor or recipient, so templates should use those objects only for matching events. Contact details are resolved during delivery and are not added to the generic event shared with other webhooks.
+
+`notification.created` uses `Payload.Data` for structured notification data and sets `Payload.Recipient` to the target user when user details are enabled. A trusted receiver can then choose whether and how to forward the notification. Kumbuka does not select email, Slack, Teams, or other external channels.
 
 ## Request headers
 
