@@ -54,6 +54,40 @@ For example:
 
 `notification.created` uses `Payload.Data` for structured notification data and sets `Payload.Recipient` to the target user when user details are enabled. A trusted receiver can then choose whether and how to forward the notification. Kumbuka does not select email, Slack, Teams, or other external channels.
 
+## Forward notification emails with Mailbridge
+
+Mailbridge can receive Kumbuka notification webhooks and deliver them through its configured SMTP server. Kumbuka remains responsible only for creating the notification and rendering the webhook payload; Mailbridge owns email delivery.
+
+Create a webhook with:
+
+- **Endpoint:** `https://mail.example.com/mail`
+- **Enabled:** on
+- **Include user details:** on
+- **Events:** `notification.created` only
+- **Request header:** `Authorization: Bearer <token>` when Mailbridge authentication is enabled; mark the value sensitive
+
+Use this JSON payload template:
+
+```gotemplate
+{{- $notification := index .Payload.Data "notification" -}}
+{
+  "recipients": {
+    "to": [{{ .Payload.Recipient.Email | json }}]
+  },
+  "message": {
+    "subject": {{ index $notification "title" | json }},
+    "body": {{ index $notification "body" | json }},
+    "body_format": "text"
+  }
+}
+```
+
+**Include user details** is required because the recipient email address is exposed through `.Payload.Recipient.Email`. Restrict the webhook to `notification.created`; other webhook events do not necessarily have a recipient or notification data.
+
+Mailbridge sends one email for each accepted webhook request. SMTP host, sender, TLS, and authentication settings belong to Mailbridge rather than Kumbuka.
+
+**Send test** uses the generic `webhook.test` event, which has no notification recipient. Use a real `notification.created` event when verifying this recipient-dependent Mailbridge template end to end.
+
 ## Request headers
 
 Webhooks can send application-level request headers such as `Authorization` or `X-API-Key`. Headers containing credentials can be marked sensitive; configure `KUMBUKA__ENCRYPTION_KEY` so Kumbuka can encrypt those values at rest.
