@@ -4,28 +4,31 @@ Kumbuka exposes a JSON API under `/api`. Requests can use an authenticated brows
 
 Important endpoints include:
 
-| Method           | Path                           | Purpose                                     |
-| ---------------- | ------------------------------ | ------------------------------------------- |
-| `GET`            | `/api/pages`                   | List recent pages.                          |
-| `POST`           | `/api/pages`                   | Create a page (`admin`/`editor`).           |
-| `GET`            | `/api/pages/{slug...}`         | Read a page; append `/raw` for Markdown.    |
-| `PUT`            | `/api/pages/{slug...}`         | Update a page (`admin`/`editor`).           |
-| `DELETE`         | `/api/pages/{slug...}`         | Move a page to the bin (`admin`).           |
-| `POST`           | `/api/preview`                 | Render unsaved Markdown (`admin`/`editor`). |
-| `GET/PUT/DELETE` | `/api/drafts/{key}`            | Private server drafts (`admin`/`editor`).   |
-| `GET`            | `/api/search?q=...`            | Search page summaries.                      |
-| `GET`            | `/api/graph`                   | Knowledge graph.                            |
-| `GET`            | `/api/tags`                    | Known tags.                                 |
-| `GET`            | `/api/groups`                  | Groups assignable by the current user.      |
-| `GET`            | `/api/recent`                  | Recently updated pages.                     |
-| `GET`            | `/api/images`                  | Image metadata (`admin`/`editor`).          |
-| `POST`           | `/api/images`                  | Upload image (`admin`/`editor`).            |
-| `GET`            | `/api/attachments`             | Attachment metadata (`admin`/`editor`).     |
-| `POST`           | `/api/attachments`             | Upload attachment (`admin`/`editor`).       |
-| `GET`            | `/api/notifications`           | Current user notification inbox.            |
-| `POST`           | `/api/notifications/{id}/read` | Mark one notification read.                 |
-| `POST`           | `/api/notifications/all/read`  | Mark the complete notification inbox read.  |
+| Method           | Path                           | Purpose                                      |
+| ---------------- | ------------------------------ | -------------------------------------------- |
+| `GET`            | `/api/pages`                   | List recent pages.                           |
+| `POST`           | `/api/pages`                   | Create a page (`admin`/`editor`).            |
+| `GET`            | `/api/pages/{slug...}`         | Read a page; append `/raw` for Markdown.     |
+| `PUT`            | `/api/pages/{slug...}`         | Update a page (`admin`/`editor`).            |
+| `DELETE`         | `/api/pages/{slug...}`         | Move a page to the bin (`admin`).            |
+| `POST`           | `/api/preview`                 | Render unsaved Markdown (`admin`/`editor`).  |
+| `GET/PUT/DELETE` | `/api/drafts/{key}`            | Private server drafts (`admin`/`editor`).    |
+| `GET`            | `/api/search?q=...`            | Search page summaries.                       |
+| `GET`            | `/api/graph`                   | Knowledge graph.                             |
+| `GET`            | `/api/tags`                    | Known tags.                                  |
+| `GET`            | `/api/groups`                  | Groups assignable by the current user.       |
+| `GET`            | `/api/recent`                  | Recently updated pages.                      |
+| `GET`            | `/api/images`                  | Image metadata (`admin`/`editor`).           |
+| `POST`           | `/api/images`                  | Upload image (`admin`/`editor`).             |
+| `GET`            | `/api/attachments`             | Attachment metadata (`admin`/`editor`).      |
+| `POST`           | `/api/attachments`             | Upload attachment (`admin`/`editor`).        |
+| `GET`            | `/api/notifications`           | Current user notification inbox.             |
+| `POST`           | `/api/notifications/{id}/read` | Mark one notification read.                  |
+| `POST`           | `/api/notifications/all/read`  | Mark the complete notification inbox read.   |
+| `GET`            | `/api/integration/users/{id}`  | Resolve user contact data (`admin`, opt-in). |
 
 Errors are returned as JSON problem responses.
+
+The integration user directory is disabled by default. An administrator can enable it under **Administration → Configuration**. Once enabled, administrator sessions and administrator-owned personal access tokens can retrieve stable ID, canonical mention, display name, email, and enabled state. This endpoint is intended for trusted webhook receivers; ordinary plugins use the privacy-safe `users:read` SDK capability instead.
 
 See [Personal access tokens](tokens.md) for bearer authentication. Static sites do not expose the Kumbuka API.

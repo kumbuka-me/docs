@@ -14,6 +14,7 @@ The template context includes:
 .Payload.ObjectType
 .Payload.ObjectKey
 .Payload.Detail
+.Payload.Data
 .Payload.OccurredAt
 .Payload.URL
 .Receiver
@@ -38,6 +39,8 @@ For example:
 ```
 
 `Payload.URL` is populated for page events when `KUMBUKA__PUBLIC_URL` is configured. **Send test** renders the configured template with a `webhook.test` event.
+
+`notification.created` uses `Payload.Data` for structured recipient and notification data. It includes the recipient's stable user ID, canonical mention and display name together with the notification title, body, local URL, and core-controlled source attribution. A trusted receiver can use the user ID with the opt-in integration user directory API to resolve contact details; Kumbuka does not select email, Slack, Teams, or other external channels.
 
 ## Request headers
 
