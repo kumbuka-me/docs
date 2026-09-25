@@ -162,6 +162,12 @@ Render Markdown task list items with visible checkbox state.
 
 ![Task Lists preview](/assets/plugins/task-lists/preview.png)
 
+## [Tasks](tasks.md)
+
+Add persistent actionable tasks with assignees and due dates to Kumbuka pages.
+
+![Tasks preview](/assets/plugins/tasks/preview.png)
+
 ## [Typographer](typographer.md)
 
 Convert common ASCII punctuation into typographic characters.
