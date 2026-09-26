@@ -6,6 +6,8 @@ The Kumbuka server accepts command-line flags and matching `KUMBUKA__` environme
 | -------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `--listen-address`               | `KUMBUKA__LISTEN_ADDRESS`               | HTTP listen address; defaults to `127.0.0.1:8080`.                                              |
 | `--database-url`                 | `KUMBUKA__DATABASE_URL`                 | PostgreSQL connection URL.                                                                      |
+| `--database-max-conns`           | `KUMBUKA__DATABASE_MAX_CONNS`           | Maximum PostgreSQL pool connections; `0` keeps the pgxpool/connection-URL value.                |
+| `--database-min-idle-conns`      | `KUMBUKA__DATABASE_MIN_IDLE_CONNS`      | Minimum idle PostgreSQL pool connections; `0` keeps the pgxpool/connection-URL value.           |
 | `--public-url`                   | `KUMBUKA__PUBLIC_URL`                   | Externally visible base URL; defaults to `http://localhost:8080`.                               |
 | `--pdf-url`                      | `KUMBUKA__PDF_URL`                      | Optional deployment override for the HTML-to-PDF endpoint.                                      |
 | `--plugin-update-check-interval` | `KUMBUKA__PLUGIN_UPDATE_CHECK_INTERVAL` | First-party plugin update-check interval; defaults to `1h`, or `0` to disable scheduled checks. |
@@ -30,6 +32,8 @@ The Kumbuka server accepts command-line flags and matching `KUMBUKA__` environme
 | `--debug`                        | `KUMBUKA__DEBUG`                        | Enable verbose diagnostics.                                                                     |
 | `--debug-render-timings`         | `KUMBUKA__DEBUG_RENDER_TIMINGS`         | Log detailed page-render timing information for temporary performance diagnosis.                |
 | `--access-log`                   | `KUMBUKA__ACCESS_LOG`                   | Enable HTTP access logging.                                                                     |
+
+Database pool settings default to `0`, which leaves the corresponding pgxpool setting unchanged. A positive deployment value overrides `pool_max_conns` or `pool_min_idle_conns` from the database URL. The minimum idle connection count must not exceed the effective maximum connection count.
 
 ## Deployment overrides
 
