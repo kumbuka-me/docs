@@ -1,6 +1,6 @@
 # Getting started
 
-The quickest way to run the full Kumbuka server is Docker Compose. It starts Kumbuka, PostgreSQL, and the separate `html2pdf` service used for PDF export.
+The quickest way to run the full Kumbuka server is Docker Compose. It starts Kumbuka, PostgreSQL, and the supporting services used by the reference deployment.
 
 ## Start the stack
 
@@ -11,6 +11,8 @@ docker compose -f deploy/compose.yaml up -d
 Open `http://localhost:8080`.
 
 A fresh database redirects to `/setup`. Create the first local administrator there. Registration begins closed; after setup, configure the long-term authentication mode in **Administration → Configuration**.
+
+For Kubernetes or direct binary deployments, see [Installation](installation/index.md).
 
 ## Create your first page
 
