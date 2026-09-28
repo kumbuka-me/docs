@@ -164,7 +164,7 @@ Render Markdown task list items with visible checkbox state.
 
 ## [Tasks](tasks.md)
 
-Add persistent task lists and subtasks with assignees, due dates, configurable states, and notifications to Kumbuka pages.
+Add persistent nested task lists with assignees, due dates, configurable states, and notifications to Kumbuka pages.
 
 ![Tasks preview](/assets/plugins/tasks/preview.png)
 
