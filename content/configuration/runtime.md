@@ -49,7 +49,7 @@ With an OIDC override, the runtime issuer, client ID, group claim, and administr
 
 Plugin update checks use the configured interval but never install updates automatically. Administrators can always use **Check for updates** under **Administration → Plugins** unless access to the catalog itself is unavailable. See [Plugins](../administration/plugins.md).
 
-`KUMBUKA__DEBUG_RENDER_TIMINGS=true` is intended for short-term troubleshooting. Disable it after profiling to avoid unnecessary diagnostic output.
+`KUMBUKA__DEBUG_RENDER_TIMINGS=true` is intended for short-term troubleshooting. Disable it after profiling to avoid unnecessary diagnostic output. For opt-in browser navigation, frontend initialization, resource, long-task, and per-request backend timings, see [Performance diagnostics](../development/performance.md).
 
 ## Proxy and certificate environment
 

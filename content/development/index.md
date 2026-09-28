@@ -3,6 +3,7 @@
 This page is for contributors working on the Kumbuka server repository. Related components live in sibling repositories rather than subdirectories of the server checkout.
 
 - [Architecture](architecture.md) documents server package boundaries and dependency direction.
+- [Performance diagnostics](performance.md) covers the opt-in browser console profiler and backend `Server-Timing` measurements.
 - [Plugin development](plugins/index.md) covers the SDK, manifests, capabilities, package format, and WASI contract.
 
 ## Repositories
