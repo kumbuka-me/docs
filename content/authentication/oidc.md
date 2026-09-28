@@ -2,6 +2,8 @@
 
 OIDC mode uses authorization-code login with provider discovery, S256 PKCE, and an ID-token nonce check. Kumbuka identifies an account by the verified issuer and subject; username, email, and display name are profile attributes.
 
+Username, email, and display name update from the provider at login by default. Under **Administration → Users**, an administrator can override any of those fields independently. Other fields continue syncing, and the latest provider values remain visible for auditing. Restoring an overridden field to provider-managed immediately applies the latest observed provider value. These profile changes never alter the immutable issuer-and-subject binding, and Kumbuka never links OIDC accounts by email.
+
 ## Required deployment secrets
 
 Set:

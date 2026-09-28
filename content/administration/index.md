@@ -10,4 +10,8 @@ Overrides use stable plugin and contribution IDs, so they survive plugin upgrade
 
 The administration area is available only to `admin` users. It covers application configuration, branding, plugins, users, groups, page inventory, navigation icons, reusable content, tags, tokens, imports/exports, media cleanup, documentation health, audit history, and the recycle bin.
 
+## User profiles and external identities
+
+Under **Administration → Users**, local-account usernames, email addresses, and display names are directly editable. OIDC profile fields show whether they are provider-managed or locally overridden, and each override can be restored independently. Trusted-proxy email and display name work the same way, while the trusted username is changed only through the explicit **Relink identity** action because it is the external account key. Profile overrides, restores, and trusted-proxy relinks are recorded in the audit log.
+
 {{subpages}}
