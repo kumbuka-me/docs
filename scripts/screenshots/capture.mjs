@@ -65,25 +65,13 @@ async function pluginFixtures() {
       !plugin ||
       typeof plugin.id !== "string" ||
       typeof plugin.name !== "string" ||
-      typeof plugin.version !== "string" ||
-      typeof plugin.package !== "string"
+      typeof plugin.version !== "string"
     ) {
       throw new Error("Plugin screenshot metadata is invalid.");
     }
   }
 
   return fixtures;
-}
-
-async function packageBytes(plugin) {
-  try {
-    return await readFile(plugin.package);
-  } catch (error) {
-    const reason = error instanceof Error ? error.message : String(error);
-    throw new Error(
-      `Could not read synced package for ${plugin.name} ${plugin.version} at ${plugin.package}: ${reason}`,
-    );
-  }
 }
 
 function responseSummary(content) {
@@ -154,41 +142,38 @@ try {
   async function importArchive(filename) {
     const importURL = new URL("/admin/import", baseURL).toString();
     const importTimeout = 180_000;
+    const response = await context.request.post(importURL, {
+      multipart: {
+        format: "markdown",
+        files: {
+          name: "documentation.zip",
+          mimeType: "application/zip",
+          buffer: await readFile(filename),
+        },
+      },
+      maxRedirects: 0,
+      timeout: importTimeout,
+    });
 
-    await page.goto(importURL, { waitUntil: "networkidle" });
-    await page.locator('select[name="format"]').selectOption("markdown");
-    await page
-      .locator('input[type="file"][name="files"]:not([webkitdirectory])')
-      .setInputFiles(filename);
-
-    const [response] = await Promise.all([
-      page.waitForResponse(
-        (candidate) =>
-          candidate.url() === importURL &&
-          candidate.request().method() === "POST",
-        { timeout: importTimeout },
-      ),
-      page
-        .getByRole("button", { name: "Import pages" })
-        .click({ timeout: importTimeout }),
-    ]);
-
-    if (response.status() >= 400) {
-      await page
-        .waitForLoadState("domcontentloaded", { timeout: importTimeout })
-        .catch(() => {});
-      const details = responseSummary(await page.content());
+    if (response.status() !== 303) {
+      const details = responseSummary(await response.text());
       throw new Error(
         `Could not import ${filename}: HTTP ${response.status()}${details ? `: ${details}` : ""}`,
       );
     }
 
-    await page.waitForURL(
-      (url) =>
-        url.pathname === "/admin/import" &&
-        /^\d+$/.test(url.searchParams.get("result") || ""),
-      { timeout: importTimeout, waitUntil: "domcontentloaded" },
-    );
+    const location = response.headers().location;
+    if (!location) {
+      throw new Error(`Could not import ${filename}: response did not include a redirect.`);
+    }
+
+    const resultURL = new URL(location, baseURL);
+    if (
+      resultURL.pathname !== "/admin/import" ||
+      !/^\d+$/.test(resultURL.searchParams.get("result") || "")
+    ) {
+      throw new Error(`Could not import ${filename}: unexpected redirect ${location}.`);
+    }
   }
 
   async function openEditor(slug) {
@@ -262,33 +247,38 @@ try {
     return location;
   }
 
-  async function installedPluginIDs() {
+  async function installedPluginStates() {
     await page.goto(`${baseURL}/admin/plugins`, { waitUntil: "networkidle" });
-    return new Set(
-      await page
-        .locator("[data-plugin-detail-dialog][data-plugin-id]")
-        .evaluateAll((items) => items.map((item) => item.dataset.pluginId)),
-    );
+    const states = await page
+      .locator(".plugin-row[data-plugin-detail-open]")
+      .evaluateAll((rows) =>
+        rows.map((row) => {
+          const control = row.querySelector("[data-plugin-state-control]");
+          return [
+            row.dataset.pluginDetailOpen,
+            {
+              version:
+                row
+                  .querySelector("[data-plugin-installed-version]")
+                  ?.textContent?.trim() || "",
+              enabled:
+                control
+                  ?.querySelector(".plugin-state")
+                  ?.classList.contains("enabled") === true,
+              required: control?.textContent?.includes("Required") === true,
+            },
+          ];
+        }),
+      );
+    return new Map(states);
   }
 
-  async function submitPluginPackage(plugin, bytes, installed) {
-    const path = installed
-      ? `/admin/plugins/${encodeURIComponent(plugin.id)}/upgrade`
-      : "/admin/plugins";
+  async function disablePlugin(plugin) {
+    const path = `/admin/plugins/${encodeURIComponent(plugin.id)}/disable?defer_render=1`;
     const response = await context.request.post(
       new URL(path, baseURL).toString(),
-      {
-        multipart: {
-          package: {
-            name: `${plugin.name}-${plugin.version}.kumbukaplugin`,
-            mimeType: "application/octet-stream",
-            buffer: bytes,
-          },
-        },
-        maxRedirects: 0,
-      },
+      { maxRedirects: 0 },
     );
-
     if (response.status() === 303) return { ok: true, message: "" };
     return {
       ok: false,
@@ -297,11 +287,9 @@ try {
   }
 
   async function enablePlugin(plugin) {
+    const path = `/admin/plugins/${encodeURIComponent(plugin.id)}/enable?defer_render=1`;
     const response = await context.request.post(
-      new URL(
-        `/admin/plugins/${encodeURIComponent(plugin.id)}/enable`,
-        baseURL,
-      ).toString(),
+      new URL(path, baseURL).toString(),
       { maxRedirects: 0 },
     );
     if (response.status() === 303) return { ok: true, message: "" };
@@ -309,6 +297,19 @@ try {
       ok: false,
       message: `HTTP ${response.status()}: ${responseSummary(await response.text())}`,
     };
+  }
+
+  async function rebuildPluginPreview(plugin) {
+    const slug = `__screenshots/plugins/${plugin.name}`;
+    const response = await context.request.post(
+      new URL(`/admin/pages/render/${slug}`, baseURL).toString(),
+      { maxRedirects: 0 },
+    );
+    if (response.status() !== 303) {
+      throw new Error(
+        `Could not rebuild ${slug}: HTTP ${response.status()}: ${responseSummary(await response.text())}`,
+      );
+    }
   }
 
   async function applyWithDependencyRetries(items, action, description) {
@@ -343,30 +344,55 @@ try {
     }
   }
 
-  async function installPreviewPlugins(fixtures) {
-    const installed = await installedPluginIDs();
-    const missing = [];
-
-    for (const plugin of fixtures) {
-      if (installed.has(plugin.id)) continue;
-      missing.push({ plugin, bytes: await packageBytes(plugin) });
+  async function disablePreviewPlugins(fixtures) {
+    const states = await installedPluginStates();
+    const missing = fixtures.filter((plugin) => !states.has(plugin.id));
+    if (missing.length > 0) {
+      throw new Error(
+        `Pinned Kumbuka release does not bundle expected plugins:\n${missing
+          .map((plugin) => `${plugin.id} ${plugin.version}`)
+          .join("\n")}`,
+      );
     }
 
-    await applyWithDependencyRetries(
-      missing,
-      async ({ plugin, bytes }) => {
-        const result = await submitPluginPackage(plugin, bytes, false);
-        if (result.ok) installed.add(plugin.id);
-        return result;
-      },
-      "install missing preview plugins",
+    const mismatched = fixtures.filter(
+      (plugin) => states.get(plugin.id)?.version !== plugin.version,
     );
+    if (mismatched.length > 0) {
+      throw new Error(
+        `Bundled plugin versions do not match the pinned Kumbuka release:\n${mismatched
+          .map(
+            (plugin) =>
+              `${plugin.id}: expected ${plugin.version}, found ${states.get(plugin.id)?.version || "unknown"}`,
+          )
+          .join("\n")}`,
+      );
+    }
 
+    const enabled = fixtures
+      .filter((plugin) => {
+        const state = states.get(plugin.id);
+        return state?.enabled && !state.required;
+      })
+      .map((plugin) => ({ plugin }));
+
+    await applyWithDependencyRetries(
+      enabled.reverse(),
+      async ({ plugin }) => disablePlugin(plugin),
+      "disable preview plugins before importing fixtures",
+    );
+  }
+
+  async function enablePreviewPlugins(fixtures) {
     await applyWithDependencyRetries(
       fixtures.map((plugin) => ({ plugin })),
       async ({ plugin }) => enablePlugin(plugin),
       "enable preview plugins",
     );
+
+    for (const plugin of fixtures) {
+      await rebuildPluginPreview(plugin);
+    }
   }
 
   async function capturePluginPreview(plugin) {
@@ -393,9 +419,7 @@ try {
     });
     await settle(page);
 
-    const preview = page
-      .locator(".page-reading .prose, article.page .prose")
-      .first();
+    const preview = page.locator(".page-reading .prose, article.page .prose").first();
     await preview.waitFor({ state: "visible" });
     const directory = join(pluginOutput, plugin.name);
     await mkdir(directory, { recursive: true });
@@ -499,8 +523,9 @@ try {
   await capture("/admin/health", "documentation-health.png", ".health-grid");
 
   const fixtures = await pluginFixtures();
-  await installPreviewPlugins(fixtures);
+  await disablePreviewPlugins(fixtures);
   await importArchive(pluginArchive);
+  await enablePreviewPlugins(fixtures);
   for (const plugin of fixtures) {
     await capturePluginPreview(plugin);
   }

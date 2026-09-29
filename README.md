@@ -30,7 +30,7 @@ Regenerate the application screenshots and plugin previews:
 make screenshots
 ```
 
-The pinned Kumbuka release and its matching first-party plugin packages are downloaded automatically. A temporary Kumbuka instance with PostgreSQL renders the current documentation and the released plugin preview fixtures.
+The pinned Kumbuka release is downloaded automatically. Its matching first-party plugins are already bundled in the release binary. Plugin preview fixtures are cached under `bin/screenshot-fixtures/`, so unchanged versions are reused on later runs.
 
 Generated images are written to `assets/screenshots/` and `assets/plugins/<plugin>/preview.png`.
 

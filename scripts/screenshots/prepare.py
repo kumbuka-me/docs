@@ -19,7 +19,9 @@ DOWNLOAD_DELAY = 2
 
 
 def raw_github_file(repository: str, path: str, ref: str) -> bytes:
-    repository_path = "/".join(urllib.parse.quote(part, safe="") for part in repository.split("/"))
+    repository_path = "/".join(
+        urllib.parse.quote(part, safe="") for part in repository.split("/")
+    )
     ref_path = urllib.parse.quote(ref, safe="/")
     file_path = urllib.parse.quote(path, safe="/")
     url = f"https://raw.githubusercontent.com/{repository_path}/{ref_path}/{file_path}"
@@ -71,6 +73,10 @@ def parse_plugin_lock(source: str) -> list[tuple[str, str]]:
 
 
 def write_plugin_lock(version: str, output: Path) -> None:
+    if output.is_file():
+        parse_plugin_lock(output.read_text(encoding="utf-8"))
+        return
+
     lock = raw_github_file(
         "kumbuka-me/kumbuka",
         "plugins.lock",
@@ -111,9 +117,32 @@ def preview_support_files(archive: zipfile.ZipFile, plugin_name: str) -> None:
             )
 
 
+def cached_preview(cache_dir: Path, name: str, version: str) -> str:
+    filename = cache_dir / name / version / "preview.md"
+    if filename.is_file():
+        preview = filename.read_text(encoding="utf-8")
+        if preview.strip():
+            return preview
+        filename.unlink()
+
+    tag = f"{name}/v{version}"
+    print(f"Downloading preview fixture {name} v{version}")
+    preview = raw_github_file(
+        "kumbuka-me/plugins",
+        f"{name}/preview.md",
+        f"refs/tags/{tag}",
+    ).decode("utf-8")
+    if not preview.strip():
+        raise RuntimeError(f"Empty preview fixture for {name} at {tag}")
+
+    filename.parent.mkdir(parents=True, exist_ok=True)
+    filename.write_text(preview, encoding="utf-8")
+    return preview
+
+
 def write_plugin_archive(
     lock_file: Path,
-    packages_dir: Path,
+    preview_cache: Path,
     content_dir: Path,
     archive_file: Path,
     metadata_file: Path,
@@ -128,21 +157,7 @@ def write_plugin_archive(
             if not extension_page.is_file():
                 continue
 
-            tag = f"{name}/v{version}"
-            preview = raw_github_file(
-                "kumbuka-me/plugins",
-                f"{name}/preview.md",
-                f"refs/tags/{tag}",
-            ).decode("utf-8")
-            if not preview.strip():
-                raise RuntimeError(f"Empty preview fixture for {name} at {tag}")
-
-            package = packages_dir / f"{name}.kumbukaplugin"
-            if not package.is_file():
-                raise RuntimeError(
-                    f"Plugin package was not downloaded for me.kumbuka.{name} {version}: {package}"
-                )
-
+            preview = cached_preview(preview_cache, name, version)
             archive.writestr(f"__screenshots/plugins/{name}.md", preview)
             preview_support_files(archive, name)
             selected.append(
@@ -150,7 +165,6 @@ def write_plugin_archive(
                     "id": f"me.kumbuka.{name}",
                     "name": name,
                     "version": version,
-                    "package": str(package),
                 }
             )
 
@@ -175,7 +189,7 @@ def command_content(args: argparse.Namespace) -> None:
 def command_plugins(args: argparse.Namespace) -> None:
     write_plugin_archive(
         args.plugin_lock,
-        args.packages,
+        args.preview_cache,
         args.content,
         args.archive,
         args.metadata,
@@ -188,7 +202,7 @@ def parser() -> argparse.ArgumentParser:
 
     lock = subcommands.add_parser(
         "lock",
-        help="Fetch plugins.lock from the selected Kumbuka release",
+        help="Fetch and cache plugins.lock from the selected Kumbuka release",
     )
     lock.add_argument("--kumbuka-version", required=True)
     lock.add_argument("--output", required=True, type=Path)
@@ -205,7 +219,7 @@ def parser() -> argparse.ArgumentParser:
         "plugins", help="Create plugin preview pages from released preview fixtures"
     )
     plugins.add_argument("--plugin-lock", required=True, type=Path)
-    plugins.add_argument("--packages", required=True, type=Path)
+    plugins.add_argument("--preview-cache", required=True, type=Path)
     plugins.add_argument("--content", required=True, type=Path)
     plugins.add_argument("--archive", required=True, type=Path)
     plugins.add_argument("--metadata", required=True, type=Path)
