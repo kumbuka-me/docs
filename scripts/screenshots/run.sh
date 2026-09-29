@@ -3,7 +3,7 @@ set -eu
 
 usage() {
   cat <<'USAGE'
-Usage: scripts/screenshots/run.sh --repository DIR --binary FILE --kumbuka-version VERSION --content DIR --output DIR --plugin-output DIR --editor-slug SLUG [--visits PATHS]
+Usage: scripts/screenshots/run.sh --repository DIR --binary FILE --kumbuka-version VERSION --content DIR --output DIR --plugin-output DIR --plugin-cache DIR --editor-slug SLUG [--visits PATHS]
 
 PATHS is a comma-separated list of application paths to visit before the dashboard capture.
 USAGE
@@ -15,6 +15,7 @@ kumbuka_version=""
 content_dir=""
 output=""
 plugin_output=""
+plugin_cache=""
 editor_slug=""
 visits=""
 
@@ -50,6 +51,11 @@ while [ "$#" -gt 0 ]; do
     plugin_output=$2
     shift 2
     ;;
+  --plugin-cache)
+    [ "$#" -ge 2 ] || { usage >&2; exit 2; }
+    plugin_cache=$2
+    shift 2
+    ;;
   --editor-slug)
     [ "$#" -ge 2 ] || { usage >&2; exit 2; }
     editor_slug=$2
@@ -78,6 +84,7 @@ done
 [ -n "$content_dir" ] || { echo "--content is required" >&2; exit 2; }
 [ -n "$output" ] || { echo "--output is required" >&2; exit 2; }
 [ -n "$plugin_output" ] || { echo "--plugin-output is required" >&2; exit 2; }
+[ -n "$plugin_cache" ] || { echo "--plugin-cache is required" >&2; exit 2; }
 [ -n "$editor_slug" ] || { echo "--editor-slug is required" >&2; exit 2; }
 
 [ -d "$repository" ] || { echo "Repository directory not found: $repository" >&2; exit 1; }
@@ -102,7 +109,7 @@ work_dir=$(mktemp -d "${TMPDIR:-/tmp}/kumbuka-screenshots.XXXXXX")
 archive="$work_dir/content.zip"
 plugin_archive="$work_dir/plugin-previews.zip"
 plugin_lock="$work_dir/plugins.lock"
-plugin_packages="$work_dir/plugins"
+plugin_packages="$plugin_cache"
 plugin_metadata="$work_dir/plugins.json"
 server_log="$work_dir/kumbuka.log"
 server_pid=""
@@ -154,7 +161,7 @@ python3 "$prepare_script" lock \
   --kumbuka-version "$kumbuka_version" \
   --output "$plugin_lock"
 
-printf '%s\n' "Downloading first-party plugins pinned by Kumbuka $kumbuka_version..."
+printf '%s\n' "Syncing first-party plugins pinned by Kumbuka $kumbuka_version..."
 "$plugin_download" \
   --plugin-lock "$plugin_lock" \
   --destination "$plugin_packages" \

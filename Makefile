@@ -48,6 +48,7 @@ BUILD_ARGS ?=
 
 SCREENSHOT_OUTPUT ?= assets/screenshots
 SCREENSHOT_PLUGIN_OUTPUT ?= assets/plugins
+SCREENSHOT_PLUGIN_CACHE ?= bin/screenshot-plugins
 SCREENSHOT_EDITOR_SLUG ?= getting-started
 SCREENSHOT_VISITS ?= /pages/getting-started,/pages/content/editor,/pages/knowledge/search
 SCREENSHOT_BROWSER_CHANNEL ?=
@@ -109,6 +110,7 @@ screenshots: $(NODE_MODULES) $(KUMBUKA) ## Regenerate application and plugin scr
 			--content "$(CURDIR)/content" \
 			--output "$(CURDIR)/$(SCREENSHOT_OUTPUT)" \
 			--plugin-output "$(CURDIR)/$(SCREENSHOT_PLUGIN_OUTPUT)" \
+			--plugin-cache "$(CURDIR)/$(SCREENSHOT_PLUGIN_CACHE)" \
 			--editor-slug "$(SCREENSHOT_EDITOR_SLUG)" \
 			--visits "$(SCREENSHOT_VISITS)"
 
