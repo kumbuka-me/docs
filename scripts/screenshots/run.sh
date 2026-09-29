@@ -191,7 +191,7 @@ cleanup() {
 
   if [ "$status" -ne 0 ] && [ -s "$server_log" ]; then
     echo "Kumbuka screenshot server log:" >&2
-    sed -n '1,200p' "$server_log" >&2
+    tail -n 200 "$server_log" >&2
   fi
 
   rm -rf "$work_dir"

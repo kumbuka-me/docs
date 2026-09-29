@@ -75,18 +75,10 @@ jobs:
           npm ci
           npx playwright install --with-deps chromium
 
-      - name: Install Kumbuka dependencies
-        working-directory: .kumbuka-server
-        run: |
-          npm ci
-          go mod download
-          make generate web
-          go build -o kumbuka ./cmd/kumbuka
-
       - name: Generate screenshots from documentation content
         run: |
           make screenshots \
-            KUMBUKA="$GITHUB_WORKSPACE/.kumbuka-server/kumbuka" \
+            SCREENSHOT_KUMBUKA_DIR="$GITHUB_WORKSPACE/.kumbuka-server" \
             SCREENSHOT_PLUGINS_DIR="$GITHUB_WORKSPACE/.kumbuka-plugins" \
             SCREENSHOT_SKIP_BROWSER_INSTALL=1
 
