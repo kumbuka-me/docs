@@ -12,6 +12,12 @@ Turn plain URLs and email addresses into links.
 
 ![Automatic Links preview](/assets/plugins/autolinks/preview.png)
 
+## [Bulleted Lists](bulleted-lists.md)
+
+Configure indentation for Markdown bulleted lists.
+
+![Bulleted Lists preview](/assets/plugins/bulleted-lists/preview.png)
+
 ## [Callouts](callouts.md)
 
 Note, warning, and other callout blocks
@@ -77,6 +83,12 @@ Transclude complete pages or heading sections into Markdown.
 Render Mermaid diagrams in isolated browser modules.
 
 ![Mermaid preview](/assets/plugins/mermaid/preview.png)
+
+## [Numbered Lists](numbered-lists.md)
+
+Configure indentation for Markdown numbered lists.
+
+![Numbered Lists preview](/assets/plugins/numbered-lists/preview.png)
 
 ## [Page Report](page-report.md)
 
