@@ -152,14 +152,43 @@ try {
   }
 
   async function importArchive(filename) {
-    await page.goto(`${baseURL}/admin/import`, { waitUntil: "networkidle" });
+    const importURL = new URL("/admin/import", baseURL).toString();
+    const importTimeout = 180_000;
+
+    await page.goto(importURL, { waitUntil: "networkidle" });
+    await page.locator('select[name="format"]').selectOption("markdown");
     await page
       .locator('input[type="file"][name="files"]:not([webkitdirectory])')
       .setInputFiles(filename);
-    await Promise.all([
-      page.waitForURL(/\/admin\/import\?result=\d+$/),
-      page.getByRole("button", { name: "Import pages" }).click(),
+
+    const [response] = await Promise.all([
+      page.waitForResponse(
+        (candidate) =>
+          candidate.url() === importURL &&
+          candidate.request().method() === "POST",
+        { timeout: importTimeout },
+      ),
+      page
+        .getByRole("button", { name: "Import pages" })
+        .click({ timeout: importTimeout }),
     ]);
+
+    if (response.status() >= 400) {
+      await page
+        .waitForLoadState("domcontentloaded", { timeout: importTimeout })
+        .catch(() => {});
+      const details = responseSummary(await page.content());
+      throw new Error(
+        `Could not import ${filename}: HTTP ${response.status()}${details ? `: ${details}` : ""}`,
+      );
+    }
+
+    await page.waitForURL(
+      (url) =>
+        url.pathname === "/admin/import" &&
+        /^\d+$/.test(url.searchParams.get("result") || ""),
+      { timeout: importTimeout, waitUntil: "domcontentloaded" },
+    );
   }
 
   async function openEditor(slug) {
@@ -246,16 +275,19 @@ try {
     const path = installed
       ? `/admin/plugins/${encodeURIComponent(plugin.id)}/upgrade`
       : "/admin/plugins";
-    const response = await context.request.post(new URL(path, baseURL).toString(), {
-      multipart: {
-        package: {
-          name: `${plugin.name}-${plugin.version}.kumbukaplugin`,
-          mimeType: "application/octet-stream",
-          buffer: bytes,
+    const response = await context.request.post(
+      new URL(path, baseURL).toString(),
+      {
+        multipart: {
+          package: {
+            name: `${plugin.name}-${plugin.version}.kumbukaplugin`,
+            mimeType: "application/octet-stream",
+            buffer: bytes,
+          },
         },
+        maxRedirects: 0,
       },
-      maxRedirects: 0,
-    });
+    );
 
     if (response.status() === 303) return { ok: true, message: "" };
     return {
@@ -266,7 +298,10 @@ try {
 
   async function enablePlugin(plugin) {
     const response = await context.request.post(
-      new URL(`/admin/plugins/${encodeURIComponent(plugin.id)}/enable`, baseURL).toString(),
+      new URL(
+        `/admin/plugins/${encodeURIComponent(plugin.id)}/enable`,
+        baseURL,
+      ).toString(),
       { maxRedirects: 0 },
     );
     if (response.status() === 303) return { ok: true, message: "" };
@@ -358,7 +393,9 @@ try {
     });
     await settle(page);
 
-    const preview = page.locator(".page-reading .prose, article.page .prose").first();
+    const preview = page
+      .locator(".page-reading .prose, article.page .prose")
+      .first();
     await preview.waitFor({ state: "visible" });
     const directory = join(pluginOutput, plugin.name);
     await mkdir(directory, { recursive: true });
