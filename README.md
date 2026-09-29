@@ -24,23 +24,15 @@ The site opens automatically in your browser.
 
 ## Screenshots
 
-Regenerate the documentation screenshots and plugin previews:
+Regenerate the application screenshots and plugin previews:
 
 ```sh
 make screenshots
 ```
 
-By default the screenshot runner uses sibling checkouts at `../kumbuka` and `../plugins`. It builds the current Kumbuka source, starts a temporary instance, imports the documentation, and captures the required screenshots. Plugin previews are generated with the current plugin source as well.
+The required Kumbuka and Kumbuka CLI releases are downloaded automatically. The screenshot runner starts a temporary Kumbuka instance with PostgreSQL, imports the current documentation, syncs the plugin versions bundled with that Kumbuka release, and captures everything with the normal Kumbuka renderer.
 
-If the repositories live elsewhere:
-
-```sh
-make screenshots \
-  SCREENSHOT_KUMBUKA_DIR=/path/to/kumbuka \
-  SCREENSHOT_PLUGINS_DIR=/path/to/plugins
-```
-
-Generated screenshots are written to `assets/screenshots/` and `assets/plugins/<plugin>/preview.png`.
+Generated images are written to `assets/screenshots/` and `assets/plugins/<plugin>/preview.png`.
 
 ## Plugin catalog
 

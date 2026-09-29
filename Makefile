@@ -3,7 +3,7 @@
 ## Tool Versions
 
 # renovate: datasource=github-releases depName=kumbuka-me/kumbuka
-KUMBUKA_VERSION ?= v0.36.2
+KUMBUKA_VERSION ?= v0.38.0
 
 # renovate: datasource=github-releases depName=kumbuka-me/cli
 KUMBUKA_CLI_VERSION ?= v0.10.1
@@ -48,9 +48,6 @@ BUILD_ARGS ?=
 
 SCREENSHOT_OUTPUT ?= assets/screenshots
 SCREENSHOT_PLUGIN_OUTPUT ?= assets/plugins
-SCREENSHOT_KUMBUKA_DIR ?= ../kumbuka
-SCREENSHOT_KUMBUKA_BINARY ?= bin/kumbuka-screenshots
-SCREENSHOT_PLUGINS_DIR ?= ../plugins
 SCREENSHOT_EDITOR_SLUG ?= getting-started
 SCREENSHOT_VISITS ?= /pages/getting-started,/pages/content/editor,/pages/knowledge/search
 SCREENSHOT_BROWSER_CHANNEL ?=
@@ -101,21 +98,16 @@ serve: $(DEV_PORT) $(OPEN_BROWSER) ## Build, serve, and open the documentation l
 		--directory "$(SITE_OUTPUT)"
 
 .PHONY: screenshots
-screenshots: $(NODE_MODULES) ## Regenerate application and plugin screenshots with a real Kumbuka instance.
-	@test -f "$(SCREENSHOT_KUMBUKA_DIR)/Makefile" || { \
-		echo "Kumbuka checkout not found: $(SCREENSHOT_KUMBUKA_DIR)" >&2; \
-		echo "Set SCREENSHOT_KUMBUKA_DIR to a kumbuka-me/kumbuka checkout." >&2; \
-		exit 1; \
-	}
-	@mkdir -p "$(dir $(abspath $(SCREENSHOT_KUMBUKA_BINARY)))"
-	$(MAKE) -C "$(SCREENSHOT_KUMBUKA_DIR)" build BINARY="$(abspath $(SCREENSHOT_KUMBUKA_BINARY))"
+screenshots: $(NODE_MODULES) $(KUMBUKA) $(KUMBUKA_CLI) ## Regenerate application and plugin screenshots with released Kumbuka tooling.
 	@SCREENSHOT_BROWSER_CHANNEL="$(SCREENSHOT_BROWSER_CHANNEL)" \
 		SCREENSHOT_DEVICE_SCALE_FACTOR="$(SCREENSHOT_DEVICE_SCALE_FACTOR)" \
 		SCREENSHOT_SKIP_BROWSER_INSTALL="$(SCREENSHOT_SKIP_BROWSER_INSTALL)" \
 		$(SCREENSHOT_SCRIPT) \
-			--binary "$(abspath $(SCREENSHOT_KUMBUKA_BINARY))" \
+			--repository "$(CURDIR)" \
+			--binary "$(abspath $(KUMBUKA))" \
+			--cli "$(abspath $(KUMBUKA_CLI))" \
+			--kumbuka-version "$(KUMBUKA_VERSION)" \
 			--content "$(CURDIR)/content" \
-			--plugins "$(abspath $(SCREENSHOT_PLUGINS_DIR))" \
 			--output "$(CURDIR)/$(SCREENSHOT_OUTPUT)" \
 			--plugin-output "$(CURDIR)/$(SCREENSHOT_PLUGIN_OUTPUT)" \
 			--editor-slug "$(SCREENSHOT_EDITOR_SLUG)" \

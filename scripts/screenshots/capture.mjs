@@ -5,9 +5,7 @@ import { chromium } from "playwright";
 const baseURL = process.env.SCREENSHOT_BASE_URL;
 const archive = process.env.SCREENSHOT_ARCHIVE;
 const pluginArchive = process.env.SCREENSHOT_PLUGIN_ARCHIVE;
-const pluginListPath = process.env.SCREENSHOT_PLUGIN_LIST;
-const pluginPackages = process.env.SCREENSHOT_PLUGIN_PACKAGES;
-const pluginsDir = process.env.SCREENSHOT_PLUGINS_DIR;
+const pluginMetadata = process.env.SCREENSHOT_PLUGIN_METADATA;
 const output = process.env.SCREENSHOT_OUTPUT;
 const pluginOutput = process.env.SCREENSHOT_PLUGIN_OUTPUT;
 const editorSlug = process.env.SCREENSHOT_EDITOR_SLUG;
@@ -24,9 +22,7 @@ if (
   !baseURL ||
   !archive ||
   !pluginArchive ||
-  !pluginListPath ||
-  !pluginPackages ||
-  !pluginsDir ||
+  !pluginMetadata ||
   !output ||
   !pluginOutput ||
   !editorSlug
@@ -51,39 +47,41 @@ await mkdir(pluginOutput, { recursive: true });
 const launchOptions = { headless: true };
 if (browserChannel) launchOptions.channel = browserChannel;
 
-function topLevelValue(source, field) {
-  const match = source.match(new RegExp(`^${field}:\\s*(.+?)\\s*$`, "m"));
-  if (!match) throw new Error(`Missing ${field} in plugin manifest.`);
-  return match[1].trim().replace(/^['"]|['"]$/g, "");
-}
-
 async function pluginFixtures() {
-  const names = (await readFile(pluginListPath, "utf8"))
-    .split(/\r?\n/)
-    .map((value) => value.trim())
-    .filter(Boolean);
-  const fixtures = [];
+  let fixtures;
+  try {
+    fixtures = JSON.parse(await readFile(pluginMetadata, "utf8"));
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    throw new Error(`Could not read plugin screenshot metadata: ${reason}`);
+  }
 
-  for (const name of names) {
-    const manifest = await readFile(join(pluginsDir, name, "plugin.yaml"), "utf8");
-    const id = topLevelValue(manifest, "id");
-    const version = topLevelValue(manifest, "version");
-    fixtures.push({ id, name, version });
+  if (!Array.isArray(fixtures) || fixtures.length === 0) {
+    throw new Error("Plugin screenshot metadata contains no plugins.");
+  }
+
+  for (const plugin of fixtures) {
+    if (
+      !plugin ||
+      typeof plugin.id !== "string" ||
+      typeof plugin.name !== "string" ||
+      typeof plugin.version !== "string" ||
+      typeof plugin.package !== "string"
+    ) {
+      throw new Error("Plugin screenshot metadata is invalid.");
+    }
   }
 
   return fixtures;
 }
 
 async function packageBytes(plugin) {
-  const filename = `${plugin.name}-${plugin.version}.kumbukaplugin`;
-  const path = join(pluginPackages, filename);
-
   try {
-    return await readFile(path);
+    return await readFile(plugin.package);
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     throw new Error(
-      `Could not read locally built package for ${plugin.name} ${plugin.version} at ${path}: ${reason}`,
+      `Could not read synced package for ${plugin.name} ${plugin.version} at ${plugin.package}: ${reason}`,
     );
   }
 }

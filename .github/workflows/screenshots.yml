@@ -6,20 +6,13 @@ on:
     branches:
       - main
     paths:
-      - "content/extensions/**"
-      - "content/plugins/catalog.json"
+      - "content/**"
+      - "Makefile"
+      - "package.json"
+      - "package-lock.json"
+      - "scripts/screenshots/**"
+      - ".github/workflows/screenshots.yml"
   workflow_dispatch:
-    inputs:
-      kumbuka_ref:
-        description: Kumbuka server branch, tag, or commit to capture
-        required: true
-        default: main
-        type: string
-      plugins_ref:
-        description: First-party plugins branch, tag, or commit to capture
-        required: true
-        default: main
-        type: string
 
 jobs:
   screenshots:
@@ -36,51 +29,22 @@ jobs:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
 
-      - name: Check out Kumbuka server
-        uses: actions/checkout@v7
-        with:
-          repository: kumbuka-me/kumbuka
-          ref: ${{ inputs.kumbuka_ref || 'main' }}
-          path: .kumbuka-server
-          fetch-depth: 1
-
-      - name: Check out first-party plugins
-        uses: actions/checkout@v7
-        with:
-          repository: kumbuka-me/plugins
-          ref: ${{ inputs.plugins_ref || 'main' }}
-          path: .kumbuka-plugins
-          fetch-depth: 1
-
-      - name: Set up Go
-        uses: actions/setup-go@v7
-        with:
-          go-version-file: .kumbuka-server/go.mod
-          check-latest: true
-          cache: true
-          cache-dependency-path: .kumbuka-server/go.sum
-
       - name: Set up Node
         uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
-          cache-dependency-path: |
-            package-lock.json
-            .kumbuka-server/package-lock.json
-            .kumbuka-plugins/package-lock.json
+          cache-dependency-path: package-lock.json
 
-      - name: Install documentation screenshot dependencies
+      - name: Install screenshot dependencies
         run: |
           npm ci
           npx playwright install --with-deps chromium
 
-      - name: Generate screenshots from documentation content
-        run: |
-          make screenshots \
-            SCREENSHOT_KUMBUKA_DIR="$GITHUB_WORKSPACE/.kumbuka-server" \
-            SCREENSHOT_PLUGINS_DIR="$GITHUB_WORKSPACE/.kumbuka-plugins" \
-            SCREENSHOT_SKIP_BROWSER_INSTALL=1
+      - name: Generate screenshots
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: make screenshots SCREENSHOT_SKIP_BROWSER_INSTALL=1
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v7
