@@ -42,8 +42,6 @@ jobs:
           npx playwright install --with-deps chromium
 
       - name: Generate screenshots
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
         run: make screenshots SCREENSHOT_SKIP_BROWSER_INSTALL=1
 
       - name: Upload screenshots

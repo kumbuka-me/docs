@@ -310,24 +310,25 @@ try {
 
   async function installPreviewPlugins(fixtures) {
     const installed = await installedPluginIDs();
-    const packages = [];
+    const missing = [];
 
     for (const plugin of fixtures) {
-      packages.push({ plugin, bytes: await packageBytes(plugin) });
+      if (installed.has(plugin.id)) continue;
+      missing.push({ plugin, bytes: await packageBytes(plugin) });
     }
 
     await applyWithDependencyRetries(
-      packages,
+      missing,
       async ({ plugin, bytes }) => {
-        const result = await submitPluginPackage(plugin, bytes, installed.has(plugin.id));
+        const result = await submitPluginPackage(plugin, bytes, false);
         if (result.ok) installed.add(plugin.id);
         return result;
       },
-      "install or upgrade preview plugins",
+      "install missing preview plugins",
     );
 
     await applyWithDependencyRetries(
-      packages,
+      fixtures.map((plugin) => ({ plugin })),
       async ({ plugin }) => enablePlugin(plugin),
       "enable preview plugins",
     );

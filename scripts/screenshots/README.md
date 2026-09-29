@@ -6,8 +6,8 @@ Run the complete screenshot flow from the documentation repository:
 make screenshots
 ```
 
-The Makefile downloads the pinned Kumbuka and Kumbuka CLI release binaries. The runner starts an isolated PostgreSQL instance, imports `content/`, syncs the plugin versions bundled with the selected Kumbuka release, and captures the application and plugin previews with Playwright.
+The Makefile downloads the pinned Kumbuka release through the shared dev-tools installer. The screenshot runner fetches that release's `plugins.lock` and uses the same plugin download and checksum verification logic as Kumbuka core.
 
-Application screenshots are written to `assets/screenshots/`. Plugin previews are written to `assets/plugins/<plugin>/preview.png`.
+An isolated PostgreSQL instance and real Kumbuka server render the current documentation and released plugin preview fixtures. Application screenshots are written to `assets/screenshots/`; plugin previews are written to `assets/plugins/<plugin>/preview.png`.
 
 Captures use a 2× device scale factor by default for sharp HiDPI output.

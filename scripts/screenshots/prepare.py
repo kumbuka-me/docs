@@ -4,13 +4,9 @@
 from __future__ import annotations
 
 import argparse
-import base64
-import hashlib
 import json
-import os
 from pathlib import Path
-import sys
-import tomllib
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -18,114 +14,71 @@ import zipfile
 
 
 USER_AGENT = "kumbuka-docs/screenshots"
+DOWNLOAD_ATTEMPTS = 5
+DOWNLOAD_DELAY = 2
 
 
-def github_file(repository: str, path: str, ref: str) -> bytes:
-    query = urllib.parse.urlencode({"ref": ref})
-    quoted = urllib.parse.quote(path, safe="/")
-    url = f"https://api.github.com/repos/{repository}/contents/{quoted}?{query}"
-    headers = {
-        "Accept": "application/vnd.github+json",
-        "User-Agent": USER_AGENT,
-    }
-    token = os.environ.get("GITHUB_TOKEN", "").strip()
-    if token:
-        headers["Authorization"] = f"Bearer {token}"
+def raw_github_file(repository: str, path: str, ref: str) -> bytes:
+    repository_path = "/".join(urllib.parse.quote(part, safe="") for part in repository.split("/"))
+    ref_path = urllib.parse.quote(ref, safe="/")
+    file_path = urllib.parse.quote(path, safe="/")
+    url = f"https://raw.githubusercontent.com/{repository_path}/{ref_path}/{file_path}"
+    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
 
-    request = urllib.request.Request(url, headers=headers)
-    try:
-        with urllib.request.urlopen(request, timeout=30) as response:
-            payload = json.load(response)
-    except urllib.error.HTTPError as error:
-        raise RuntimeError(
-            f"GitHub returned HTTP {error.code} for {repository}@{ref}:{path}"
-        ) from error
-    except urllib.error.URLError as error:
-        raise RuntimeError(
-            f"Could not fetch {repository}@{ref}:{path}: {error.reason}"
-        ) from error
+    for attempt in range(1, DOWNLOAD_ATTEMPTS + 1):
+        try:
+            with urllib.request.urlopen(request, timeout=30) as response:
+                return response.read()
+        except urllib.error.HTTPError as error:
+            if error.code == 404:
+                raise RuntimeError(
+                    f"GitHub file not found: {repository}@{ref}:{path}"
+                ) from error
+            if attempt == DOWNLOAD_ATTEMPTS:
+                raise RuntimeError(
+                    f"GitHub returned HTTP {error.code} for {repository}@{ref}:{path}"
+                ) from error
+        except urllib.error.URLError as error:
+            if attempt == DOWNLOAD_ATTEMPTS:
+                raise RuntimeError(
+                    f"Could not fetch {repository}@{ref}:{path}: {error.reason}"
+                ) from error
 
-    if payload.get("encoding") != "base64" or not payload.get("content"):
-        raise RuntimeError(f"Unexpected GitHub response for {repository}@{ref}:{path}")
+        time.sleep(DOWNLOAD_DELAY)
 
-    return base64.b64decode(payload["content"])
+    raise RuntimeError(f"Could not fetch {repository}@{ref}:{path}")
 
 
 def parse_plugin_lock(source: str) -> list[tuple[str, str]]:
     plugins: list[tuple[str, str]] = []
+    seen: set[str] = set()
     for raw in source.splitlines():
         line = raw.strip()
         if not line or line.startswith("#"):
             continue
         name, separator, version = line.partition("=")
+        name = name.strip()
+        version = version.strip()
         if not separator or not name or not version:
             raise RuntimeError(f"Invalid plugins.lock entry: {raw!r}")
-        plugins.append((name.strip(), version.strip()))
+        if name in seen:
+            raise RuntimeError(f"Duplicate plugin in plugins.lock: {name}")
+        seen.add(name)
+        plugins.append((name, version))
     if not plugins:
         raise RuntimeError("Kumbuka plugins.lock did not contain any plugins")
     return plugins
 
 
-def write_manifest(version: str, output: Path) -> None:
-    source = github_file("kumbuka-me/kumbuka", "plugins.lock", version).decode("utf-8")
-    plugins = parse_plugin_lock(source)
-
-    lines = ["format = 1", ""]
-    for name, plugin_version in plugins:
-        lines.extend(
-            [
-                "[[plugin]]",
-                f'id = "me.kumbuka.{name}"',
-                'repository = "kumbuka-me/plugins"',
-                f'tag_prefix = "{name}/v"',
-                f'asset = "{name}"',
-                f'version = "{plugin_version}"',
-                "",
-            ]
-        )
-
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text("\n".join(lines), encoding="utf-8")
-
-
-def user_cache_dir() -> Path:
-    if sys.platform == "darwin":
-        return Path.home() / "Library" / "Caches"
-    if sys.platform.startswith("linux"):
-        configured = os.environ.get("XDG_CACHE_HOME", "").strip()
-        return Path(configured) if configured else Path.home() / ".cache"
-    raise RuntimeError(f"Unsupported screenshot platform: {sys.platform}")
-
-
-def package_cache_path(plugin: dict[str, object]) -> Path:
-    repository = str(plugin["repository"])
-    tag_prefix = str(plugin["tag_prefix"])
-    asset = str(plugin["asset"])
-    plugin_id = str(plugin["id"])
-    version = str(plugin["version"])
-    digest = hashlib.sha256(
-        f"{repository}\n{tag_prefix}\n{asset}".encode("utf-8")
-    ).hexdigest()
-    return (
-        user_cache_dir()
-        / "kumbuka"
-        / "plugins"
-        / digest
-        / plugin_id
-        / version
-        / "plugin.kumbukaplugin"
+def write_plugin_lock(version: str, output: Path) -> None:
+    lock = raw_github_file(
+        "kumbuka-me/kumbuka",
+        "plugins.lock",
+        f"refs/tags/{version}",
     )
-
-
-def read_manifest(filename: Path) -> list[dict[str, object]]:
-    with filename.open("rb") as source:
-        data = tomllib.load(source)
-    if data.get("format") != 1:
-        raise RuntimeError(f"Unsupported plugin manifest format in {filename}")
-    plugins = data.get("plugin")
-    if not isinstance(plugins, list):
-        raise RuntimeError(f"Plugin manifest contains no plugins: {filename}")
-    return plugins
+    parse_plugin_lock(lock.decode("utf-8"))
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_bytes(lock)
 
 
 def write_markdown_archive(source_dir: Path, output: Path) -> None:
@@ -159,42 +112,44 @@ def preview_support_files(archive: zipfile.ZipFile, plugin_name: str) -> None:
 
 
 def write_plugin_archive(
-    manifest_file: Path,
+    lock_file: Path,
+    packages_dir: Path,
     content_dir: Path,
     archive_file: Path,
     metadata_file: Path,
 ) -> None:
-    plugins = read_manifest(manifest_file)
+    plugins = parse_plugin_lock(lock_file.read_text(encoding="utf-8"))
     selected: list[dict[str, str]] = []
 
     archive_file.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(archive_file, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        for plugin in plugins:
-            name = str(plugin["asset"])
+        for name, version in plugins:
             extension_page = content_dir / "extensions" / f"{name}.md"
             if not extension_page.is_file():
                 continue
 
-            repository = str(plugin["repository"])
-            tag = f"{plugin['tag_prefix']}{plugin['version']}"
-            preview_path = f"{name}/preview.md"
-            preview = github_file(repository, preview_path, tag).decode("utf-8")
+            tag = f"{name}/v{version}"
+            preview = raw_github_file(
+                "kumbuka-me/plugins",
+                f"{name}/preview.md",
+                f"refs/tags/{tag}",
+            ).decode("utf-8")
             if not preview.strip():
                 raise RuntimeError(f"Empty preview fixture for {name} at {tag}")
 
-            package = package_cache_path(plugin)
+            package = packages_dir / f"{name}.kumbukaplugin"
             if not package.is_file():
                 raise RuntimeError(
-                    f"Plugin package was not synced for {plugin['id']} {plugin['version']}: {package}"
+                    f"Plugin package was not downloaded for me.kumbuka.{name} {version}: {package}"
                 )
 
             archive.writestr(f"__screenshots/plugins/{name}.md", preview)
             preview_support_files(archive, name)
             selected.append(
                 {
-                    "id": str(plugin["id"]),
+                    "id": f"me.kumbuka.{name}",
                     "name": name,
-                    "version": str(plugin["version"]),
+                    "version": version,
                     "package": str(package),
                 }
             )
@@ -209,8 +164,8 @@ def write_plugin_archive(
     )
 
 
-def command_manifest(args: argparse.Namespace) -> None:
-    write_manifest(args.kumbuka_version, args.output)
+def command_lock(args: argparse.Namespace) -> None:
+    write_plugin_lock(args.kumbuka_version, args.output)
 
 
 def command_content(args: argparse.Namespace) -> None:
@@ -218,19 +173,26 @@ def command_content(args: argparse.Namespace) -> None:
 
 
 def command_plugins(args: argparse.Namespace) -> None:
-    write_plugin_archive(args.manifest, args.content, args.archive, args.metadata)
+    write_plugin_archive(
+        args.plugin_lock,
+        args.packages,
+        args.content,
+        args.archive,
+        args.metadata,
+    )
 
 
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description=__doc__)
     subcommands = result.add_subparsers(dest="command", required=True)
 
-    manifest = subcommands.add_parser(
-        "manifest", help="Create the plugin dependency manifest for one Kumbuka release"
+    lock = subcommands.add_parser(
+        "lock",
+        help="Fetch plugins.lock from the selected Kumbuka release",
     )
-    manifest.add_argument("--kumbuka-version", required=True)
-    manifest.add_argument("--output", required=True, type=Path)
-    manifest.set_defaults(handler=command_manifest)
+    lock.add_argument("--kumbuka-version", required=True)
+    lock.add_argument("--output", required=True, type=Path)
+    lock.set_defaults(handler=command_lock)
 
     content = subcommands.add_parser(
         "content", help="Create a portable Markdown archive from the documentation"
@@ -240,9 +202,10 @@ def parser() -> argparse.ArgumentParser:
     content.set_defaults(handler=command_content)
 
     plugins = subcommands.add_parser(
-        "plugins", help="Create plugin preview fixtures and metadata from synced releases"
+        "plugins", help="Create plugin preview pages from released preview fixtures"
     )
-    plugins.add_argument("--manifest", required=True, type=Path)
+    plugins.add_argument("--plugin-lock", required=True, type=Path)
+    plugins.add_argument("--packages", required=True, type=Path)
     plugins.add_argument("--content", required=True, type=Path)
     plugins.add_argument("--archive", required=True, type=Path)
     plugins.add_argument("--metadata", required=True, type=Path)
@@ -255,7 +218,7 @@ def main() -> None:
     args = parser().parse_args()
     try:
         args.handler(args)
-    except (OSError, RuntimeError, tomllib.TOMLDecodeError, ValueError) as error:
+    except RuntimeError as error:
         raise SystemExit(f"prepare screenshots: {error}") from error
 
 

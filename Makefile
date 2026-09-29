@@ -98,14 +98,13 @@ serve: $(DEV_PORT) $(OPEN_BROWSER) ## Build, serve, and open the documentation l
 		--directory "$(SITE_OUTPUT)"
 
 .PHONY: screenshots
-screenshots: $(NODE_MODULES) $(KUMBUKA) $(KUMBUKA_CLI) ## Regenerate application and plugin screenshots with released Kumbuka tooling.
+screenshots: $(NODE_MODULES) $(KUMBUKA) ## Regenerate application and plugin screenshots with the pinned Kumbuka release.
 	@SCREENSHOT_BROWSER_CHANNEL="$(SCREENSHOT_BROWSER_CHANNEL)" \
 		SCREENSHOT_DEVICE_SCALE_FACTOR="$(SCREENSHOT_DEVICE_SCALE_FACTOR)" \
 		SCREENSHOT_SKIP_BROWSER_INSTALL="$(SCREENSHOT_SKIP_BROWSER_INSTALL)" \
 		$(SCREENSHOT_SCRIPT) \
 			--repository "$(CURDIR)" \
 			--binary "$(abspath $(KUMBUKA))" \
-			--cli "$(abspath $(KUMBUKA_CLI))" \
 			--kumbuka-version "$(KUMBUKA_VERSION)" \
 			--content "$(CURDIR)/content" \
 			--output "$(CURDIR)/$(SCREENSHOT_OUTPUT)" \

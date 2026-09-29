@@ -30,7 +30,7 @@ Regenerate the application screenshots and plugin previews:
 make screenshots
 ```
 
-The required Kumbuka and Kumbuka CLI releases are downloaded automatically. The screenshot runner starts a temporary Kumbuka instance with PostgreSQL, imports the current documentation, syncs the plugin versions bundled with that Kumbuka release, and captures everything with the normal Kumbuka renderer.
+The pinned Kumbuka release and its matching first-party plugin packages are downloaded automatically. A temporary Kumbuka instance with PostgreSQL renders the current documentation and the released plugin preview fixtures.
 
 Generated images are written to `assets/screenshots/` and `assets/plugins/<plugin>/preview.png`.
 

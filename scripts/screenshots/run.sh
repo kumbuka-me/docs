@@ -3,7 +3,7 @@ set -eu
 
 usage() {
   cat <<'USAGE'
-Usage: scripts/screenshots/run.sh --repository DIR --binary FILE --cli FILE --kumbuka-version VERSION --content DIR --output DIR --plugin-output DIR --editor-slug SLUG [--visits PATHS]
+Usage: scripts/screenshots/run.sh --repository DIR --binary FILE --kumbuka-version VERSION --content DIR --output DIR --plugin-output DIR --editor-slug SLUG [--visits PATHS]
 
 PATHS is a comma-separated list of application paths to visit before the dashboard capture.
 USAGE
@@ -11,7 +11,6 @@ USAGE
 
 repository=""
 binary=""
-cli=""
 kumbuka_version=""
 content_dir=""
 output=""
@@ -29,11 +28,6 @@ while [ "$#" -gt 0 ]; do
   --binary)
     [ "$#" -ge 2 ] || { usage >&2; exit 2; }
     binary=$2
-    shift 2
-    ;;
-  --cli)
-    [ "$#" -ge 2 ] || { usage >&2; exit 2; }
-    cli=$2
     shift 2
     ;;
   --kumbuka-version)
@@ -80,7 +74,6 @@ done
 
 [ -n "$repository" ] || { echo "--repository is required" >&2; exit 2; }
 [ -n "$binary" ] || { echo "--binary is required" >&2; exit 2; }
-[ -n "$cli" ] || { echo "--cli is required" >&2; exit 2; }
 [ -n "$kumbuka_version" ] || { echo "--kumbuka-version is required" >&2; exit 2; }
 [ -n "$content_dir" ] || { echo "--content is required" >&2; exit 2; }
 [ -n "$output" ] || { echo "--output is required" >&2; exit 2; }
@@ -89,7 +82,6 @@ done
 
 [ -d "$repository" ] || { echo "Repository directory not found: $repository" >&2; exit 1; }
 [ -x "$binary" ] || { echo "Kumbuka binary not found or not executable: $binary" >&2; exit 1; }
-[ -x "$cli" ] || { echo "Kumbuka CLI not found or not executable: $cli" >&2; exit 1; }
 [ -d "$content_dir" ] || { echo "Screenshot content directory not found: $content_dir" >&2; exit 1; }
 [ -x "$repository/node_modules/.bin/playwright" ] || {
   echo "Playwright is not installed. Run npm ci in the docs repository." >&2
@@ -99,15 +91,18 @@ done
 compose_file="$repository/scripts/screenshots/compose.yaml"
 prepare_script="$repository/scripts/screenshots/prepare.py"
 capture_script="$repository/scripts/screenshots/capture.mjs"
+plugin_download="$repository/scripts/screenshots/download-plugins.sh"
 
 [ -f "$compose_file" ] || { echo "Screenshot compose file not found: $compose_file" >&2; exit 1; }
 [ -x "$prepare_script" ] || { echo "Screenshot prepare script not found: $prepare_script" >&2; exit 1; }
 [ -f "$capture_script" ] || { echo "Screenshot capture script not found: $capture_script" >&2; exit 1; }
+[ -x "$plugin_download" ] || { echo "Plugin download script not found: $plugin_download" >&2; exit 1; }
 
 work_dir=$(mktemp -d "${TMPDIR:-/tmp}/kumbuka-screenshots.XXXXXX")
 archive="$work_dir/content.zip"
 plugin_archive="$work_dir/plugin-previews.zip"
-plugin_manifest="$work_dir/.kumbukaplugins"
+plugin_lock="$work_dir/plugins.lock"
+plugin_packages="$work_dir/plugins"
 plugin_metadata="$work_dir/plugins.json"
 server_log="$work_dir/kumbuka.log"
 server_pid=""
@@ -143,7 +138,7 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-mkdir -p "$output" "$plugin_output"
+mkdir -p "$output" "$plugin_output" "$plugin_packages"
 rm -f "$output"/*.png
 find "$plugin_output" -mindepth 2 -maxdepth 2 -type f -name 'preview.png' -delete 2>/dev/null || true
 
@@ -155,15 +150,19 @@ python3 "$prepare_script" content \
   --source "$content_dir" \
   --output "$archive"
 
-python3 "$prepare_script" manifest \
+python3 "$prepare_script" lock \
   --kumbuka-version "$kumbuka_version" \
-  --output "$plugin_manifest"
+  --output "$plugin_lock"
 
-printf '%s\n' "Syncing first-party plugin releases for Kumbuka $kumbuka_version..."
-"$cli" plugins sync --file "$plugin_manifest"
+printf '%s\n' "Downloading first-party plugins pinned by Kumbuka $kumbuka_version..."
+"$plugin_download" \
+  --plugin-lock "$plugin_lock" \
+  --destination "$plugin_packages" \
+  --plugin-repository kumbuka-me/plugins
 
 python3 "$prepare_script" plugins \
-  --manifest "$plugin_manifest" \
+  --plugin-lock "$plugin_lock" \
+  --packages "$plugin_packages" \
   --content "$content_dir" \
   --archive "$plugin_archive" \
   --metadata "$plugin_metadata"
