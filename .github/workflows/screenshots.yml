@@ -68,6 +68,7 @@ jobs:
           cache-dependency-path: |
             package-lock.json
             .kumbuka-server/package-lock.json
+            .kumbuka-plugins/package-lock.json
 
       - name: Install documentation screenshot dependencies
         run: |

@@ -6,6 +6,7 @@ const baseURL = process.env.SCREENSHOT_BASE_URL;
 const archive = process.env.SCREENSHOT_ARCHIVE;
 const pluginArchive = process.env.SCREENSHOT_PLUGIN_ARCHIVE;
 const pluginListPath = process.env.SCREENSHOT_PLUGIN_LIST;
+const pluginPackages = process.env.SCREENSHOT_PLUGIN_PACKAGES;
 const pluginsDir = process.env.SCREENSHOT_PLUGINS_DIR;
 const output = process.env.SCREENSHOT_OUTPUT;
 const pluginOutput = process.env.SCREENSHOT_PLUGIN_OUTPUT;
@@ -24,6 +25,7 @@ if (
   !archive ||
   !pluginArchive ||
   !pluginListPath ||
+  !pluginPackages ||
   !pluginsDir ||
   !output ||
   !pluginOutput ||
@@ -72,22 +74,18 @@ async function pluginFixtures() {
   return fixtures;
 }
 
-function packageURL(plugin) {
-  const name = encodeURIComponent(plugin.name);
-  const version = encodeURIComponent(plugin.version);
-  const filename = `${encodeURIComponent(plugin.name)}-${version}.kumbukaplugin`;
-  return `https://github.com/kumbuka-me/plugins/releases/download/${name}/v${version}/${filename}`;
-}
-
 async function packageBytes(plugin) {
-  const url = packageURL(plugin);
-  const response = await fetch(url, { redirect: "follow" });
-  if (!response.ok) {
+  const filename = `${plugin.name}-${plugin.version}.kumbukaplugin`;
+  const path = join(pluginPackages, filename);
+
+  try {
+    return await readFile(path);
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
     throw new Error(
-      `Could not download ${plugin.name} ${plugin.version}: HTTP ${response.status} from ${url}.`,
+      `Could not read locally built package for ${plugin.name} ${plugin.version} at ${path}: ${reason}`,
     );
   }
-  return Buffer.from(await response.arrayBuffer());
 }
 
 function responseSummary(content) {

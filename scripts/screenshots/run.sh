@@ -162,6 +162,7 @@ esac
 work_dir=$(mktemp -d "${TMPDIR:-/tmp}/kumbuka-screenshots.XXXXXX")
 archive="$work_dir/content.zip"
 plugin_archive="$work_dir/plugin-previews.zip"
+plugin_dist="$work_dir/plugin-packages"
 plugin_list="$work_dir/plugins.txt"
 plugin_source="$work_dir/plugin-previews"
 server_log="$work_dir/kumbuka.log"
@@ -263,6 +264,19 @@ if [ ! -s "$plugin_list" ]; then
   exit 1
 fi
 
+printf '%s\n' "Building first-party plugin packages from $plugins_dir..."
+make -C "$plugins_dir" build DIST="$plugin_dist"
+
+while IFS= read -r plugin; do
+  [ -n "$plugin" ] || continue
+  version=$(sed -n 's/^version:[[:space:]]*//p' "$plugins_dir/$plugin/plugin.yaml" | head -n 1 | tr -d '"' | tr -d "'")
+  package="$plugin_dist/$plugin-$version.kumbukaplugin"
+  if [ ! -s "$package" ]; then
+    echo "Plugin build did not produce $package" >&2
+    exit 1
+  fi
+done <"$plugin_list"
+
 (
   cd "$plugin_source"
   find . -type f -name '*.md' -print |
@@ -292,6 +306,7 @@ SCREENSHOT_BASE_URL="$base_url" \
   SCREENSHOT_ARCHIVE="$archive" \
   SCREENSHOT_PLUGIN_ARCHIVE="$plugin_archive" \
   SCREENSHOT_PLUGIN_LIST="$plugin_list" \
+  SCREENSHOT_PLUGIN_PACKAGES="$plugin_dist" \
   SCREENSHOT_PLUGINS_DIR="$plugins_dir" \
   SCREENSHOT_OUTPUT="$output" \
   SCREENSHOT_PLUGIN_OUTPUT="$plugin_output" \

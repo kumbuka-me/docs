@@ -1,10 +1,10 @@
 # Documentation screenshots
 
-The documentation repository owns the complete screenshot scenario. Kumbuka provides the real server used for capture, while `kumbuka-me/plugins` provides the canonical first-party plugin preview Markdown and release versions.
+The documentation repository owns the complete screenshot scenario. Kumbuka provides the real server used for capture, while `kumbuka-me/plugins` provides the canonical first-party plugin source and preview Markdown.
 
 The runner starts an isolated PostgreSQL instance and a real Kumbuka server, completes first-run setup, imports the canonical Markdown from `content/`, visits the configured pages, and captures representative application features with Playwright. It also creates deterministic discussion and review fixtures so those screenshots contain useful inline feedback instead of empty states.
 
-After the application screenshots are complete, the same Kumbuka instance installs or upgrades the documented first-party plugin releases, enables them, imports temporary preview pages built from each plugin's `preview.md` (or `preview.static.md` when present), waits for browser modules to settle, and captures only the rendered page content. The temporary preview pages never enter the documentation repository.
+Before capture, the runner builds versioned `.kumbukaplugin` packages directly from the selected `kumbuka-me/plugins` checkout. After the application screenshots are complete, the same Kumbuka instance installs or upgrades those locally built packages, enables them, imports temporary preview pages built from each plugin's `preview.md` (or `preview.static.md` when present), waits for browser modules to settle, and captures only the rendered page content. This works even when the checkout contains a plugin version that has not been published as a GitHub release yet. The temporary preview pages never enter the documentation repository.
 
 From the documentation repository, with `kumbuka-me/plugins` checked out as the sibling `../plugins` directory:
 
