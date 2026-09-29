@@ -10,10 +10,10 @@ From the documentation repository:
 make screenshots
 ```
 
-By default the server checkout is expected at `../kumbuka`. Override it when necessary:
+To capture with a different released Kumbuka version, override the pinned version:
 
 ```sh
-make screenshots KUMBUKA_SERVER_DIR=/path/to/kumbuka
+make screenshots KUMBUKA_VERSION=v0.36.2
 ```
 
 The runner writes these generated images under `assets/screenshots/`:

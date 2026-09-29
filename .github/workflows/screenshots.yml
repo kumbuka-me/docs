@@ -60,11 +60,13 @@ jobs:
         run: |
           npm ci
           go mod download
+          make generate web
+          go build -o kumbuka ./cmd/kumbuka
 
       - name: Generate screenshots from documentation content
         run: |
           make screenshots \
-            KUMBUKA_SERVER_DIR="$GITHUB_WORKSPACE/.kumbuka-server" \
+            KUMBUKA="$GITHUB_WORKSPACE/.kumbuka-server/kumbuka" \
             SCREENSHOT_SKIP_BROWSER_INSTALL=1
 
       - name: Upload screenshots

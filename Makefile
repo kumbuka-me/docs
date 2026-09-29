@@ -23,7 +23,9 @@ include $(call dev-tools-module,help)
 
 ## Tools
 
-KUMBUKA := bin/kumbuka
+# Keep the release version in the target name so changing KUMBUKA_VERSION cannot
+# silently reuse a previously downloaded server binary.
+KUMBUKA := bin/kumbuka-$(KUMBUKA_VERSION)
 KUMBUKA_ASSET ?= kumbuka_{version}_{os}_{arch}.tar.gz
 KUMBUKA_CLI := bin/kumbuka-cli
 KUMBUKA_CLI_ASSET ?= kumbuka-cli_{version}_{os}_{arch}.tar.gz
@@ -98,7 +100,7 @@ screenshots: $(NODE_MODULES) $(KUMBUKA) ## Regenerate product screenshots from t
 	@SCREENSHOT_BROWSER_CHANNEL="$(SCREENSHOT_BROWSER_CHANNEL)" \
 		SCREENSHOT_SKIP_BROWSER_INSTALL="$(SCREENSHOT_SKIP_BROWSER_INSTALL)" \
 		$(SCREENSHOT_SCRIPT) \
-			--binary "$(CURDIR)/$(KUMBUKA)" \
+			--binary "$(abspath $(KUMBUKA))" \
 			--content "$(CURDIR)/content" \
 			--output "$(CURDIR)/$(SCREENSHOT_OUTPUT)" \
 			--editor-slug "$(SCREENSHOT_EDITOR_SLUG)" \
