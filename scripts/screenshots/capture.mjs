@@ -4,7 +4,6 @@ import { chromium } from "playwright";
 
 const baseURL = process.env.SCREENSHOT_BASE_URL;
 const archive = process.env.SCREENSHOT_ARCHIVE;
-const pluginArchive = process.env.SCREENSHOT_PLUGIN_ARCHIVE;
 const pluginMetadata = process.env.SCREENSHOT_PLUGIN_METADATA;
 const output = process.env.SCREENSHOT_OUTPUT;
 const pluginOutput = process.env.SCREENSHOT_PLUGIN_OUTPUT;
@@ -21,7 +20,6 @@ const visitPaths = (process.env.SCREENSHOT_VISITS || "")
 if (
   !baseURL ||
   !archive ||
-  !pluginArchive ||
   !pluginMetadata ||
   !output ||
   !pluginOutput ||
@@ -65,9 +63,22 @@ async function pluginFixtures() {
       !plugin ||
       typeof plugin.id !== "string" ||
       typeof plugin.name !== "string" ||
-      typeof plugin.version !== "string"
+      typeof plugin.version !== "string" ||
+      typeof plugin.title !== "string" ||
+      typeof plugin.markdown !== "string" ||
+      !Array.isArray(plugin.support_pages)
     ) {
       throw new Error("Plugin screenshot metadata is invalid.");
+    }
+    for (const support of plugin.support_pages) {
+      if (
+        !support ||
+        typeof support.slug !== "string" ||
+        typeof support.title !== "string" ||
+        typeof support.markdown !== "string"
+      ) {
+        throw new Error(`Plugin screenshot support metadata is invalid for ${plugin.id}.`);
+      }
     }
   }
 
@@ -299,6 +310,56 @@ try {
     };
   }
 
+  async function createPageFixture(slug, title, markdown) {
+    const response = await context.request.post(
+      new URL("/pages", baseURL).toString(),
+      {
+        form: {
+          slug,
+          title,
+          markdown,
+          message: "Documentation screenshot fixture",
+          status: "verified",
+        },
+        maxRedirects: 0,
+      },
+    );
+    if (response.status() !== 303) {
+      throw new Error(
+        `Could not create screenshot page ${slug}: HTTP ${response.status()}: ${responseSummary(await response.text())}`,
+      );
+    }
+  }
+
+  async function createPluginPreviewPages(fixtures) {
+    const supportPages = new Map();
+    for (const plugin of fixtures) {
+      for (const support of plugin.support_pages) {
+        const existing = supportPages.get(support.slug);
+        if (
+          existing &&
+          (existing.title !== support.title || existing.markdown !== support.markdown)
+        ) {
+          throw new Error(
+            `Conflicting screenshot support page definitions for ${support.slug}.`,
+          );
+        }
+        supportPages.set(support.slug, support);
+      }
+    }
+
+    for (const support of supportPages.values()) {
+      await createPageFixture(support.slug, support.title, support.markdown);
+    }
+    for (const plugin of fixtures) {
+      await createPageFixture(
+        `__screenshots/plugins/${plugin.name}`,
+        plugin.title,
+        plugin.markdown,
+      );
+    }
+  }
+
   async function rebuildPluginPreview(plugin) {
     const slug = `__screenshots/plugins/${plugin.name}`;
     const response = await context.request.post(
@@ -524,7 +585,7 @@ try {
 
   const fixtures = await pluginFixtures();
   await disablePreviewPlugins(fixtures);
-  await importArchive(pluginArchive);
+  await createPluginPreviewPages(fixtures);
   await enablePreviewPlugins(fixtures);
   for (const plugin of fixtures) {
     await capturePluginPreview(plugin);

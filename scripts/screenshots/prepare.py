@@ -98,23 +98,34 @@ def write_markdown_archive(source_dir: Path, output: Path) -> None:
             archive.write(path, path.relative_to(source_dir).as_posix())
 
 
-def preview_support_files(archive: zipfile.ZipFile, plugin_name: str) -> None:
+def preview_support_pages(plugin_name: str) -> list[dict[str, str]]:
     if plugin_name == "includes":
-        archive.writestr(
-            "operations/shared-warning.md",
-            """# Shared warning\n\n## Warning\n\n!!! warning\nBack up the database before changing production.\n""",
-        )
-    elif plugin_name == "subpages":
-        children = {
-            "getting-started.md": "# Getting started\n\nPrepare the service and confirm access before making changes.\n",
-            "operations.md": "# Operations\n\nDay-two procedures for running the service safely.\n",
-            "troubleshooting.md": "# Troubleshooting\n\nCommon symptoms, checks, and recovery steps.\n",
-        }
-        for filename, content in children.items():
-            archive.writestr(
-                f"__screenshots/plugins/subpages/{filename}",
-                content,
-            )
+        return [
+            {
+                "slug": "operations/shared-warning",
+                "title": "Shared warning",
+                "markdown": "# Shared warning\n\n## Warning\n\n!!! warning\nBack up the database before changing production.\n",
+            }
+        ]
+    if plugin_name == "subpages":
+        return [
+            {
+                "slug": "__screenshots/plugins/subpages/getting-started",
+                "title": "Getting started",
+                "markdown": "# Getting started\n\nPrepare the service and confirm access before making changes.\n",
+            },
+            {
+                "slug": "__screenshots/plugins/subpages/operations",
+                "title": "Operations",
+                "markdown": "# Operations\n\nDay-two procedures for running the service safely.\n",
+            },
+            {
+                "slug": "__screenshots/plugins/subpages/troubleshooting",
+                "title": "Troubleshooting",
+                "markdown": "# Troubleshooting\n\nCommon symptoms, checks, and recovery steps.\n",
+            },
+        ]
+    return []
 
 
 def cached_preview(cache_dir: Path, name: str, version: str) -> str:
@@ -140,33 +151,34 @@ def cached_preview(cache_dir: Path, name: str, version: str) -> str:
     return preview
 
 
-def write_plugin_archive(
+def preview_title(name: str) -> str:
+    return name.replace("-", " ").title() + " preview"
+
+
+def write_plugin_metadata(
     lock_file: Path,
     preview_cache: Path,
     content_dir: Path,
-    archive_file: Path,
     metadata_file: Path,
 ) -> None:
     plugins = parse_plugin_lock(lock_file.read_text(encoding="utf-8"))
-    selected: list[dict[str, str]] = []
+    selected: list[dict[str, object]] = []
 
-    archive_file.parent.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(archive_file, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        for name, version in plugins:
-            extension_page = content_dir / "extensions" / f"{name}.md"
-            if not extension_page.is_file():
-                continue
+    for name, version in plugins:
+        extension_page = content_dir / "extensions" / f"{name}.md"
+        if not extension_page.is_file():
+            continue
 
-            preview = cached_preview(preview_cache, name, version)
-            archive.writestr(f"__screenshots/plugins/{name}.md", preview)
-            preview_support_files(archive, name)
-            selected.append(
-                {
-                    "id": f"me.kumbuka.{name}",
-                    "name": name,
-                    "version": version,
-                }
-            )
+        selected.append(
+            {
+                "id": f"me.kumbuka.{name}",
+                "name": name,
+                "version": version,
+                "title": preview_title(name),
+                "markdown": cached_preview(preview_cache, name, version),
+                "support_pages": preview_support_pages(name),
+            }
+        )
 
     if not selected:
         raise RuntimeError("No released plugin previews matched content/extensions")
@@ -187,11 +199,10 @@ def command_content(args: argparse.Namespace) -> None:
 
 
 def command_plugins(args: argparse.Namespace) -> None:
-    write_plugin_archive(
+    write_plugin_metadata(
         args.plugin_lock,
         args.preview_cache,
         args.content,
-        args.archive,
         args.metadata,
     )
 
@@ -221,7 +232,6 @@ def parser() -> argparse.ArgumentParser:
     plugins.add_argument("--plugin-lock", required=True, type=Path)
     plugins.add_argument("--preview-cache", required=True, type=Path)
     plugins.add_argument("--content", required=True, type=Path)
-    plugins.add_argument("--archive", required=True, type=Path)
     plugins.add_argument("--metadata", required=True, type=Path)
     plugins.set_defaults(handler=command_plugins)
 

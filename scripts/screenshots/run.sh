@@ -105,7 +105,6 @@ capture_script="$repository/scripts/screenshots/capture.mjs"
 
 work_dir=$(mktemp -d "${TMPDIR:-/tmp}/kumbuka-screenshots.XXXXXX")
 archive="$work_dir/content.zip"
-plugin_archive="$work_dir/plugin-previews.zip"
 plugin_metadata="$work_dir/plugins.json"
 server_log="$work_dir/kumbuka.log"
 server_pid=""
@@ -165,7 +164,6 @@ python3 "$prepare_script" plugins \
   --plugin-lock "$plugin_lock" \
   --preview-cache "$preview_cache" \
   --content "$content_dir" \
-  --archive "$plugin_archive" \
   --metadata "$plugin_metadata"
 
 SCREENSHOT_DB_PORT="$database_port" \
@@ -196,7 +194,6 @@ done
 
 SCREENSHOT_BASE_URL="$base_url" \
   SCREENSHOT_ARCHIVE="$archive" \
-  SCREENSHOT_PLUGIN_ARCHIVE="$plugin_archive" \
   SCREENSHOT_PLUGIN_METADATA="$plugin_metadata" \
   SCREENSHOT_OUTPUT="$output" \
   SCREENSHOT_PLUGIN_OUTPUT="$plugin_output" \
