@@ -2,10 +2,21 @@
 name: Documentation Screenshots
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - "content/extensions/**"
+      - "content/plugins/catalog.json"
   workflow_dispatch:
     inputs:
       kumbuka_ref:
         description: Kumbuka server branch, tag, or commit to capture
+        required: true
+        default: main
+        type: string
+      plugins_ref:
+        description: First-party plugins branch, tag, or commit to capture
         required: true
         default: main
         type: string
@@ -29,8 +40,16 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: kumbuka-me/kumbuka
-          ref: ${{ inputs.kumbuka_ref }}
+          ref: ${{ inputs.kumbuka_ref || 'main' }}
           path: .kumbuka-server
+          fetch-depth: 1
+
+      - name: Check out first-party plugins
+        uses: actions/checkout@v7
+        with:
+          repository: kumbuka-me/plugins
+          ref: ${{ inputs.plugins_ref || 'main' }}
+          path: .kumbuka-plugins
           fetch-depth: 1
 
       - name: Set up Go
@@ -67,25 +86,28 @@ jobs:
         run: |
           make screenshots \
             KUMBUKA="$GITHUB_WORKSPACE/.kumbuka-server/kumbuka" \
+            SCREENSHOT_PLUGINS_DIR="$GITHUB_WORKSPACE/.kumbuka-plugins" \
             SCREENSHOT_SKIP_BROWSER_INSTALL=1
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v7
         with:
           name: documentation-screenshots
-          path: assets/screenshots/*.png
+          path: |
+            assets/screenshots/*.png
+            assets/plugins/*/preview.png
           if-no-files-found: error
           retention-days: 14
 
       - name: Commit changed screenshots
         if: github.ref_type == 'branch'
         run: |
-          git add -A assets/screenshots
+          git add -A assets/screenshots assets/plugins
           if git diff --cached --quiet; then
             echo "Screenshots are unchanged."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "docs: update application screenshots"
+          git commit -m "docs: update screenshots"
           git push origin "HEAD:${GITHUB_REF_NAME}"

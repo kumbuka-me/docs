@@ -47,9 +47,12 @@ BUILD_ARGS ?=
 ## Screenshots
 
 SCREENSHOT_OUTPUT ?= assets/screenshots
+SCREENSHOT_PLUGIN_OUTPUT ?= assets/plugins
+SCREENSHOT_PLUGINS_DIR ?= ../plugins
 SCREENSHOT_EDITOR_SLUG ?= getting-started
 SCREENSHOT_VISITS ?= /pages/getting-started,/pages/content/editor,/pages/knowledge/search
 SCREENSHOT_BROWSER_CHANNEL ?=
+SCREENSHOT_DEVICE_SCALE_FACTOR ?= 2
 SCREENSHOT_SKIP_BROWSER_INSTALL ?= 0
 
 ## Assets
@@ -96,13 +99,16 @@ serve: $(DEV_PORT) $(OPEN_BROWSER) ## Build, serve, and open the documentation l
 		--directory "$(SITE_OUTPUT)"
 
 .PHONY: screenshots
-screenshots: $(NODE_MODULES) $(KUMBUKA) ## Regenerate product screenshots from the canonical documentation Markdown.
+screenshots: $(NODE_MODULES) $(KUMBUKA) ## Regenerate application and plugin screenshots from canonical documentation fixtures.
 	@SCREENSHOT_BROWSER_CHANNEL="$(SCREENSHOT_BROWSER_CHANNEL)" \
+		SCREENSHOT_DEVICE_SCALE_FACTOR="$(SCREENSHOT_DEVICE_SCALE_FACTOR)" \
 		SCREENSHOT_SKIP_BROWSER_INSTALL="$(SCREENSHOT_SKIP_BROWSER_INSTALL)" \
 		$(SCREENSHOT_SCRIPT) \
 			--binary "$(abspath $(KUMBUKA))" \
 			--content "$(CURDIR)/content" \
+			--plugins "$(abspath $(SCREENSHOT_PLUGINS_DIR))" \
 			--output "$(CURDIR)/$(SCREENSHOT_OUTPUT)" \
+			--plugin-output "$(CURDIR)/$(SCREENSHOT_PLUGIN_OUTPUT)" \
 			--editor-slug "$(SCREENSHOT_EDITOR_SLUG)" \
 			--visits "$(SCREENSHOT_VISITS)"
 
