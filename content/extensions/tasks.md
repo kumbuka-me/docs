@@ -7,7 +7,7 @@ Add persistent nested task trees with descriptions, assignees, due dates, config
 ![Tasks preview](/assets/plugins/tasks/preview.png)
 
 - Plugin ID: `me.kumbuka.tasks`
-- Source version: `1.7.0`
+- Source version: `1.7.1`
 - Permissions: `browser:render`, `settings:read`, `storage:read`, `storage:write`, `pages:content`, `users:read`, `notifications:send`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/tasks) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=tasks%2Fv) · [Installation](../administration/plugins.md)
@@ -79,7 +79,7 @@ When no states are configured, Tasks uses the backward-compatible `open` and `do
 
 ## Interaction
 
-Rendered task trees use compact rows rather than large cards. Nested tasks are shown below their parent with hierarchy lines. The circular control at the left changes state; descriptions and task metadata remain visually secondary. Completed tasks are muted and struck through, and multi-task lists show a completed/total counter.
+Rendered task trees use compact rows rather than large cards. Nested tasks are shown below their parent with hierarchy lines. The visible state pill is a native select that changes state, while the circle at the left remains a quick state indicator. Descriptions and task metadata remain visually secondary. Completed tasks are muted and struck through, and multi-task lists show a completed/total counter.
 
 State changes are sent through Kumbuka's host-mediated page-details command handler. Before persisting a change, Tasks rereads the current page and verifies that both the task and requested state are still valid.
 

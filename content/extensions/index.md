@@ -18,6 +18,12 @@ Note, warning, and other callout blocks
 
 ![Callouts preview](/assets/plugins/callouts/preview.png)
 
+## [Checklists](task-lists.md)
+
+Add lightweight, interactive Markdown checklists to Kumbuka pages.
+
+![Checklists preview](/assets/plugins/task-lists/preview.png)
+
 ## [Coding Ligatures](coding-ligatures.md)
 
 Show programming ligatures in rendered text and code.
@@ -155,12 +161,6 @@ Markdown tables with colors, sorting, and filtering.
 Render Material-style tab groups with Markdown content.
 
 ![Tabs preview](/assets/plugins/tabs/preview.png)
-
-## [Task Lists](task-lists.md)
-
-Render Markdown task list items with visible checkbox state.
-
-![Task Lists preview](/assets/plugins/task-lists/preview.png)
 
 ## [Tasks](tasks.md)
 
