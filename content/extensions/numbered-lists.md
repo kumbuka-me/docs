@@ -7,7 +7,7 @@ Configure indentation for Markdown numbered lists.
 ![Numbered Lists preview](/assets/plugins/numbered-lists/preview.png)
 
 - Plugin ID: `me.kumbuka.numbered-lists`
-- Source version: `1.0.0`
+- Source version: `1.0.1`
 - Permissions: `settings:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/numbered-lists) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=numbered-lists%2Fv) · [Installation](../administration/plugins.md)

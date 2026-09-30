@@ -7,7 +7,7 @@ Configure indentation for Markdown bulleted lists.
 ![Bulleted Lists preview](/assets/plugins/bulleted-lists/preview.png)
 
 - Plugin ID: `me.kumbuka.bulleted-lists`
-- Source version: `1.0.0`
+- Source version: `1.0.1`
 - Permissions: `settings:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/bulleted-lists) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=bulleted-lists%2Fv) · [Installation](../administration/plugins.md)
