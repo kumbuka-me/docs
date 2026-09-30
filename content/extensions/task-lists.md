@@ -7,7 +7,7 @@ Add lightweight, interactive Markdown checklists to Kumbuka pages.
 ![Checklists preview](/assets/plugins/task-lists/preview.png)
 
 - Plugin ID: `me.kumbuka.task-lists`
-- Source version: `1.4.1`
+- Source version: `1.4.2`
 - Permissions: `browser:render`, `settings:read`, `pages:content`, `pages:write`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/task-lists) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=task-lists%2Fv) · [Installation](../administration/plugins.md)
