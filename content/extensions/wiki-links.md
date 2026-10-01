@@ -7,7 +7,7 @@ Show incoming and outgoing wiki-link relationships in page details.
 ![Wiki Links preview](/assets/plugins/wiki-links/preview.png)
 
 - Plugin ID: `me.kumbuka.wiki-links`
-- Source version: `1.2.2`
+- Source version: `1.3.0`
 - Permissions: `pages:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/wiki-links) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=wiki-links%2Fv) · [Installation](../administration/plugins.md)
