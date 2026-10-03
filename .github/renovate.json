@@ -33,6 +33,13 @@
       "automerge": true
     },
     {
+      "description": "Automerge pinned Kumbuka application tools",
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["kumbuka-me/kumbuka", "kumbuka-me/cli"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
       "matchPackageNames": ["prettier", "golangci/golangci-lint"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
