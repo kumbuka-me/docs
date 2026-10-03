@@ -117,6 +117,18 @@ preview_cache="$fixture_cache/plugin-previews"
 screenshot_port=${SCREENSHOT_PORT:-18080}
 database_port=${SCREENSHOT_DB_PORT:-55432}
 base_url="http://127.0.0.1:$screenshot_port"
+health_timeout_seconds=${SCREENSHOT_HEALTH_TIMEOUT_SECONDS:-120}
+
+case "$health_timeout_seconds" in
+  ''|*[!0-9]*)
+    echo "SCREENSHOT_HEALTH_TIMEOUT_SECONDS must be a positive integer" >&2
+    exit 2
+    ;;
+  0)
+    echo "SCREENSHOT_HEALTH_TIMEOUT_SECONDS must be greater than zero" >&2
+    exit 2
+    ;;
+esac
 
 cleanup() {
   status=$?
@@ -182,11 +194,14 @@ KUMBUKA__PLUGIN_UPDATE_CHECK_INTERVAL=0 \
   --log-format=text >"$server_log" 2>&1 &
 server_pid=$!
 
-attempt=0
+health_deadline=$(( $(date +%s) + health_timeout_seconds ))
 until curl --fail --silent "$base_url/healthz" >/dev/null; do
-  attempt=$((attempt + 1))
-  if [ "$attempt" -ge 60 ]; then
-    echo "Kumbuka did not become healthy at $base_url" >&2
+  if ! kill -0 "$server_pid" 2>/dev/null; then
+    echo "Kumbuka exited before becoming healthy; see the server log below." >&2
+    exit 1
+  fi
+  if [ "$(date +%s)" -ge "$health_deadline" ]; then
+    echo "Kumbuka did not become healthy at $base_url within ${health_timeout_seconds}s" >&2
     exit 1
   fi
   sleep 0.25
