@@ -3,7 +3,7 @@
 ## Tool Versions
 
 # renovate: datasource=github-releases depName=kumbuka-me/kumbuka
-KUMBUKA_VERSION ?= v0.46.3
+KUMBUKA_VERSION ?= v0.47.0
 
 # renovate: datasource=github-releases depName=kumbuka-me/cli
 KUMBUKA_CLI_VERSION ?= v0.11.4
