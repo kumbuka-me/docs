@@ -67,7 +67,7 @@ Each `external_links` entry requires a label and absolute HTTP(S) URL. Icons and
 
 ## Project plugins
 
-Static builds use `.kumbukaplugins` to pin optional rendering and presentation plugins. Manage the file with the CLI:
+Static builds use `.kumbukaplugins` to pin optional rendering and presentation plugins. By default, `build` reads this file from the directory containing the selected site configuration. For example, `--config config/site.toml` uses `config/.kumbukaplugins`. Manage the file with the CLI:
 
 ```sh
 kumbuka-cli plugins list
@@ -79,7 +79,7 @@ kumbuka-cli plugins add \
 kumbuka-cli plugins remove --id com.example.chart
 ```
 
-Use `--plugins FILE` to select a different plugin dependency file for one build. `plugins sync` downloads and validates every pinned package and validates the declared plugin dependency graph; a missing dependency or dependency cycle fails the command instead of being deferred until the site build.
+Use `--plugins FILE` to override the config-relative default for one build. `plugins sync` downloads and validates every pinned package and validates the declared plugin dependency graph; a missing dependency or dependency cycle fails the command instead of being deferred until the site build.
 
 ## Filesystem routes
 
