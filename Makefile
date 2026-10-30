@@ -6,7 +6,7 @@
 KUMBUKA_VERSION ?= v0.57.10
 
 # renovate: datasource=github-releases depName=kumbuka-me/cli
-KUMBUKA_CLI_VERSION ?= v0.13.6
+KUMBUKA_CLI_VERSION ?= v0.13.7
 
 # renovate: datasource=github-releases depName=gi8lino/dev-tools
 DEV_TOOLS_VERSION ?= v0.9.0
