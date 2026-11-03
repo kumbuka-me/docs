@@ -126,6 +126,12 @@ Show recent revision metadata and expose the full history as a page action.
 
 ![Revision History preview](/assets/plugins/revision-history/preview.png)
 
+## [Runbook](runbook.md)
+
+Show decisions, actions, and shared handoffs as a compact branch-and-merge graph.
+
+![Runbook preview](/assets/plugins/runbook/preview.png)
+
 ## [Simple Icons](simple-icons.md)
 
 Add brand icons from Simple Icons to the Kumbuka icon catalog.
