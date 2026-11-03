@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 import time
 import urllib.error
@@ -19,6 +20,7 @@ DOWNLOAD_DELAY = 2
 
 
 def raw_github_file(repository: str, path: str, ref: str) -> bytes:
+    """Fetch a release fixture with bounded retries for transient network failures."""
     repository_path = "/".join(
         urllib.parse.quote(part, safe="") for part in repository.split("/")
     )
@@ -51,7 +53,16 @@ def raw_github_file(repository: str, path: str, ref: str) -> bytes:
     raise RuntimeError(f"Could not fetch {repository}@{ref}:{path}")
 
 
+def valid_plugin_coordinate(name: str, version: str) -> bool:
+    """Accept a plugin name and release version safe for fixture paths."""
+    return (
+        re.fullmatch(r"[a-z0-9][a-z0-9._-]*", name) is not None
+        and re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", version) is not None
+    )
+
+
 def parse_plugin_lock(source: str) -> list[tuple[str, str]]:
+    """Parse unique plugin coordinates from a released lock file."""
     plugins: list[tuple[str, str]] = []
     seen: set[str] = set()
     for raw in source.splitlines():
@@ -61,7 +72,7 @@ def parse_plugin_lock(source: str) -> list[tuple[str, str]]:
         name, separator, version = line.partition("=")
         name = name.strip()
         version = version.strip()
-        if not separator or not name or not version:
+        if not separator or not valid_plugin_coordinate(name, version):
             raise RuntimeError(f"Invalid plugins.lock entry: {raw!r}")
         if name in seen:
             raise RuntimeError(f"Duplicate plugin in plugins.lock: {name}")
@@ -73,6 +84,7 @@ def parse_plugin_lock(source: str) -> list[tuple[str, str]]:
 
 
 def write_plugin_lock(version: str, output: Path) -> None:
+    """Cache the validated plugin lock for the selected application release."""
     if output.is_file():
         parse_plugin_lock(output.read_text(encoding="utf-8"))
         return
@@ -88,6 +100,7 @@ def write_plugin_lock(version: str, output: Path) -> None:
 
 
 def write_markdown_archive(source_dir: Path, output: Path) -> None:
+    """Package documentation pages with paths relative to their content root."""
     files = sorted(path for path in source_dir.rglob("*.md") if path.is_file())
     if not files:
         raise RuntimeError(f"No Markdown files found under {source_dir}")
@@ -99,6 +112,7 @@ def write_markdown_archive(source_dir: Path, output: Path) -> None:
 
 
 def preview_support_pages(plugin_name: str) -> list[dict[str, str]]:
+    """Return pages needed by plugins that reference other content."""
     if plugin_name == "includes":
         return [
             {
@@ -129,6 +143,7 @@ def preview_support_pages(plugin_name: str) -> list[dict[str, str]]:
 
 
 def cached_preview(cache_dir: Path, name: str, version: str) -> str:
+    """Load a cached preview or fetch its pinned release fixture."""
     filename = cache_dir / name / version / "preview.md"
     if filename.is_file():
         preview = filename.read_text(encoding="utf-8")
@@ -152,6 +167,7 @@ def cached_preview(cache_dir: Path, name: str, version: str) -> str:
 
 
 def preview_title(name: str) -> str:
+    """Build a readable screenshot page title from a plugin name."""
     return name.replace("-", " ").title() + " preview"
 
 
@@ -161,6 +177,7 @@ def write_plugin_metadata(
     content_dir: Path,
     metadata_file: Path,
 ) -> None:
+    """Write preview metadata for released plugins with documentation pages."""
     plugins = parse_plugin_lock(lock_file.read_text(encoding="utf-8"))
     selected: list[dict[str, object]] = []
 
@@ -191,14 +208,17 @@ def write_plugin_metadata(
 
 
 def command_lock(args: argparse.Namespace) -> None:
+    """Prepare the pinned plugin lock for screenshot generation."""
     write_plugin_lock(args.kumbuka_version, args.output)
 
 
 def command_content(args: argparse.Namespace) -> None:
+    """Archive the selected documentation tree."""
     write_markdown_archive(args.source, args.output)
 
 
 def command_plugins(args: argparse.Namespace) -> None:
+    """Generate preview metadata using the selected lock and cache."""
     write_plugin_metadata(
         args.plugin_lock,
         args.preview_cache,
@@ -208,6 +228,7 @@ def command_plugins(args: argparse.Namespace) -> None:
 
 
 def parser() -> argparse.ArgumentParser:
+    """Define the screenshot preparation subcommands."""
     result = argparse.ArgumentParser(description=__doc__)
     subcommands = result.add_subparsers(dest="command", required=True)
 
@@ -239,6 +260,7 @@ def parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    """Dispatch a preparation command and report fixture errors."""
     args = parser().parse_args()
     try:
         args.handler(args)
