@@ -7,7 +7,7 @@ Render Mermaid diagrams in isolated browser modules.
 ![Mermaid preview](/assets/plugins/mermaid/preview.png)
 
 - Plugin ID: `me.kumbuka.mermaid`
-- Source version: `1.1.1`
+- Source version: `1.2.0`
 - Permissions: `browser:render`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/mermaid) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=mermaid%2Fv) · [Installation](../administration/plugins.md)
@@ -22,6 +22,8 @@ flowchart LR
     Start --> Finish
 ```
 ````
+
+The plugin declares `mermaid` as a selectable fenced code-block language using the SDK code-language contract.
 
 Use `mermaid` as the fenced code-block language. Mermaid source is rendered only in the browser module and remains normal code when the plugin is unavailable.
 
