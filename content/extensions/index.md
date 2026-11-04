@@ -122,7 +122,7 @@ Show pages related by shared tags in page details.
 
 ## [Revision History](revision-history.md)
 
-Show recent revision metadata and expose the full history as a page action.
+Show the latest revision and open a color-coded comparison dialog.
 
 ![Revision History preview](/assets/plugins/revision-history/preview.png)
 
