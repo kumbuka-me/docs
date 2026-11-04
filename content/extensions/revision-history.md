@@ -2,19 +2,21 @@
 
 # Revision History
 
-Show the latest revision and open a color-coded comparison dialog.
+Show a compact latest-revision card with a color-coded comparison dialog.
 
 ![Revision History preview](/assets/plugins/revision-history/preview.png)
 
 - Plugin ID: `me.kumbuka.revision-history`
-- Source version: `1.2.1`
+- Source version: `1.2.2`
 - Permissions: `pages:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/revision-history) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=revision-history%2Fv) · [Installation](../administration/plugins.md)
 
-Revision History adds a **Latest revision** summary to page details and contributes a **View changes** action and a page action that open Kumbuka's full revision-history fragment in a dialog.
+Revision History adds a compact **Latest revision** summary to page details. The entire summary is clickable and opens the color-coded comparison for that exact revision. The widget shows the author, revision number, timestamp, and added/removed line counts. Metadata-only revisions display changed field names when Kumbuka supplies them.
 
-Kumbuka core continues to own revision persistence, metadata snapshots, restore authorization, diffs, and the full history endpoint. Older revisions without snapshots remain Markdown-only. The plugin owns the optional page-details presentation.
+The plugin also contributes a **Revision history** page action that opens the full revision list.
+
+Kumbuka core owns revision persistence, metadata snapshots, restore authorization, diffs, and the comparison dialog. Older revisions without snapshots remain Markdown-only. The plugin owns the optional page-details presentation.
 
 ## Permissions
 
