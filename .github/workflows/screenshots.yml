@@ -14,6 +14,10 @@ on:
       - ".github/workflows/screenshots.yml"
   workflow_dispatch:
 
+concurrency:
+  group: documentation-screenshots-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   screenshots:
     name: Update Screenshots
@@ -67,4 +71,33 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "docs: update screenshots"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          snapshot=$(git rev-parse HEAD)
+          changed_paths=$(mktemp)
+          deleted_paths=$(mktemp)
+          trap 'rm -f "$changed_paths" "$deleted_paths"' EXIT
+          git diff --name-only --diff-filter=d -z HEAD^ HEAD -- assets/screenshots assets/plugins > "$changed_paths"
+          git diff --name-only --diff-filter=D -z HEAD^ HEAD -- assets/screenshots assets/plugins > "$deleted_paths"
+
+          for attempt in 1 2 3; do
+            git fetch origin "$GITHUB_REF_NAME"
+            # This checkout is disposable. Reapply only the generated changes
+            # onto the latest branch so concurrent documentation commits survive.
+            git reset --hard FETCH_HEAD
+            if [ -s "$changed_paths" ]; then
+              git restore --source="$snapshot" --staged --worktree --pathspec-from-file="$changed_paths" --pathspec-file-nul
+            fi
+            if [ -s "$deleted_paths" ]; then
+              git rm --ignore-unmatch --pathspec-from-file="$deleted_paths" --pathspec-file-nul
+            fi
+            if git diff --cached --quiet; then
+              echo "Screenshots are already up to date."
+              exit 0
+            fi
+            git commit -m "docs: update screenshots"
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              exit 0
+            fi
+            echo "Screenshot push failed on attempt $attempt of 3."
+          done
+          echo "::error::Could not publish screenshots after 3 attempts."
+          exit 1
