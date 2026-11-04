@@ -7,12 +7,14 @@ Show a compact latest-revision card with a color-coded comparison dialog.
 ![Revision History preview](/assets/plugins/revision-history/preview.png)
 
 - Plugin ID: `me.kumbuka.revision-history`
-- Source version: `1.2.2`
+- Source version: `1.2.3`
 - Permissions: `pages:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/revision-history) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=revision-history%2Fv) · [Installation](../administration/plugins.md)
 
 Revision History adds a compact **Latest revision** summary to page details. The entire summary is clickable and opens the color-coded comparison for that exact revision. The widget shows the author, revision number, timestamp, and added/removed line counts. Metadata-only revisions display changed field names when Kumbuka supplies them.
+
+The plugin owns its compact layout in `assets/revision-history.css`, contributed through the existing `content-style` module. Kumbuka sanitizes the stylesheet and permits only safe declarations under `.prose`; plugin-specific class names scope these rules to this widget. The host still supplies the accessible full-card comparison dialog action. No revision-specific styles are required in Kumbuka core.
 
 The plugin also contributes a **Revision history** page action that opens the full revision list.
 
