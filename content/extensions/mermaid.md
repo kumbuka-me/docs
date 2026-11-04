@@ -7,7 +7,7 @@ Render Mermaid diagrams in isolated browser modules.
 ![Mermaid preview](/assets/plugins/mermaid/preview.png)
 
 - Plugin ID: `me.kumbuka.mermaid`
-- Source version: `1.2.0`
+- Source version: `1.3.0`
 - Permissions: `browser:render`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/mermaid) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=mermaid%2Fv) · [Installation](../administration/plugins.md)

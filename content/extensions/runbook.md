@@ -7,7 +7,7 @@ Show decisions, actions, and shared handoffs as a compact branch-and-merge graph
 ![Runbook preview](/assets/plugins/runbook/preview.png)
 
 - Plugin ID: `me.kumbuka.runbook`
-- Source version: `1.2.0`
+- Source version: `1.2.1`
 - Permissions: `browser:render`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/runbook) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=runbook%2Fv) · [Installation](../administration/plugins.md)
