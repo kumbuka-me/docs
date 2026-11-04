@@ -7,14 +7,14 @@ Show recent revision metadata and expose the full history as a page action.
 ![Revision History preview](/assets/plugins/revision-history/preview.png)
 
 - Plugin ID: `me.kumbuka.revision-history`
-- Source version: `1.1.2`
+- Source version: `1.2.0`
 - Permissions: `pages:read`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/revision-history) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=revision-history%2Fv) · [Installation](../administration/plugins.md)
 
-Revision History adds the latest revision summary to page details and contributes a host-rendered page action that opens Kumbuka's full revision-history fragment in a dialog.
+Revision History adds a **Latest revision** summary to page details and contributes a host-rendered page action that opens Kumbuka's full revision-history fragment in a dialog.
 
-Kumbuka core continues to own revision persistence, restore authorization, diffs, and the full history endpoint. The plugin owns the optional page-details presentation.
+Kumbuka core continues to own revision persistence, metadata snapshots, restore authorization, diffs, and the full history endpoint. Older revisions without snapshots remain Markdown-only. The plugin owns the optional page-details presentation.
 
 ## Permissions
 
