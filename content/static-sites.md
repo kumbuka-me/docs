@@ -18,6 +18,35 @@ Without a configuration file, the defaults are:
 - sidebar navigation with comfortable density;
 - 280-pixel sidebar width.
 
+## Preview locally
+
+Use `kumbuka-cli serve` to build and preview the same documentation site in a local browser, similar to the MkDocs development server. The command starts a local HTTP server and watches project inputs for changes; it requires no Kumbuka server, PostgreSQL database, or Python runtime.
+
+```sh
+kumbuka-cli serve --config site.toml
+```
+
+The default preview address is `http://127.0.0.1:8000/`. Choose another address with `--listen-address`:
+
+```sh
+kumbuka-cli serve --config site.toml --listen-address 127.0.0.1:8080
+```
+
+By default, `serve` builds the site first, watches the Markdown source directory, site configuration, assets, branding files, and `.kumbukaplugins`, and rebuilds when any of them change. Connected browsers reload automatically after successful builds. If a rebuild fails, the error appears in the terminal and the previous successful build remains available. Stop the server with `Ctrl+C`.
+
+To build once and serve without watching, or to serve an existing generated site without building:
+
+```sh
+kumbuka-cli serve --config site.toml --no-watch
+kumbuka-cli serve --config site.toml --no-build --no-watch
+```
+
+`--no-build` requires an existing generated `index.html`; it does not rewrite that build's URLs or browser-plugin origin. For an accurate local preview, prefer the default command, which generates files using the local HTTP origin and preserves any path prefix from `site_url` in memory without modifying your TOML configuration. For example, `site_url = "https://docs.example.com/guide/"` serves the preview under `/guide/`.
+
+The preview is a development server, not a production hosting option. Its generated output uses local preview URLs, so run `kumbuka-cli build` again before publishing the directory to your production hosting environment.
+
+In the [Kumbuka documentation repository](https://github.com/kumbuka-me/docs), use `make serve` to select a local port and open the browser automatically. The production deployment continues to use `make build`.
+
 ## Configuration
 
 Example `site.toml`:

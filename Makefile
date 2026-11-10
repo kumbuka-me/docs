@@ -27,7 +27,7 @@ include $(call dev-tools-module,help)
 # silently reuse a previously downloaded server binary.
 KUMBUKA := bin/kumbuka-$(KUMBUKA_VERSION)
 KUMBUKA_ASSET ?= kumbuka_{version}_{os}_{arch}.tar.gz
-KUMBUKA_CLI := bin/kumbuka-cli
+KUMBUKA_CLI := bin/kumbuka-cli-$(KUMBUKA_CLI_VERSION)
 KUMBUKA_CLI_ASSET ?= kumbuka-cli_{version}_{os}_{arch}.tar.gz
 FAVICON_GENERATE := $(DEV_TOOLS_BIN)/favicon-generate
 SVG_TO_PNG := $(DEV_TOOLS_BIN)/svg-to-png
@@ -84,19 +84,14 @@ check: fmt-check build ## Check formatting, build, and verify the GitHub Pages a
 	@test -f "$(SITE_OUTPUT)/.nojekyll"
 
 .PHONY: serve
-serve: $(DEV_PORT) $(OPEN_BROWSER) ## Build, serve, and open the documentation locally.
-	$(MAKE) build BUILD_ARGS='--site-url "$(SITE_URL)"'
-	@test -s "$(SITE_OUTPUT)/index.html" || { \
-		echo "$(SITE_OUTPUT)/index.html does not exist."; \
-		exit 1; \
-	}
-	@echo "Serving Kumbuka documentation at $(SITE_URL)"
-	@$(OPEN_BROWSER) "$(SITE_URL)" & \
+serve: $(DEV_PORT) $(OPEN_BROWSER) cli ## Build, watch, serve, and open the documentation locally.
+	@(until curl --fail --silent --output /dev/null "$(SITE_URL)"; do sleep 0.2; done; \
+		$(OPEN_BROWSER) "$(SITE_URL)") & \
 	browser_pid=$$!; \
 	trap 'kill "$$browser_pid" 2>/dev/null || true' EXIT; \
-	python3 -m http.server "$(SITE_PORT)" \
-		--bind 127.0.0.1 \
-		--directory "$(SITE_OUTPUT)"
+	$(KUMBUKA_CLI) serve \
+		--config "$(SITE_CONFIG)" \
+		--listen-address "127.0.0.1:$(SITE_PORT)"
 
 .PHONY: screenshots
 screenshots: $(NODE_MODULES) $(KUMBUKA) ## Regenerate application and plugin screenshots with the pinned Kumbuka release.
@@ -166,11 +161,13 @@ dev-tools: $(DEV_PORT) $(OPEN_BROWSER) $(MAKE_HELP) $(FAVICON_GENERATE) $(SVG_TO
 .PHONY: kumbuka
 kumbuka: $(KUMBUKA) ## Install the pinned Kumbuka server.
 
-.PHONY: cli
-cli: $(GITHUB_RELEASE_INSTALL) ## Install the pinned Kumbuka CLI.
+$(KUMBUKA_CLI): $(GITHUB_RELEASE_INSTALL)
 	@$(GITHUB_RELEASE_INSTALL) \
 		--repo kumbuka-me/cli \
 		--tag "$(KUMBUKA_CLI_VERSION)" \
 		--asset "$(KUMBUKA_CLI_ASSET)" \
 		--binary kumbuka-cli \
-		--target "$(KUMBUKA_CLI)"
+		--target "$@"
+
+.PHONY: cli
+cli: $(KUMBUKA_CLI) ## Install the pinned Kumbuka CLI.

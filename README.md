@@ -14,13 +14,21 @@ The generated site is written to `site/`.
 
 ## Preview locally
 
-Build the documentation and serve it locally:
+Build and preview the documentation with the Kumbuka CLI:
 
 ```sh
 make serve
 ```
 
-The site opens automatically in your browser.
+The site opens automatically in your browser. The CLI watches Markdown, site configuration, assets, and plugin dependencies; when an input changes, it rebuilds the site and reloads the browser. A failed rebuild leaves the last successful site available. Stop the preview with `Ctrl+C`.
+
+`make serve` uses the pinned `kumbuka-cli` release (v0.14.0 or newer) and a checkout-specific local port. It does not require Python, a Kumbuka server, or PostgreSQL. To run the preview command directly, use:
+
+```sh
+kumbuka-cli serve --config site.toml --listen-address 127.0.0.1:8000
+```
+
+For additional options, including serving an already-built site without watching for changes, see [Static sites](content/static-sites.md#preview-locally).
 
 ## Screenshots
 
