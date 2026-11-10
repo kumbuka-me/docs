@@ -30,6 +30,12 @@ Add lightweight, interactive Markdown checklists to Kumbuka pages.
 
 ![Checklists preview](/assets/plugins/task-lists/preview.png)
 
+## [Code Annotations](code-annotations.md)
+
+Add opt-in line highlighting, line numbers, and annotations to fenced code.
+
+![Code Annotations preview](/assets/plugins/code-annotations/preview.png)
+
 ## [Coding Ligatures](coding-ligatures.md)
 
 Show programming ligatures in rendered text and code.
