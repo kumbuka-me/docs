@@ -7,7 +7,7 @@ Render Mermaid diagrams interactively or pre-render SVGs for static sites.
 ![Mermaid preview](/assets/plugins/mermaid/preview.png)
 
 - Plugin ID: `me.kumbuka.mermaid`
-- Source version: `1.4.0`
+- Source version: `1.5.0`
 - Permissions: `browser:render`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/mermaid) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=mermaid%2Fv) · [Installation](../administration/plugins.md)
