@@ -7,7 +7,7 @@ Generate cached Mermaid SVGs and opt-in interactive diagrams.
 ![Mermaid preview](/assets/plugins/mermaid/preview.png)
 
 - Plugin ID: `me.kumbuka.mermaid`
-- Source version: `1.10.0`
+- Source version: `1.11.0`
 - Permissions: `browser:render`, `artifacts:write`
 
 [Source](https://github.com/kumbuka-me/plugins/tree/main/mermaid) · [Releases](https://github.com/kumbuka-me/plugins/releases?q=mermaid%2Fv) · [Installation](../administration/plugins.md)
@@ -36,6 +36,8 @@ flowchart LR
 The adjacent `{mermaid interactive="true"}` directive is also accepted for compatibility. These options affect the diagram only, not a whole page. Static sites retain the isolated browser plugin for explicitly interactive diagrams.
 
 The visual editor supports Mermaid source, an **Interactive diagram** checkbox, and alignment to the left, center, or right. Alignment is stored as `%% kumbuka-align: left` (or `right`), and is respected by both SVGs and interactive diagrams.
+
+Set **Diagram width (px)** in the visual editor or add a comment such as `%% kumbuka-width: 320` on its own line inside the fence. Both static and interactive diagrams accept whole pixels from 1 to 9999 and shrink to fit narrower pages. Clear the field to restore automatic sizing.
 
 ## Rendering and compatibility
 
