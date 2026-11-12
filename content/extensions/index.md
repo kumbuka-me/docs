@@ -86,7 +86,7 @@ Transclude complete pages or heading sections into Markdown.
 
 ## [Mermaid](mermaid.md)
 
-Render Mermaid v13 alpha diagrams in isolated browser modules.
+Generate cached Mermaid SVGs and opt-in interactive diagrams.
 
 ![Mermaid preview](/assets/plugins/mermaid/preview.png)
 
