@@ -12,7 +12,7 @@ KUMBUKA_CLI_VERSION ?= v0.14.2
 DEV_TOOLS_VERSION ?= v0.9.0
 
 # renovate: datasource=npm depName=prettier
-PRETTIER_VERSION ?= 3.10.0
+PRETTIER_VERSION ?= 3.10.1
 
 ## Shared development tools
 
