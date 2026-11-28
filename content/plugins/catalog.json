@@ -1883,6 +1883,13 @@
       "provider": "Kumbuka",
       "versions": [
         {
+          "version": "1.6.1",
+          "api_version": 1,
+          "released_at": "2026-11-28T17:39:39Z",
+          "package_url": "https://github.com/kumbuka-me/plugins/releases/download/syntax-highlighting/v1.6.1/syntax-highlighting-1.6.1.kumbukaplugin",
+          "sha256": "ace2e1fd02ccb338ec476578a6e402d07147967cc1ac9b203747ac44169c2db0"
+        },
+        {
           "version": "1.6.0",
           "api_version": 1,
           "released_at": "2026-11-04T18:25:36Z",
